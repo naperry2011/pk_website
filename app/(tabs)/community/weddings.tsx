@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Input, TextArea } from "@/components/ui/Input";
 import { Card, CardContent } from "@/components/ui/Card";
 import { FontAwesome } from "@expo/vector-icons";
-import { weddings, towns } from "@/constants/mockData";
+import { weddings, towns, getTownName } from "@/constants/mockData";
 
 export default function WeddingsScreen() {
   const [showForm, setShowForm] = useState(false);
@@ -167,7 +167,7 @@ export default function WeddingsScreen() {
                       </Body>
                     </View>
 
-                    <Body className="text-sm text-gold mt-2">{wedding.town}</Body>
+                    <Body className="text-sm text-gold mt-2">{getTownName(wedding.townId)}</Body>
                   </View>
                 </CardContent>
               </Card>

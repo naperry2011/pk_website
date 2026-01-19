@@ -1,15 +1,25 @@
-import { View, ScrollView } from "react-native";
+import { View, ScrollView, Pressable } from "react-native";
 import { useLocalSearchParams, Link } from "expo-router";
 import { PageLayout, Section } from "@/components/layout";
 import { H1, H2, H3, Body } from "@/components/ui/Typography";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
 import { FontAwesome } from "@expo/vector-icons";
-import { towns } from "@/constants/mockData";
+import {
+  towns,
+  getObituariesByTown,
+  getWeddingsByTown,
+  getAnnouncementsByTown,
+} from "@/constants/mockData";
 
 export default function TownDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const town = towns.find((t) => t.id === id);
+
+  // Get town-specific content
+  const townObituaries = id ? getObituariesByTown(id) : [];
+  const townWeddings = id ? getWeddingsByTown(id) : [];
+  const townAnnouncements = id ? getAnnouncementsByTown(id) : [];
 
   if (!town) {
     return (
@@ -134,33 +144,179 @@ export default function TownDetailScreen() {
         </View>
       </Section>
 
-      {/* Upcoming Events */}
-      <Section background="warm">
-        <H2 className="text-center mb-6">Upcoming Events in {town.name}</H2>
-        <View className="max-w-2xl mx-auto">
-          <Card className="mb-4">
-            <CardContent>
-              <View className="flex-row items-start gap-4">
-                <View className="bg-gold px-3 py-2 rounded-lg items-center">
-                  <Body className="text-white font-body-semibold">15</Body>
-                  <Body className="text-white text-xs">SEP</Body>
-                </View>
-                <View className="flex-1">
-                  <Body className="font-body-semibold mb-1">
-                    Odwira Festival
-                  </Body>
-                  <Body className="text-sm text-gray-charcoal/70">
-                    Annual harvest festival celebration
-                  </Body>
-                </View>
-              </View>
-            </CardContent>
-          </Card>
-          <Body className="text-center text-gray-charcoal/60">
-            More events coming soon
-          </Body>
-        </View>
-      </Section>
+      {/* Town Events & Announcements */}
+      {townAnnouncements.length > 0 && (
+        <Section background="warm">
+          <H2 className="mb-6">Events & Announcements in {town.name}</H2>
+          <View className="max-w-3xl">
+            {townAnnouncements.map((announcement) => (
+              <Card key={announcement.id} className="mb-4">
+                <CardContent>
+                  <View className="flex-row items-start gap-4">
+                    <View className="bg-gold px-3 py-2 rounded-lg items-center min-w-[50px]">
+                      <Body className="text-white font-body-semibold">
+                        {new Date(announcement.date).getDate()}
+                      </Body>
+                      <Body className="text-white text-xs uppercase">
+                        {new Date(announcement.date).toLocaleDateString(
+                          "en-GB",
+                          { month: "short" }
+                        )}
+                      </Body>
+                    </View>
+                    <View className="flex-1">
+                      <View className="flex-row items-center gap-2 mb-1">
+                        <FontAwesome
+                          name={
+                            announcement.type === "event"
+                              ? "calendar"
+                              : "bullhorn"
+                          }
+                          size={12}
+                          color="#D4AF37"
+                        />
+                        <Body className="text-xs text-gold uppercase font-body-medium">
+                          {announcement.type}
+                        </Body>
+                      </View>
+                      <Body className="font-body-semibold mb-1">
+                        {announcement.title}
+                      </Body>
+                      <Body className="text-sm text-gray-charcoal/70">
+                        {announcement.excerpt}
+                      </Body>
+                    </View>
+                  </View>
+                </CardContent>
+              </Card>
+            ))}
+          </View>
+        </Section>
+      )}
+
+      {/* Town Obituaries */}
+      {townObituaries.length > 0 && (
+        <Section background="white">
+          <View className="flex-row items-center justify-between mb-6">
+            <H2>Obituaries in {town.name}</H2>
+            <Link href="/community/obituaries" asChild>
+              <Pressable className="flex-row items-center gap-1">
+                <Body className="text-gold text-sm">View all</Body>
+                <FontAwesome name="arrow-right" size={12} color="#D4AF37" />
+              </Pressable>
+            </Link>
+          </View>
+          <View className="max-w-3xl">
+            {townObituaries.map((obituary) => (
+              <Card key={obituary.id} className="mb-4">
+                <CardContent>
+                  <View className="flex-row gap-4">
+                    <View className="w-16 h-16 bg-gray-warm rounded-lg items-center justify-center">
+                      <FontAwesome name="user" size={24} color="#2C3E5030" />
+                    </View>
+                    <View className="flex-1">
+                      <Body className="font-body-semibold mb-1">
+                        {obituary.name}
+                      </Body>
+                      <Body className="text-sm text-gray-charcoal/70 mb-1">
+                        {new Date(obituary.birthDate).getFullYear()} -{" "}
+                        {new Date(obituary.passedDate).getFullYear()}
+                      </Body>
+                      <View className="flex-row items-center gap-2">
+                        <FontAwesome name="calendar" size={12} color="#8B0000" />
+                        <Body className="text-sm text-red-kente">
+                          Funeral:{" "}
+                          {new Date(obituary.funeralDate).toLocaleDateString(
+                            "en-GB",
+                            {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            }
+                          )}
+                        </Body>
+                      </View>
+                    </View>
+                  </View>
+                </CardContent>
+              </Card>
+            ))}
+          </View>
+        </Section>
+      )}
+
+      {/* Town Weddings */}
+      {townWeddings.length > 0 && (
+        <Section background="warm">
+          <View className="flex-row items-center justify-between mb-6">
+            <H2>Weddings in {town.name}</H2>
+            <Link href="/community/weddings" asChild>
+              <Pressable className="flex-row items-center gap-1">
+                <Body className="text-gold text-sm">View all</Body>
+                <FontAwesome name="arrow-right" size={12} color="#D4AF37" />
+              </Pressable>
+            </Link>
+          </View>
+          <View className="max-w-3xl">
+            {townWeddings.map((wedding) => (
+              <Card key={wedding.id} className="mb-4">
+                <CardContent>
+                  <View className="flex-row items-center gap-4">
+                    <View className="flex-row items-center gap-2">
+                      <View className="w-12 h-12 bg-gold/10 rounded-full items-center justify-center">
+                        <FontAwesome name="heart" size={18} color="#D4AF37" />
+                      </View>
+                    </View>
+                    <View className="flex-1">
+                      <Body className="font-body-semibold mb-1">
+                        {wedding.bride} & {wedding.groom}
+                      </Body>
+                      <View className="flex-row items-center gap-2 mb-1">
+                        <FontAwesome name="calendar" size={12} color="#D4AF37" />
+                        <Body className="text-sm">
+                          {new Date(wedding.date).toLocaleDateString("en-GB", {
+                            weekday: "short",
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </Body>
+                      </View>
+                      <View className="flex-row items-center gap-2">
+                        <FontAwesome
+                          name="map-marker"
+                          size={12}
+                          color="#1B4D3E"
+                        />
+                        <Body className="text-sm text-gray-charcoal/70">
+                          {wedding.venue}
+                        </Body>
+                      </View>
+                    </View>
+                  </View>
+                </CardContent>
+              </Card>
+            ))}
+          </View>
+        </Section>
+      )}
+
+      {/* No content message if all sections are empty */}
+      {townObituaries.length === 0 &&
+        townWeddings.length === 0 &&
+        townAnnouncements.length === 0 && (
+          <Section background="warm">
+            <View className="items-center py-8">
+              <FontAwesome name="calendar-o" size={48} color="#2C3E5030" />
+              <Body className="text-gray-charcoal/50 mt-4 text-center">
+                No current announcements, obituaries, or weddings in {town.name}
+              </Body>
+              <Body className="text-sm text-gray-charcoal/40 mt-2">
+                Check back soon for updates
+              </Body>
+            </View>
+          </Section>
+        )}
     </PageLayout>
   );
 }

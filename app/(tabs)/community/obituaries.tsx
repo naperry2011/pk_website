@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Input, TextArea } from "@/components/ui/Input";
 import { Card, CardContent } from "@/components/ui/Card";
 import { FontAwesome } from "@expo/vector-icons";
-import { obituaries, towns } from "@/constants/mockData";
+import { obituaries, towns, getTownName } from "@/constants/mockData";
 
 export default function ObituariesScreen() {
   const [showForm, setShowForm] = useState(false);
@@ -148,7 +148,7 @@ export default function ObituariesScreen() {
                           size={14}
                           color="#D4AF37"
                         />
-                        <Body className="text-sm">{obituary.town}</Body>
+                        <Body className="text-sm">{getTownName(obituary.townId)}</Body>
                       </View>
                       <View className="flex-row items-center gap-2">
                         <FontAwesome

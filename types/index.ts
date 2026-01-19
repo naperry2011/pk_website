@@ -13,6 +13,7 @@ export interface Announcement {
   title: string;
   date: string;
   type: "event" | "council" | "development" | "urgent";
+  townId: string | null; // null for council-wide announcements
   excerpt: string;
   content?: string;
   imageUrl?: string;
@@ -24,7 +25,7 @@ export interface Obituary {
   birthDate: string;
   passedDate: string;
   funeralDate: string;
-  town: string;
+  townId: string;
   photo: string | null;
   biography?: string;
   familyContact?: string;
@@ -35,7 +36,7 @@ export interface Wedding {
   bride: string;
   groom: string;
   date: string;
-  town: string;
+  townId: string;
   venue: string;
   photos?: string[];
 }

@@ -3,7 +3,7 @@ import { Link } from "expo-router";
 import { PageLayout, Section } from "@/components/layout";
 import { H1, H2, H3, Body } from "@/components/ui/Typography";
 import { FontAwesome } from "@expo/vector-icons";
-import { obituaries, weddings, announcements } from "@/constants/mockData";
+import { obituaries, weddings, announcements, getTownName } from "@/constants/mockData";
 
 const sections = [
   {
@@ -103,7 +103,7 @@ export default function CommunityScreen() {
               <View className="flex-1">
                 <Body className="font-body-semibold">{obituaries[0].name}</Body>
                 <Body className="text-sm text-gray-charcoal/70">
-                  Funeral: {obituaries[0].funeralDate} • {obituaries[0].town}
+                  Funeral: {obituaries[0].funeralDate} • {getTownName(obituaries[0].townId)}
                 </Body>
               </View>
             </View>

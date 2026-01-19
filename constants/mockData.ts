@@ -20,12 +20,19 @@ export const towns = [
   { id: "suhum", name: "Suhum", chief: "Nana Kwame Boahen" },
 ];
 
+// Helper to get town name from ID
+export const getTownName = (townId: string) => {
+  const town = towns.find((t) => t.id === townId);
+  return town?.name || townId;
+};
+
 export const announcements = [
   {
     id: "1",
     title: "Annual Odwira Festival 2026",
     date: "2026-09-15",
-    type: "event",
+    type: "event" as const,
+    townId: "akropong", // Main festival location
     excerpt:
       "The Akuapem Traditional Council announces the dates for the annual Odwira Festival celebrations.",
   },
@@ -33,7 +40,8 @@ export const announcements = [
     id: "2",
     title: "Council Meeting Resolution",
     date: "2026-01-10",
-    type: "council",
+    type: "council" as const,
+    townId: null, // Council-wide, not town-specific
     excerpt:
       "Summary of key decisions from the January Traditional Council meeting.",
   },
@@ -41,9 +49,28 @@ export const announcements = [
     id: "3",
     title: "New Development Initiative",
     date: "2026-01-05",
-    type: "development",
+    type: "development" as const,
+    townId: null,
     excerpt:
       "The Council partners with government on new infrastructure projects.",
+  },
+  {
+    id: "4",
+    title: "Larteh Cultural Day",
+    date: "2026-03-20",
+    type: "event" as const,
+    townId: "larteh",
+    excerpt:
+      "Annual celebration of Larteh's unique cultural heritage and traditions.",
+  },
+  {
+    id: "5",
+    title: "Mampong Road Rehabilitation",
+    date: "2026-02-01",
+    type: "development" as const,
+    townId: "mampong",
+    excerpt:
+      "Construction begins on the main road rehabilitation project in Mampong.",
   },
 ];
 
@@ -54,7 +81,7 @@ export const obituaries = [
     birthDate: "1945-03-15",
     passedDate: "2026-01-10",
     funeralDate: "2026-02-01",
-    town: "Akropong",
+    townId: "akropong",
     photo: null,
   },
   {
@@ -63,7 +90,25 @@ export const obituaries = [
     birthDate: "1938-07-22",
     passedDate: "2026-01-08",
     funeralDate: "2026-01-28",
-    town: "Larteh",
+    townId: "larteh",
+    photo: null,
+  },
+  {
+    id: "3",
+    name: "Nana Yaa Asantewaa",
+    birthDate: "1950-06-12",
+    passedDate: "2026-01-15",
+    funeralDate: "2026-02-10",
+    townId: "mampong",
+    photo: null,
+  },
+  {
+    id: "4",
+    name: "Opanin Kofi Mensah",
+    birthDate: "1942-11-03",
+    passedDate: "2026-01-12",
+    funeralDate: "2026-02-05",
+    townId: "akropong",
     photo: null,
   },
 ];
@@ -74,8 +119,24 @@ export const weddings = [
     bride: "Akosua Mensah",
     groom: "Kofi Asante",
     date: "2026-02-14",
-    town: "Mampong",
+    townId: "mampong",
     venue: "Mampong Presbyterian Church",
+  },
+  {
+    id: "2",
+    bride: "Adwoa Serwaa",
+    groom: "Kwame Owusu",
+    date: "2026-03-08",
+    townId: "akropong",
+    venue: "Basel Mission Church, Akropong",
+  },
+  {
+    id: "3",
+    bride: "Ama Darko",
+    groom: "Yaw Boateng",
+    date: "2026-04-15",
+    townId: "larteh",
+    venue: "Larteh Presbyterian Church",
   },
 ];
 
@@ -94,3 +155,13 @@ export const councilHistory = {
   founded: "Pre-colonial era",
   headquarters: "Akropong-Akuapem",
 };
+
+// Helper functions to filter by town
+export const getObituariesByTown = (townId: string) =>
+  obituaries.filter((o) => o.townId === townId);
+
+export const getWeddingsByTown = (townId: string) =>
+  weddings.filter((w) => w.townId === townId);
+
+export const getAnnouncementsByTown = (townId: string) =>
+  announcements.filter((a) => a.townId === townId);
