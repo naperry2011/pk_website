@@ -1,19 +1,48 @@
-const tintColorLight = '#2f95dc';
-const tintColorDark = '#fff';
+// Akuapem Paramount King Council - Color Palette
 
+export const Colors = {
+  // Primary Colors
+  gold: {
+    DEFAULT: "#D4AF37",
+    light: "#FFF8DC",
+  },
+  green: {
+    deep: "#1B4D3E",
+  },
+  red: {
+    kente: "#8B0000",
+  },
+
+  // Secondary Colors
+  white: "#FFFFFF",
+  gray: {
+    warm: "#F5F5F0",
+    charcoal: "#2C3E50",
+  },
+
+  // Accent Colors
+  blue: {
+    heritage: "#1E4D8B",
+  },
+  brown: {
+    earth: "#8B4513",
+  },
+};
+
+// Tab navigation colors
 export default {
   light: {
-    text: '#000',
-    background: '#fff',
-    tint: tintColorLight,
-    tabIconDefault: '#ccc',
-    tabIconSelected: tintColorLight,
+    text: Colors.gray.charcoal,
+    background: Colors.white,
+    tint: Colors.gold.DEFAULT,
+    tabIconDefault: Colors.gray.charcoal,
+    tabIconSelected: Colors.gold.DEFAULT,
   },
   dark: {
-    text: '#fff',
-    background: '#000',
-    tint: tintColorDark,
-    tabIconDefault: '#ccc',
-    tabIconSelected: tintColorDark,
+    text: Colors.white,
+    background: Colors.gray.charcoal,
+    tint: Colors.gold.DEFAULT,
+    tabIconDefault: Colors.gray.warm,
+    tabIconSelected: Colors.gold.DEFAULT,
   },
 };

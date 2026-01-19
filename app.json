@@ -1,37 +1,42 @@
 {
   "expo": {
-    "name": "pk_website",
-    "slug": "pk_website",
+    "name": "Akuapem Traditional Council",
+    "slug": "akuapem-council",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "pkwebsite",
-    "userInterfaceStyle": "automatic",
+    "scheme": "akuapemcouncil",
+    "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#1B4D3E"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "org.akuapemcouncil.app"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#1B4D3E"
       },
+      "package": "org.akuapemcouncil.app",
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
     },
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "name": "Akuapem Traditional Council",
+      "shortName": "Akuapem Council",
+      "description": "Official website of the Akuapem Traditional Council - preserving heritage, serving communities",
+      "themeColor": "#D4AF37",
+      "backgroundColor": "#FFFFFF"
     },
-    "plugins": [
-      "expo-router"
-    ],
+    "plugins": ["expo-router"],
     "experiments": {
       "typedRoutes": true
     }
