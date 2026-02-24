@@ -3,13 +3,15 @@ import { Link } from "expo-router";
 import Head from "expo-router/head";
 import { PageLayout, Section } from "@/components/layout";
 import { H1, H3, Body } from "@/components/ui/Typography";
-import { Card, CardContent } from "@/components/ui/Card";
 import { FontAwesome } from "@expo/vector-icons";
-import { towns } from "@/constants/mockData";
+import { useTowns } from "@/hooks/useTowns";
+import { LoadingState } from "@/components/ui/LoadingState";
+import { ErrorState } from "@/components/ui/ErrorState";
 
 export default function TownsScreen() {
   const { width } = useWindowDimensions();
   const isMobile = width < 768;
+  const { data: towns, isLoading, error, refetch } = useTowns();
 
   return (
     <PageLayout>
@@ -31,39 +33,45 @@ export default function TownsScreen() {
 
       {/* Towns Grid */}
       <Section background="white">
-        <View
-          className={`${
-            isMobile ? "flex-col" : "flex-row flex-wrap"
-          } gap-4 justify-center`}
-        >
-          {towns.map((town) => (
-            <Link key={town.id} href={`/towns/${town.id}`} asChild>
-              <Pressable
-                className={`${
-                  isMobile ? "w-full" : "w-[280px]"
-                } bg-white rounded-xl overflow-hidden border border-brown-earth/10 hover:border-gold/30 hover:shadow-md active:bg-gray-warm`}
-              >
-                {/* Town Image Placeholder */}
-                <View className="h-40 bg-green-deep/5 items-center justify-center">
-                  <View className="w-14 h-14 bg-green-deep/10 rounded-full items-center justify-center mb-2">
-                    <FontAwesome name="home" size={22} color="#1B4D3E" />
+        {isLoading ? (
+          <LoadingState message="Loading towns..." />
+        ) : error ? (
+          <ErrorState message="Failed to load towns." onRetry={refetch} />
+        ) : (
+          <View
+            className={`${
+              isMobile ? "flex-col" : "flex-row flex-wrap"
+            } gap-4 justify-center`}
+          >
+            {(towns ?? []).map((town) => (
+              <Link key={town.id} href={`/towns/${town.id}`} asChild>
+                <Pressable
+                  className={`${
+                    isMobile ? "w-full" : "w-[280px]"
+                  } bg-white rounded-xl overflow-hidden border border-brown-earth/10 hover:border-gold/30 hover:shadow-md active:bg-gray-warm`}
+                >
+                  {/* Town Image Placeholder */}
+                  <View className="h-40 bg-green-deep/5 items-center justify-center">
+                    <View className="w-14 h-14 bg-green-deep/10 rounded-full items-center justify-center mb-2">
+                      <FontAwesome name="home" size={22} color="#1B4D3E" />
+                    </View>
+                    <Body className="text-xs text-green-deep/50">{town.name}</Body>
                   </View>
-                  <Body className="text-xs text-green-deep/50">{town.name}</Body>
-                </View>
-                <View className="p-4">
-                  <H3 className="mb-1">{town.name}</H3>
-                  <Body className="text-sm text-gray-charcoal/70 mb-2">
-                    {town.chief}
-                  </Body>
-                  <View className="flex-row items-center gap-1">
-                    <FontAwesome name="arrow-right" size={12} color="#D4AF37" />
-                    <Body className="text-gold text-sm">Learn more</Body>
+                  <View className="p-4">
+                    <H3 className="mb-1">{town.name}</H3>
+                    <Body className="text-sm text-gray-charcoal/70 mb-2">
+                      {town.chief}
+                    </Body>
+                    <View className="flex-row items-center gap-1">
+                      <FontAwesome name="arrow-right" size={12} color="#D4AF37" />
+                      <Body className="text-gold text-sm">Learn more</Body>
+                    </View>
                   </View>
-                </View>
-              </Pressable>
-            </Link>
-          ))}
-        </View>
+                </Pressable>
+              </Link>
+            ))}
+          </View>
+        )}
       </Section>
 
       {/* Map Section Placeholder */}

@@ -1,12 +1,15 @@
-import { View, Image } from "react-native";
+import { View } from "react-native";
 import Head from "expo-router/head";
 import { PageLayout, Section } from "@/components/layout";
 import { H1, H2, H3, Body, Accent } from "@/components/ui/Typography";
 import { Card, CardContent } from "@/components/ui/Card";
 import { FontAwesome } from "@expo/vector-icons";
-import { paramountKing, councilHistory, towns } from "@/constants/mockData";
+import { paramountKing, councilHistory } from "@/constants/mockData";
+import { useTowns } from "@/hooks/useTowns";
 
 export default function AboutScreen() {
+  const { data: towns } = useTowns();
+
   return (
     <PageLayout>
       <Head>
@@ -130,7 +133,7 @@ export default function AboutScreen() {
         {/* Divisional Chiefs */}
         <H3 className="mb-6">Divisional Chiefs</H3>
         <View className="flex-row flex-wrap gap-4">
-          {towns.slice(0, 8).map((town) => (
+          {(towns ?? []).slice(0, 8).map((town) => (
             <Card key={town.id} className="min-w-[200px] flex-1">
               <CardContent>
                 <Body className="font-body-semibold">{town.name}</Body>

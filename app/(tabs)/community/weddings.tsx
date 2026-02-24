@@ -6,12 +6,16 @@ import { Button } from "@/components/ui/Button";
 import { Input, TextArea } from "@/components/ui/Input";
 import { Card, CardContent } from "@/components/ui/Card";
 import { FontAwesome } from "@expo/vector-icons";
-import { weddings, towns, getTownName } from "@/constants/mockData";
+import { useWeddings, useCreateWedding } from "@/hooks/useWeddings";
+import { useTowns } from "@/hooks/useTowns";
+import { LoadingState } from "@/components/ui/LoadingState";
+import { ErrorState } from "@/components/ui/ErrorState";
 
 export default function WeddingsScreen() {
   const [showForm, setShowForm] = useState(false);
   const [selectedTown, setSelectedTown] = useState("");
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [weddingForm, setWeddingForm] = useState({
     brideName: "",
     groomName: "",
@@ -22,10 +26,19 @@ export default function WeddingsScreen() {
   });
   const [weddingErrors, setWeddingErrors] = useState<Record<string, string>>({});
 
+  const { data: weddings, isLoading, error, refetch } = useWeddings({ status: "approved" });
+  const { data: towns } = useTowns();
+  const createWedding = useCreateWedding();
+
+  const getTownName = (townId: string) => {
+    const town = (towns ?? []).find((t) => t.id === townId);
+    return town?.name || townId;
+  };
+
   const validateEmail = (email: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  const handleWeddingSubmit = () => {
+  const handleWeddingSubmit = async () => {
     const newErrors: Record<string, string> = {};
     if (!weddingForm.brideName.trim()) newErrors.brideName = "Bride's name is required";
     if (!weddingForm.groomName.trim()) newErrors.groomName = "Groom's name is required";
@@ -38,7 +51,26 @@ export default function WeddingsScreen() {
     setWeddingErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
-    setFormSubmitted(true);
+    setSubmitError("");
+    try {
+      await createWedding.mutateAsync({
+        bride: weddingForm.brideName,
+        groom: weddingForm.groomName,
+        date: weddingForm.weddingDate,
+        town_id: selectedTown || "akropong",
+        venue: weddingForm.venue,
+        message: weddingForm.message || null,
+        photos: [],
+        contact_email: weddingForm.contactEmail || null,
+        status: "pending",
+        submitted_by: null,
+        reviewed_by: null,
+        review_notes: null,
+      });
+      setFormSubmitted(true);
+    } catch (err: any) {
+      setSubmitError(err.message || "Failed to submit. Please try again.");
+    }
   };
 
   return (
@@ -100,7 +132,7 @@ export default function WeddingsScreen() {
 
                 <Input
                   label="Wedding Date *"
-                  placeholder="DD/MM/YYYY"
+                  placeholder="YYYY-MM-DD"
                   value={weddingForm.weddingDate}
                   onChangeText={(text) => {
                     setWeddingForm({ ...weddingForm, weddingDate: text });
@@ -125,7 +157,7 @@ export default function WeddingsScreen() {
                     Town
                   </Body>
                   <View className="flex-row flex-wrap gap-2">
-                    {towns.slice(0, 8).map((town) => (
+                    {(towns ?? []).slice(0, 8).map((town) => (
                       <Pressable
                         key={town.id}
                         onPress={() => setSelectedTown(town.id)}
@@ -192,6 +224,12 @@ export default function WeddingsScreen() {
                   accessibilityHint="Enter contact email address"
                 />
 
+                {submitError ? (
+                  <View className="bg-red-kente/10 border border-red-kente/30 rounded-lg p-3 mb-4">
+                    <Body className="text-red-kente text-center text-sm">{submitError}</Body>
+                  </View>
+                ) : null}
+
                 {formSubmitted ? (
                   <View className="bg-green-deep/10 border border-green-deep/30 rounded-lg p-4 items-center">
                     <FontAwesome name="check-circle" size={24} color="#1B4D3E" />
@@ -207,6 +245,7 @@ export default function WeddingsScreen() {
                     title="Submit Announcement"
                     onPress={handleWeddingSubmit}
                     fullWidth
+                    loading={createWedding.isPending}
                     accessibilityHint="Submits the wedding announcement for review"
                   />
                 )}
@@ -217,10 +256,14 @@ export default function WeddingsScreen() {
               </CardContent>
             </Card>
           </View>
+        ) : isLoading ? (
+          <LoadingState message="Loading weddings..." />
+        ) : error ? (
+          <ErrorState message="Failed to load weddings." onRetry={refetch} />
         ) : (
           /* Wedding Listings */
           <View className="max-w-3xl mx-auto">
-            {weddings.map((wedding) => (
+            {(weddings ?? []).map((wedding) => (
               <Card key={wedding.id} className="mb-4">
                 <CardContent>
                   <View className="items-center py-4">
@@ -265,13 +308,13 @@ export default function WeddingsScreen() {
                       </Body>
                     </View>
 
-                    <Body className="text-sm text-gold mt-2">{getTownName(wedding.townId)}</Body>
+                    <Body className="text-sm text-gold mt-2">{getTownName(wedding.town_id)}</Body>
                   </View>
                 </CardContent>
               </Card>
             ))}
 
-            {weddings.length === 0 && (
+            {(weddings ?? []).length === 0 && (
               <View className="py-12 items-center">
                 <FontAwesome name="inbox" size={48} color="#2C3E5030" />
                 <Body className="text-gray-charcoal/50 mt-4">

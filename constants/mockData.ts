@@ -1,4 +1,6 @@
-// Mock data for development - will be replaced with API calls
+// DEPRECATED: Most data now comes from Supabase via hooks in /hooks/.
+// Only paramountKing and councilHistory remain in use (not stored in DB).
+// Towns, announcements, obituaries, and weddings are now managed in Supabase.
 
 export const towns = [
   {

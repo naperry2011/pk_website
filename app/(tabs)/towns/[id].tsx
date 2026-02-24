@@ -5,23 +5,29 @@ import { H1, H2, H3, Body } from "@/components/ui/Typography";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
 import { FontAwesome } from "@expo/vector-icons";
-import {
-  towns,
-  getObituariesByTown,
-  getWeddingsByTown,
-  getAnnouncementsByTown,
-} from "@/constants/mockData";
+import { useTown } from "@/hooks/useTowns";
+import { useObituaries } from "@/hooks/useObituaries";
+import { useWeddings } from "@/hooks/useWeddings";
+import { useAnnouncements } from "@/hooks/useAnnouncements";
+import { LoadingState } from "@/components/ui/LoadingState";
+import { ErrorState } from "@/components/ui/ErrorState";
 
 export default function TownDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const town = towns.find((t) => t.id === id);
+  const { data: town, isLoading, error, refetch } = useTown(id!);
+  const { data: townObituaries } = useObituaries({ townId: id, status: "approved" });
+  const { data: townWeddings } = useWeddings({ townId: id, status: "approved" });
+  const { data: townAnnouncements } = useAnnouncements(id);
 
-  // Get town-specific content
-  const townObituaries = id ? getObituariesByTown(id) : [];
-  const townWeddings = id ? getWeddingsByTown(id) : [];
-  const townAnnouncements = id ? getAnnouncementsByTown(id) : [];
+  if (isLoading) {
+    return (
+      <PageLayout>
+        <LoadingState message="Loading town details..." />
+      </PageLayout>
+    );
+  }
 
-  if (!town) {
+  if (error || !town) {
     return (
       <PageLayout>
         <Section>
@@ -33,6 +39,10 @@ export default function TownDetailScreen() {
       </PageLayout>
     );
   }
+
+  const obituaries = townObituaries ?? [];
+  const weddings = townWeddings ?? [];
+  const announcements = townAnnouncements ?? [];
 
   return (
     <PageLayout>
@@ -107,14 +117,15 @@ export default function TownDetailScreen() {
               <CardContent>
                 <H3 className="mb-4">Key Landmarks</H3>
                 <View className="gap-2">
-                  {(town.landmarks || ["Chief's Palace", "Presbyterian Church", "Market Square"]).map(
-                    (landmark: string, index: number) => (
-                      <View key={index} className="flex-row items-center gap-2">
-                        <FontAwesome name="map-marker" size={16} color="#D4AF37" />
-                        <Body>{landmark}</Body>
-                      </View>
-                    )
-                  )}
+                  {(town.landmarks && town.landmarks.length > 0
+                    ? town.landmarks
+                    : ["Chief's Palace", "Presbyterian Church", "Market Square"]
+                  ).map((landmark: string, index: number) => (
+                    <View key={index} className="flex-row items-center gap-2">
+                      <FontAwesome name="map-marker" size={16} color="#D4AF37" />
+                      <Body>{landmark}</Body>
+                    </View>
+                  ))}
                 </View>
               </CardContent>
             </Card>
@@ -141,11 +152,11 @@ export default function TownDetailScreen() {
       </Section>
 
       {/* Town Events & Announcements */}
-      {townAnnouncements.length > 0 && (
+      {announcements.length > 0 && (
         <Section background="warm">
           <H2 className="mb-6">Events & Announcements in {town.name}</H2>
           <View className="max-w-3xl">
-            {townAnnouncements.map((announcement) => (
+            {announcements.map((announcement) => (
               <Card key={announcement.id} className="mb-4">
                 <CardContent>
                   <View className="flex-row items-start gap-4">
@@ -191,7 +202,7 @@ export default function TownDetailScreen() {
       )}
 
       {/* Town Obituaries */}
-      {townObituaries.length > 0 && (
+      {obituaries.length > 0 && (
         <Section background="white">
           <View className="flex-row items-center justify-between mb-6">
             <H2>Obituaries in {town.name}</H2>
@@ -203,7 +214,7 @@ export default function TownDetailScreen() {
             </Link>
           </View>
           <View className="max-w-3xl">
-            {townObituaries.map((obituary) => (
+            {obituaries.map((obituary) => (
               <Card key={obituary.id} className="mb-4">
                 <CardContent>
                   <View className="flex-row gap-4">
@@ -215,14 +226,14 @@ export default function TownDetailScreen() {
                         {obituary.name}
                       </Body>
                       <Body className="text-sm text-gray-charcoal/70 mb-1">
-                        {new Date(obituary.birthDate).getFullYear()} -{" "}
-                        {new Date(obituary.passedDate).getFullYear()}
+                        {obituary.birth_date ? new Date(obituary.birth_date).getFullYear() : "?"} -{" "}
+                        {new Date(obituary.passed_date).getFullYear()}
                       </Body>
                       <View className="flex-row items-center gap-2">
                         <FontAwesome name="calendar" size={12} color="#8B0000" />
                         <Body className="text-sm text-red-kente">
                           Funeral:{" "}
-                          {new Date(obituary.funeralDate).toLocaleDateString(
+                          {new Date(obituary.funeral_date).toLocaleDateString(
                             "en-GB",
                             {
                               day: "numeric",
@@ -242,7 +253,7 @@ export default function TownDetailScreen() {
       )}
 
       {/* Town Weddings */}
-      {townWeddings.length > 0 && (
+      {weddings.length > 0 && (
         <Section background="warm">
           <View className="flex-row items-center justify-between mb-6">
             <H2>Weddings in {town.name}</H2>
@@ -254,7 +265,7 @@ export default function TownDetailScreen() {
             </Link>
           </View>
           <View className="max-w-3xl">
-            {townWeddings.map((wedding) => (
+            {weddings.map((wedding) => (
               <Card key={wedding.id} className="mb-4">
                 <CardContent>
                   <View className="flex-row items-center gap-4">
@@ -298,9 +309,9 @@ export default function TownDetailScreen() {
       )}
 
       {/* No content message if all sections are empty */}
-      {townObituaries.length === 0 &&
-        townWeddings.length === 0 &&
-        townAnnouncements.length === 0 && (
+      {obituaries.length === 0 &&
+        weddings.length === 0 &&
+        announcements.length === 0 && (
           <Section background="warm">
             <View className="items-center py-8">
               <FontAwesome name="calendar-o" size={48} color="#2C3E5030" />

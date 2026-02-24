@@ -5,9 +5,13 @@ import { Hero, AnnouncementCard, QuickLinks, SubscribeCTA } from "@/components/h
 import { H2, Body } from "@/components/ui/Typography";
 import { FadeIn } from "@/components/ui/FadeIn";
 import { FontAwesome } from "@expo/vector-icons";
-import { announcements, paramountKing } from "@/constants/mockData";
+import { useAnnouncements } from "@/hooks/useAnnouncements";
+import { LoadingState } from "@/components/ui/LoadingState";
+import { paramountKing } from "@/constants/mockData";
 
 export default function HomeScreen() {
+  const { data: announcements, isLoading } = useAnnouncements();
+
   return (
     <PageLayout>
       <Head>
@@ -54,9 +58,13 @@ export default function HomeScreen() {
       <Section background="white">
         <H2 className="text-center mb-8">Latest Announcements</H2>
         <View className="max-w-2xl mx-auto">
-          {announcements.slice(0, 3).map((announcement) => (
-            <AnnouncementCard key={announcement.id} announcement={announcement} />
-          ))}
+          {isLoading ? (
+            <LoadingState message="Loading announcements..." />
+          ) : (
+            (announcements ?? []).slice(0, 3).map((announcement) => (
+              <AnnouncementCard key={announcement.id} announcement={announcement} />
+            ))
+          )}
         </View>
       </Section>
 

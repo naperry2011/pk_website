@@ -2,11 +2,14 @@ import "../global.css";
 import { View, Text, ActivityIndicator } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { ThemeProvider, DefaultTheme } from "@react-navigation/native";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
+import { queryClient } from "@/lib/queryClient";
+import { AuthProvider } from "@/context/AuthContext";
 import {
   PlayfairDisplay_400Regular,
   PlayfairDisplay_700Bold,
@@ -77,12 +80,18 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   return (
-    <AppErrorBoundary>
-      <ThemeProvider value={AkuapemTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        </Stack>
-      </ThemeProvider>
-    </AppErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <AppErrorBoundary>
+          <ThemeProvider value={AkuapemTheme}>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="admin" options={{ headerShown: false }} />
+              <Stack.Screen name="auth" options={{ headerShown: false }} />
+            </Stack>
+          </ThemeProvider>
+        </AppErrorBoundary>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }

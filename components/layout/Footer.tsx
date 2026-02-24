@@ -107,6 +107,11 @@ export function Footer() {
           <Text className="font-body text-sm text-white/60 text-center">
             © {currentYear} Akuapem Traditional Council. All rights reserved.
           </Text>
+          <Link href="/admin" asChild>
+            <Pressable className="mt-2 items-center">
+              <Text className="font-body text-xs text-white/30">Admin</Text>
+            </Pressable>
+          </Link>
         </View>
       </View>
     </View>

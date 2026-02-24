@@ -6,12 +6,16 @@ import { Button } from "@/components/ui/Button";
 import { Input, TextArea } from "@/components/ui/Input";
 import { Card, CardContent } from "@/components/ui/Card";
 import { FontAwesome } from "@expo/vector-icons";
-import { obituaries, towns, getTownName } from "@/constants/mockData";
+import { useObituaries, useCreateObituary } from "@/hooks/useObituaries";
+import { useTowns } from "@/hooks/useTowns";
+import { LoadingState } from "@/components/ui/LoadingState";
+import { ErrorState } from "@/components/ui/ErrorState";
 
 export default function ObituariesScreen() {
   const [showForm, setShowForm] = useState(false);
   const [selectedTown, setSelectedTown] = useState("");
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [obitForm, setObitForm] = useState({
     name: "",
     birthDate: "",
@@ -22,10 +26,19 @@ export default function ObituariesScreen() {
   });
   const [obitErrors, setObitErrors] = useState<Record<string, string>>({});
 
+  const { data: obituaries, isLoading, error, refetch } = useObituaries({ status: "approved" });
+  const { data: towns } = useTowns();
+  const createObituary = useCreateObituary();
+
+  const getTownName = (townId: string) => {
+    const town = (towns ?? []).find((t) => t.id === townId);
+    return town?.name || townId;
+  };
+
   const validateEmail = (email: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  const handleObitSubmit = () => {
+  const handleObitSubmit = async () => {
     const newErrors: Record<string, string> = {};
     if (!obitForm.name.trim()) newErrors.name = "Name of deceased is required";
     if (!obitForm.passedDate.trim()) newErrors.passedDate = "Date of passing is required";
@@ -37,7 +50,26 @@ export default function ObituariesScreen() {
     setObitErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
-    setFormSubmitted(true);
+    setSubmitError("");
+    try {
+      await createObituary.mutateAsync({
+        name: obitForm.name,
+        birth_date: obitForm.birthDate || null,
+        passed_date: obitForm.passedDate,
+        funeral_date: obitForm.funeralDate,
+        town_id: selectedTown || "akropong",
+        biography: obitForm.biography || null,
+        family_contact: obitForm.contactEmail || null,
+        photo_url: null,
+        status: "pending",
+        submitted_by: null,
+        reviewed_by: null,
+        review_notes: null,
+      });
+      setFormSubmitted(true);
+    } catch (err: any) {
+      setSubmitError(err.message || "Failed to submit. Please try again.");
+    }
   };
 
   return (
@@ -85,7 +117,7 @@ export default function ObituariesScreen() {
                   <View className="flex-1 min-w-[200px]">
                     <Input
                       label="Date of Birth"
-                      placeholder="DD/MM/YYYY"
+                      placeholder="YYYY-MM-DD"
                       value={obitForm.birthDate}
                       onChangeText={(text) => setObitForm({ ...obitForm, birthDate: text })}
                     />
@@ -93,7 +125,7 @@ export default function ObituariesScreen() {
                   <View className="flex-1 min-w-[200px]">
                     <Input
                       label="Date of Passing *"
-                      placeholder="DD/MM/YYYY"
+                      placeholder="YYYY-MM-DD"
                       value={obitForm.passedDate}
                       onChangeText={(text) => {
                         setObitForm({ ...obitForm, passedDate: text });
@@ -106,7 +138,7 @@ export default function ObituariesScreen() {
 
                 <Input
                   label="Funeral Date *"
-                  placeholder="DD/MM/YYYY"
+                  placeholder="YYYY-MM-DD"
                   value={obitForm.funeralDate}
                   onChangeText={(text) => {
                     setObitForm({ ...obitForm, funeralDate: text });
@@ -120,7 +152,7 @@ export default function ObituariesScreen() {
                     Town
                   </Body>
                   <View className="flex-row flex-wrap gap-2">
-                    {towns.slice(0, 8).map((town) => (
+                    {(towns ?? []).slice(0, 8).map((town) => (
                       <Pressable
                         key={town.id}
                         onPress={() => setSelectedTown(town.id)}
@@ -187,6 +219,12 @@ export default function ObituariesScreen() {
                   accessibilityHint="Enter email for family contact"
                 />
 
+                {submitError ? (
+                  <View className="bg-red-kente/10 border border-red-kente/30 rounded-lg p-3 mb-4">
+                    <Body className="text-red-kente text-center text-sm">{submitError}</Body>
+                  </View>
+                ) : null}
+
                 {formSubmitted ? (
                   <View className="bg-green-deep/10 border border-green-deep/30 rounded-lg p-4 items-center">
                     <FontAwesome name="check-circle" size={24} color="#1B4D3E" />
@@ -202,6 +240,7 @@ export default function ObituariesScreen() {
                     title="Submit for Review"
                     onPress={handleObitSubmit}
                     fullWidth
+                    loading={createObituary.isPending}
                     accessibilityHint="Submits the obituary for review"
                   />
                 )}
@@ -212,10 +251,14 @@ export default function ObituariesScreen() {
               </CardContent>
             </Card>
           </View>
+        ) : isLoading ? (
+          <LoadingState message="Loading obituaries..." />
+        ) : error ? (
+          <ErrorState message="Failed to load obituaries." onRetry={refetch} />
         ) : (
           /* Obituary Listings */
           <View className="max-w-3xl mx-auto">
-            {obituaries.map((obituary) => (
+            {(obituaries ?? []).map((obituary) => (
               <Card key={obituary.id} className="mb-4">
                 <CardContent>
                   <View className="flex-row gap-4">
@@ -224,13 +267,17 @@ export default function ObituariesScreen() {
                       className="w-24 h-24 bg-gray-warm rounded-lg items-center justify-center"
                       accessibilityLabel={`Photo placeholder for ${obituary.name}`}
                     >
-                      <FontAwesome name="user" size={32} color="#2C3E5030" />
+                      {obituary.photo_url ? (
+                        <View className="w-full h-full rounded-lg bg-gray-warm" />
+                      ) : (
+                        <FontAwesome name="user" size={32} color="#2C3E5030" />
+                      )}
                     </View>
                     <View className="flex-1">
                       <H3 className="mb-1">{obituary.name}</H3>
                       <Body className="text-sm text-gray-charcoal/70 mb-2">
-                        {new Date(obituary.birthDate).getFullYear()} -{" "}
-                        {new Date(obituary.passedDate).getFullYear()}
+                        {obituary.birth_date ? new Date(obituary.birth_date).getFullYear() : "?"} -{" "}
+                        {new Date(obituary.passed_date).getFullYear()}
                       </Body>
                       <View className="flex-row items-center gap-2 mb-1">
                         <FontAwesome
@@ -238,7 +285,7 @@ export default function ObituariesScreen() {
                           size={14}
                           color="#D4AF37"
                         />
-                        <Body className="text-sm">{getTownName(obituary.townId)}</Body>
+                        <Body className="text-sm">{getTownName(obituary.town_id)}</Body>
                       </View>
                       <View className="flex-row items-center gap-2">
                         <FontAwesome
@@ -248,7 +295,7 @@ export default function ObituariesScreen() {
                         />
                         <Body className="text-sm text-red-kente">
                           Funeral:{" "}
-                          {new Date(obituary.funeralDate).toLocaleDateString(
+                          {new Date(obituary.funeral_date).toLocaleDateString(
                             "en-GB",
                             {
                               day: "numeric",
@@ -264,7 +311,7 @@ export default function ObituariesScreen() {
               </Card>
             ))}
 
-            {obituaries.length === 0 && (
+            {(obituaries ?? []).length === 0 && (
               <View className="py-12 items-center">
                 <FontAwesome name="inbox" size={48} color="#2C3E5030" />
                 <Body className="text-gray-charcoal/50 mt-4">
