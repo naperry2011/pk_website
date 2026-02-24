@@ -1,5 +1,6 @@
 import { View, Pressable, useWindowDimensions } from "react-native";
 import { Link } from "expo-router";
+import Head from "expo-router/head";
 import { PageLayout, Section } from "@/components/layout";
 import { H1, H3, Body } from "@/components/ui/Typography";
 import { Card, CardContent } from "@/components/ui/Card";
@@ -12,8 +13,14 @@ export default function TownsScreen() {
 
   return (
     <PageLayout>
+      <Head>
+        <title>Towns & Communities - Akuapem Paramount King Council</title>
+        <meta name="description" content="Explore the 17 principal towns of the Akuapem Traditional Area including Akropong, Aburi, Mampong, Larteh, and more. Learn about the chiefs, history, and culture of each town." />
+        <meta property="og:title" content="Towns & Communities - Akuapem Paramount King Council" />
+        <meta property="og:description" content="Explore the 17 principal towns of the Akuapem Traditional Area." />
+      </Head>
       {/* Hero */}
-      <View className="bg-green-deep py-16 px-4">
+      <View className="bg-green-deep py-16 md:py-20 px-4 md:px-8">
         <View className="max-w-4xl mx-auto items-center">
           <H1 className="text-white text-center mb-4">Towns & Communities</H1>
           <Body className="text-white/90 text-center text-lg">
@@ -34,11 +41,14 @@ export default function TownsScreen() {
               <Pressable
                 className={`${
                   isMobile ? "w-full" : "w-[280px]"
-                } bg-white rounded-xl overflow-hidden border border-brown-earth/10 active:bg-gray-warm`}
+                } bg-white rounded-xl overflow-hidden border border-brown-earth/10 hover:border-gold/30 hover:shadow-md active:bg-gray-warm`}
               >
-                {/* Image placeholder */}
-                <View className="h-40 bg-gray-warm items-center justify-center">
-                  <FontAwesome name="image" size={40} color="#2C3E5050" />
+                {/* Town Image Placeholder */}
+                <View className="h-40 bg-green-deep/5 items-center justify-center">
+                  <View className="w-14 h-14 bg-green-deep/10 rounded-full items-center justify-center mb-2">
+                    <FontAwesome name="home" size={22} color="#1B4D3E" />
+                  </View>
+                  <Body className="text-xs text-green-deep/50">{town.name}</Body>
                 </View>
                 <View className="p-4">
                   <H3 className="mb-1">{town.name}</H3>
@@ -59,10 +69,15 @@ export default function TownsScreen() {
       {/* Map Section Placeholder */}
       <Section background="warm">
         <H3 className="text-center mb-6">Akuapem Ridge Map</H3>
-        <View className="h-80 bg-white rounded-xl items-center justify-center border border-brown-earth/20">
-          <FontAwesome name="map" size={60} color="#2C3E5030" />
-          <Body className="text-gray-charcoal/50 mt-4">
-            Interactive map coming soon
+        <View className="h-80 bg-green-deep/5 rounded-xl items-center justify-center border-2 border-dashed border-green-deep/20">
+          <View className="w-16 h-16 bg-green-deep/10 rounded-full items-center justify-center mb-4">
+            <FontAwesome name="map" size={28} color="#1B4D3E" />
+          </View>
+          <Body className="font-body-semibold text-green-deep mb-1">
+            Map Coming Soon
+          </Body>
+          <Body className="text-sm text-gray-charcoal/60 text-center px-4">
+            An interactive map of the Akuapem Ridge and its 17 principal towns is being developed.
           </Body>
         </View>
       </Section>

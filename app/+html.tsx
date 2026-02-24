@@ -12,27 +12,47 @@ export default function Root({ children }: { children: React.ReactNode }) {
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-        {/* 
-          Disable body scrolling on web. This makes ScrollView components work closer to how they do on native. 
-          However, body scrolling is often nice to have for mobile web. If you want to enable it, remove this line.
-        */}
+        {/* SEO Meta Tags */}
+        <title>Akuapem Paramount King Council - Official Website</title>
+        <meta name="description" content="Official website of the Akuapem Paramount King Council. Explore the history, leadership, towns, and community updates of the Akuapem Traditional Area in Ghana's Eastern Region." />
+        <meta name="keywords" content="Akuapem, Paramount King, Traditional Council, Okuapehene, Ghana, Eastern Region, Akropong, Akuapem Ridge, traditional authority" />
+        <meta name="author" content="Akuapem Paramount King Council" />
+
+        {/* Theme Color */}
+        <meta name="theme-color" content="#D4AF37" />
+        <meta name="msapplication-TileColor" content="#D4AF37" />
+
+        {/* Open Graph Tags */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Akuapem Paramount King Council - Official Website" />
+        <meta property="og:description" content="Official website of the Akuapem Paramount King Council. Explore the history, leadership, towns, and community updates of the Akuapem Traditional Area." />
+        <meta property="og:site_name" content="Akuapem Paramount King Council" />
+        <meta property="og:locale" content="en_GH" />
+
+        {/* Twitter Card Tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Akuapem Paramount King Council - Official Website" />
+        <meta name="twitter:description" content="Official website of the Akuapem Paramount King Council. Explore the history, leadership, towns, and community updates of the Akuapem Traditional Area." />
+
+        {/* Favicon */}
+        <link rel="icon" href="/favicon.ico" />
+
+        {/* Google Fonts Preconnect for Performance */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+
+        {/* Disable body scrolling on web for native-like ScrollView behavior */}
         <ScrollViewStyleReset />
 
-        {/* Using raw CSS styles as an escape-hatch to ensure the background color never flickers in dark-mode. */}
-        <style dangerouslySetInnerHTML={{ __html: responsiveBackground }} />
-        {/* Add any additional <head> elements that you want globally available on web... */}
+        {/* Base body styles */}
+        <style dangerouslySetInnerHTML={{ __html: bodyStyles }} />
       </head>
       <body>{children}</body>
     </html>
   );
 }
 
-const responsiveBackground = `
+const bodyStyles = `
 body {
-  background-color: #fff;
-}
-@media (prefers-color-scheme: dark) {
-  body {
-    background-color: #000;
-  }
+  background-color: #F5F5F0;
 }`;

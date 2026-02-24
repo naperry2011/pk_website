@@ -11,11 +11,39 @@ import { obituaries, towns, getTownName } from "@/constants/mockData";
 export default function ObituariesScreen() {
   const [showForm, setShowForm] = useState(false);
   const [selectedTown, setSelectedTown] = useState("");
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [obitForm, setObitForm] = useState({
+    name: "",
+    birthDate: "",
+    passedDate: "",
+    funeralDate: "",
+    biography: "",
+    contactEmail: "",
+  });
+  const [obitErrors, setObitErrors] = useState<Record<string, string>>({});
+
+  const validateEmail = (email: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  const handleObitSubmit = () => {
+    const newErrors: Record<string, string> = {};
+    if (!obitForm.name.trim()) newErrors.name = "Name of deceased is required";
+    if (!obitForm.passedDate.trim()) newErrors.passedDate = "Date of passing is required";
+    if (!obitForm.funeralDate.trim()) newErrors.funeralDate = "Funeral date is required";
+    if (obitForm.contactEmail.trim() && !validateEmail(obitForm.contactEmail)) {
+      newErrors.contactEmail = "Please enter a valid email address";
+    }
+
+    setObitErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) return;
+
+    setFormSubmitted(true);
+  };
 
   return (
     <PageLayout>
       {/* Hero */}
-      <View className="bg-red-kente/90 py-16 px-4">
+      <View className="bg-red-kente/90 py-16 md:py-20 px-4 md:px-8">
         <View className="max-w-4xl mx-auto items-center">
           <H1 className="text-white text-center mb-4">Obituaries</H1>
           <Body className="text-white/90 text-center text-lg">
@@ -43,20 +71,49 @@ export default function ObituariesScreen() {
                 <H3 className="mb-6">Submit an Obituary</H3>
 
                 <Input
-                  label="Full Name of Deceased"
+                  label="Full Name of Deceased *"
                   placeholder="Enter full name"
+                  value={obitForm.name}
+                  onChangeText={(text) => {
+                    setObitForm({ ...obitForm, name: text });
+                    if (obitErrors.name) setObitErrors((prev) => ({ ...prev, name: "" }));
+                  }}
+                  error={obitErrors.name}
                 />
 
                 <View className="flex-row gap-4 flex-wrap">
                   <View className="flex-1 min-w-[200px]">
-                    <Input label="Date of Birth" placeholder="DD/MM/YYYY" />
+                    <Input
+                      label="Date of Birth"
+                      placeholder="DD/MM/YYYY"
+                      value={obitForm.birthDate}
+                      onChangeText={(text) => setObitForm({ ...obitForm, birthDate: text })}
+                    />
                   </View>
                   <View className="flex-1 min-w-[200px]">
-                    <Input label="Date of Passing" placeholder="DD/MM/YYYY" />
+                    <Input
+                      label="Date of Passing *"
+                      placeholder="DD/MM/YYYY"
+                      value={obitForm.passedDate}
+                      onChangeText={(text) => {
+                        setObitForm({ ...obitForm, passedDate: text });
+                        if (obitErrors.passedDate) setObitErrors((prev) => ({ ...prev, passedDate: "" }));
+                      }}
+                      error={obitErrors.passedDate}
+                    />
                   </View>
                 </View>
 
-                <Input label="Funeral Date" placeholder="DD/MM/YYYY" />
+                <Input
+                  label="Funeral Date *"
+                  placeholder="DD/MM/YYYY"
+                  value={obitForm.funeralDate}
+                  onChangeText={(text) => {
+                    setObitForm({ ...obitForm, funeralDate: text });
+                    if (obitErrors.funeralDate) setObitErrors((prev) => ({ ...prev, funeralDate: "" }));
+                  }}
+                  error={obitErrors.funeralDate}
+                />
 
                 <View className="mb-4">
                   <Body className="font-body-medium text-gray-charcoal mb-2">
@@ -67,11 +124,14 @@ export default function ObituariesScreen() {
                       <Pressable
                         key={town.id}
                         onPress={() => setSelectedTown(town.id)}
-                        className={`px-3 py-2 rounded-lg border ${
+                        className={`px-3 py-2 rounded-lg border min-h-[44px] justify-center ${
                           selectedTown === town.id
                             ? "bg-gold border-gold"
                             : "bg-white border-brown-earth/30"
                         }`}
+                        accessibilityRole="radio"
+                        accessibilityLabel={town.name}
+                        accessibilityState={{ selected: selectedTown === town.id }}
                       >
                         <Body
                           className={
@@ -90,13 +150,20 @@ export default function ObituariesScreen() {
                 <TextArea
                   label="Brief Biography (Optional)"
                   placeholder="Share a few words about the deceased..."
+                  value={obitForm.biography}
+                  onChangeText={(text) => setObitForm({ ...obitForm, biography: text })}
                 />
 
                 <View className="mb-6">
                   <Body className="font-body-medium text-gray-charcoal mb-2">
                     Photo
                   </Body>
-                  <Pressable className="border-2 border-dashed border-brown-earth/30 rounded-lg p-8 items-center">
+                  <Pressable
+                    className="border-2 border-dashed border-brown-earth/30 rounded-lg p-8 items-center min-h-[44px]"
+                    accessibilityRole="button"
+                    accessibilityLabel="Upload photo"
+                    accessibilityHint="Tap to upload a photo of the deceased"
+                  >
                     <FontAwesome name="camera" size={32} color="#8B451350" />
                     <Body className="text-gray-charcoal/60 mt-2">
                       Tap to upload photo
@@ -111,13 +178,33 @@ export default function ObituariesScreen() {
                   label="Family Contact Email"
                   placeholder="email@example.com"
                   keyboardType="email-address"
+                  value={obitForm.contactEmail}
+                  onChangeText={(text) => {
+                    setObitForm({ ...obitForm, contactEmail: text });
+                    if (obitErrors.contactEmail) setObitErrors((prev) => ({ ...prev, contactEmail: "" }));
+                  }}
+                  error={obitErrors.contactEmail}
+                  accessibilityHint="Enter email for family contact"
                 />
 
-                <Button
-                  title="Submit for Review"
-                  onPress={() => alert("Form submitted (demo)")}
-                  fullWidth
-                />
+                {formSubmitted ? (
+                  <View className="bg-green-deep/10 border border-green-deep/30 rounded-lg p-4 items-center">
+                    <FontAwesome name="check-circle" size={24} color="#1B4D3E" />
+                    <Body className="text-green-deep font-body-semibold mt-2">
+                      Thank you for your submission.
+                    </Body>
+                    <Body className="text-green-deep/80 text-sm text-center mt-1">
+                      Your obituary has been received. It will be reviewed and published with care and respect.
+                    </Body>
+                  </View>
+                ) : (
+                  <Button
+                    title="Submit for Review"
+                    onPress={handleObitSubmit}
+                    fullWidth
+                    accessibilityHint="Submits the obituary for review"
+                  />
+                )}
 
                 <Body className="text-sm text-gray-charcoal/60 text-center mt-4">
                   All submissions are reviewed before publishing
@@ -133,7 +220,10 @@ export default function ObituariesScreen() {
                 <CardContent>
                   <View className="flex-row gap-4">
                     {/* Photo placeholder */}
-                    <View className="w-24 h-24 bg-gray-warm rounded-lg items-center justify-center">
+                    <View
+                      className="w-24 h-24 bg-gray-warm rounded-lg items-center justify-center"
+                      accessibilityLabel={`Photo placeholder for ${obituary.name}`}
+                    >
                       <FontAwesome name="user" size={32} color="#2C3E5030" />
                     </View>
                     <View className="flex-1">

@@ -1,5 +1,6 @@
 import { View, Pressable, Switch } from "react-native";
 import { useState } from "react";
+import Head from "expo-router/head";
 import { PageLayout, Section } from "@/components/layout";
 import { H1, H2, H3, Body } from "@/components/ui/Typography";
 import { Button } from "@/components/ui/Button";
@@ -51,18 +52,37 @@ export default function SubscribeScreen() {
     setPreferences((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
+  const [emailError, setEmailError] = useState("");
+  const [subSuccess, setSubSuccess] = useState(false);
+
+  const validateEmail = (value: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
   const handleSubscribe = () => {
-    if (!email) {
-      alert("Please enter your email address");
+    if (!email.trim()) {
+      setEmailError("Email address is required");
       return;
     }
-    alert(`Subscribed ${email} to selected categories (demo)`);
+    if (!validateEmail(email)) {
+      setEmailError("Please enter a valid email address");
+      return;
+    }
+    setEmailError("");
+    setSubSuccess(true);
+    setEmail("");
   };
 
   return (
     <PageLayout>
+      <Head>
+        <title>Subscribe - Akuapem Paramount King Council</title>
+        <meta name="description" content="Subscribe to receive updates from the Akuapem Paramount King Council. Choose to get notifications for obituaries, weddings, council business, and cultural events." />
+        <meta property="og:title" content="Subscribe - Akuapem Paramount King Council" />
+        <meta property="og:description" content="Subscribe to receive community updates from the Akuapem Traditional Area." />
+      </Head>
+
       {/* Hero */}
-      <View className="bg-gold py-16 px-4">
+      <View className="bg-gold py-16 md:py-20 px-4 md:px-8">
         <View className="max-w-4xl mx-auto items-center">
           <H1 className="text-white text-center mb-4">Stay Connected</H1>
           <Body className="text-white/90 text-center text-lg">
@@ -85,7 +105,12 @@ export default function SubscribeScreen() {
                 keyboardType="email-address"
                 autoCapitalize="none"
                 value={email}
-                onChangeText={setEmail}
+                onChangeText={(text) => {
+                  setEmail(text);
+                  if (emailError) setEmailError("");
+                }}
+                error={emailError}
+                accessibilityHint="Enter your email to subscribe to updates"
               />
 
               {/* Preference Toggles */}
@@ -98,11 +123,14 @@ export default function SubscribeScreen() {
                   <Pressable
                     key={option.id}
                     onPress={() => togglePreference(option.id)}
-                    className={`flex-row items-center p-4 rounded-xl border ${
+                    className={`flex-row items-center p-4 rounded-xl border min-h-[44px] ${
                       preferences[option.id]
                         ? "border-gold bg-gold/5"
                         : "border-brown-earth/20 bg-white"
                     }`}
+                    accessibilityRole="switch"
+                    accessibilityLabel={`${option.title}: ${option.description}`}
+                    accessibilityState={{ checked: preferences[option.id] }}
                   >
                     <View
                       className="w-12 h-12 rounded-full items-center justify-center mr-4"
@@ -125,16 +153,30 @@ export default function SubscribeScreen() {
                       onValueChange={() => togglePreference(option.id)}
                       trackColor={{ false: "#E0E0E0", true: "#D4AF3780" }}
                       thumbColor={preferences[option.id] ? "#D4AF37" : "#f4f3f4"}
+                      accessibilityLabel={`Toggle ${option.title}`}
                     />
                   </Pressable>
                 ))}
               </View>
 
-              <Button
-                title="Subscribe"
-                onPress={handleSubscribe}
-                fullWidth
-              />
+              {subSuccess ? (
+                <View className="bg-green-deep/10 border border-green-deep/30 rounded-lg p-4 items-center">
+                  <FontAwesome name="check-circle" size={24} color="#1B4D3E" />
+                  <Body className="text-green-deep font-body-semibold mt-2">
+                    You have been subscribed.
+                  </Body>
+                  <Body className="text-green-deep/80 text-sm text-center mt-1">
+                    Thank you for subscribing. You will receive updates based on your selected preferences.
+                  </Body>
+                </View>
+              ) : (
+                <Button
+                  title="Subscribe"
+                  onPress={handleSubscribe}
+                  fullWidth
+                  accessibilityHint="Subscribes you to selected update categories"
+                />
+              )}
 
               <Body className="text-sm text-gray-charcoal/60 text-center mt-4">
                 You can update your preferences or unsubscribe at any time

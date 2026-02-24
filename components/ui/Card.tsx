@@ -5,11 +5,13 @@ interface CardProps {
   children: ReactNode;
   onPress?: () => void;
   className?: string;
+  accessibilityLabel?: string;
+  accessibilityHint?: string;
 }
 
-export function Card({ children, onPress, className = "" }: CardProps) {
+export function Card({ children, onPress, className = "", accessibilityLabel, accessibilityHint }: CardProps) {
   const cardStyles = `
-    bg-white rounded-xl p-4 shadow-sm border border-gray-warm
+    bg-white rounded-xl p-4 shadow-sm border border-gray-warm hover:shadow-md
     ${className}
   `;
 
@@ -17,6 +19,9 @@ export function Card({ children, onPress, className = "" }: CardProps) {
     return (
       <Pressable
         onPress={onPress}
+        accessibilityRole="button"
+        accessibilityLabel={accessibilityLabel}
+        accessibilityHint={accessibilityHint}
         className={`${cardStyles} active:bg-gray-warm`}
       >
         {children}

@@ -9,13 +9,15 @@ interface ButtonProps {
   disabled?: boolean;
   loading?: boolean;
   fullWidth?: boolean;
+  accessibilityLabel?: string;
+  accessibilityHint?: string;
 }
 
 const variantStyles = {
-  primary: "bg-gold active:bg-gold/80",
-  secondary: "bg-green-deep active:bg-green-deep/80",
-  outline: "bg-transparent border-2 border-gold active:bg-gold-light",
-  danger: "bg-red-kente active:bg-red-kente/80",
+  primary: "bg-gold hover:bg-gold/90 active:bg-gold/80",
+  secondary: "bg-green-deep hover:bg-green-deep/90 active:bg-green-deep/80",
+  outline: "bg-transparent border-2 border-gold hover:bg-gold-light/50 active:bg-gold-light",
+  danger: "bg-red-kente hover:bg-red-kente/90 active:bg-red-kente/80",
 };
 
 const textStyles = {
@@ -32,13 +34,19 @@ export function Button({
   disabled = false,
   loading = false,
   fullWidth = false,
+  accessibilityLabel,
+  accessibilityHint,
 }: ButtonProps) {
   return (
     <Pressable
       onPress={onPress}
       disabled={disabled || loading}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel || title}
+      accessibilityHint={accessibilityHint}
+      accessibilityState={{ disabled: disabled || loading, busy: loading }}
       className={`
-        px-6 py-3 rounded-lg items-center justify-center min-h-[44px]
+        px-6 py-3 rounded-lg items-center justify-center min-h-[44px] min-w-[44px]
         ${variantStyles[variant]}
         ${fullWidth ? "w-full" : ""}
         ${disabled ? "opacity-50" : ""}

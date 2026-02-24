@@ -27,7 +27,7 @@ export default function AnnouncementsScreen() {
   return (
     <PageLayout>
       {/* Hero */}
-      <View className="bg-green-deep py-16 px-4">
+      <View className="bg-green-deep py-16 md:py-20 px-4 md:px-8">
         <View className="max-w-4xl mx-auto items-center">
           <H1 className="text-white text-center mb-4">Council Announcements</H1>
           <Body className="text-white/90 text-center text-lg">
@@ -44,10 +44,10 @@ export default function AnnouncementsScreen() {
             <Pressable
               key={filter}
               onPress={() => setActiveFilter(filter)}
-              className={`px-4 py-2 rounded-full ${
+              className={`px-4 py-2 rounded-full min-h-[44px] justify-center ${
                 activeFilter === filter
                   ? "bg-gold"
-                  : "bg-white border border-brown-earth/20"
+                  : "bg-white border border-brown-earth/20 hover:border-gold/40"
               }`}
             >
               <Body

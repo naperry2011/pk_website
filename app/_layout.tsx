@@ -1,4 +1,5 @@
 import "../global.css";
+import { View, Text, ActivityIndicator } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { ThemeProvider, DefaultTheme } from "@react-navigation/native";
 import { useFonts } from "expo-font";
@@ -18,6 +19,7 @@ import {
 import { Cinzel_400Regular } from "@expo-google-fonts/cinzel";
 
 export { ErrorBoundary } from "expo-router";
+import { AppErrorBoundary } from "@/components/ui/ErrorBoundary";
 
 export const unstable_settings = {
   initialRouteName: "(tabs)",
@@ -60,7 +62,14 @@ export default function RootLayout() {
   }, [loaded]);
 
   if (!loaded) {
-    return null;
+    return (
+      <View className="flex-1 bg-green-deep items-center justify-center">
+        <View className="w-20 h-20 bg-gold rounded-full items-center justify-center mb-4">
+          <Text className="text-white font-bold text-2xl">AK</Text>
+        </View>
+        <ActivityIndicator size="small" color="#D4AF37" />
+      </View>
+    );
   }
 
   return <RootLayoutNav />;
@@ -68,11 +77,12 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   return (
-    <ThemeProvider value={AkuapemTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-      </Stack>
-    </ThemeProvider>
+    <AppErrorBoundary>
+      <ThemeProvider value={AkuapemTheme}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
+      </ThemeProvider>
+    </AppErrorBoundary>
   );
 }

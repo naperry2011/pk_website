@@ -21,7 +21,7 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <View className="bg-green-deep pt-10 pb-6">
+    <View className="bg-green-deep pt-10 pb-6" accessibilityRole={"contentinfo" as any} accessibilityLabel="Site footer">
       <View className="px-4 max-w-7xl mx-auto w-full">
         {/* Top Section */}
         <View className="flex-row flex-wrap gap-8 mb-8">
@@ -40,14 +40,18 @@ export function Footer() {
           </View>
 
           {/* Quick Links */}
-          <View className="min-w-[150px]">
-            <Text className="font-heading-bold text-lg text-gold mb-4">
+          <View className="min-w-[150px]" accessibilityRole={"navigation" as any} accessibilityLabel="Footer navigation">
+            <Text className="font-heading-bold text-lg text-gold mb-4" accessibilityRole="header">
               Quick Links
             </Text>
             {quickLinks.map((link) => (
               <Link key={link.href} href={link.href as any} asChild>
-                <Pressable className="py-2">
-                  <Text className="font-body text-white/80">{link.label}</Text>
+                <Pressable
+                  className="py-2 min-h-[44px] justify-center"
+                  accessibilityRole="link"
+                  accessibilityLabel={link.label}
+                >
+                  <Text className="font-body text-white/80 hover:text-white">{link.label}</Text>
                 </Pressable>
               </Link>
             ))}
@@ -55,21 +59,21 @@ export function Footer() {
 
           {/* Contact Info */}
           <View className="min-w-[200px]">
-            <Text className="font-heading-bold text-lg text-gold mb-4">
+            <Text className="font-heading-bold text-lg text-gold mb-4" accessibilityRole="header">
               Contact Us
             </Text>
             <View className="gap-2">
-              <View className="flex-row items-center gap-2">
+              <View className="flex-row items-center gap-2" accessibilityLabel="Address: Akropong-Akuapem, Ghana">
                 <FontAwesome name="map-marker" size={16} color="#D4AF37" />
                 <Text className="font-body text-white/80">
                   Akropong-Akuapem, Ghana
                 </Text>
               </View>
-              <View className="flex-row items-center gap-2">
+              <View className="flex-row items-center gap-2" accessibilityLabel="Phone: +233 302 401 234">
                 <FontAwesome name="phone" size={16} color="#D4AF37" />
-                <Text className="font-body text-white/80">+233 XX XXX XXXX</Text>
+                <Text className="font-body text-white/80">+233 302 401 234</Text>
               </View>
-              <View className="flex-row items-center gap-2">
+              <View className="flex-row items-center gap-2" accessibilityLabel="Email: info@akuapemcouncil.org">
                 <FontAwesome name="envelope" size={16} color="#D4AF37" />
                 <Text className="font-body text-white/80">
                   info@akuapemcouncil.org
@@ -85,7 +89,9 @@ export function Footer() {
             <Pressable
               key={social.icon}
               onPress={() => Linking.openURL(social.url)}
-              className="w-10 h-10 bg-gold/20 rounded-full items-center justify-center"
+              className="w-11 h-11 bg-gold/20 hover:bg-gold/40 active:bg-gold/60 rounded-full items-center justify-center"
+              accessibilityRole="link"
+              accessibilityLabel={`Visit our ${social.icon} page`}
             >
               <FontAwesome
                 name={social.icon as any}

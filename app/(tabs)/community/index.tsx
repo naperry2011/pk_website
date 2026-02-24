@@ -1,5 +1,6 @@
 import { View, Pressable, useWindowDimensions } from "react-native";
 import { Link } from "expo-router";
+import Head from "expo-router/head";
 import { PageLayout, Section } from "@/components/layout";
 import { H1, H2, H3, Body } from "@/components/ui/Typography";
 import { FontAwesome } from "@expo/vector-icons";
@@ -38,8 +39,15 @@ export default function CommunityScreen() {
 
   return (
     <PageLayout>
+      <Head>
+        <title>Community Updates - Akuapem Paramount King Council</title>
+        <meta name="description" content="Stay connected with community updates from across the Akuapem Traditional Area. View obituaries, wedding announcements, and official council news." />
+        <meta property="og:title" content="Community Updates - Akuapem Paramount King Council" />
+        <meta property="og:description" content="Community announcements, celebrations, and tributes from across the Akuapem Traditional Area." />
+      </Head>
+
       {/* Hero */}
-      <View className="bg-green-deep py-16 px-4">
+      <View className="bg-green-deep py-16 md:py-20 px-4 md:px-8">
         <View className="max-w-4xl mx-auto items-center">
           <H1 className="text-white text-center mb-4">Community Updates</H1>
           <Body className="text-white/90 text-center text-lg">
@@ -61,7 +69,7 @@ export default function CommunityScreen() {
               <Pressable
                 className={`${
                   isMobile ? "w-full" : "flex-1 max-w-[350px]"
-                } bg-white rounded-xl p-6 border border-brown-earth/10 active:bg-gray-warm`}
+                } bg-white rounded-xl p-6 border border-brown-earth/10 hover:border-gold/30 hover:shadow-md active:bg-gray-warm`}
               >
                 <View
                   className="w-16 h-16 rounded-full items-center justify-center mb-4"

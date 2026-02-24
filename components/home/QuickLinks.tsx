@@ -2,6 +2,7 @@ import { View, Pressable, useWindowDimensions } from "react-native";
 import { Link } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import { H3, Body } from "../ui/Typography";
+import { FadeIn } from "../ui/FadeIn";
 
 const links = [
   {
@@ -35,7 +36,7 @@ export function QuickLinks() {
   const isMobile = width < 768;
 
   return (
-    <View className="py-12 px-4 bg-gray-warm">
+    <View className="py-12 md:py-16 px-4 md:px-8 bg-gray-warm">
       <View className="max-w-7xl mx-auto w-full">
         <H3 className="text-center mb-8">Quick Access</H3>
 
@@ -44,31 +45,37 @@ export function QuickLinks() {
             isMobile ? "flex-col" : "flex-row flex-wrap justify-center"
           } gap-4`}
         >
-          {links.map((link) => (
-            <Link key={link.href} href={link.href as any} asChild>
-              <Pressable
-                className={`
-                  bg-white rounded-xl p-6 items-center
-                  border border-brown-earth/10
-                  active:bg-gold-light
-                  ${isMobile ? "w-full" : "w-[200px]"}
-                `}
-              >
-                <View className="w-14 h-14 bg-gold/10 rounded-full items-center justify-center mb-4">
-                  <FontAwesome
-                    name={link.icon as any}
-                    size={24}
-                    color="#D4AF37"
-                  />
-                </View>
-                <Body className="font-body-semibold text-center mb-1">
-                  {link.title}
-                </Body>
-                <Body className="text-sm text-gray-charcoal/70 text-center">
-                  {link.description}
-                </Body>
-              </Pressable>
-            </Link>
+          {links.map((link, index) => (
+            <FadeIn key={link.href} delay={index * 100}>
+              <Link href={link.href as any} asChild>
+                <Pressable
+                  className={`
+                    bg-white rounded-xl p-6 items-center
+                    border border-brown-earth/10
+                    hover:border-gold/30 hover:shadow-md
+                    active:bg-gold-light
+                    min-h-[44px]
+                    ${isMobile ? "w-full" : "w-[200px]"}
+                  `}
+                  accessibilityRole="link"
+                  accessibilityLabel={`${link.title}: ${link.description}`}
+                >
+                  <View className="w-14 h-14 bg-gold/10 rounded-full items-center justify-center mb-4">
+                    <FontAwesome
+                      name={link.icon as any}
+                      size={24}
+                      color="#D4AF37"
+                    />
+                  </View>
+                  <Body className="font-body-semibold text-center mb-1">
+                    {link.title}
+                  </Body>
+                  <Body className="text-sm text-gray-charcoal/70 text-center">
+                    {link.description}
+                  </Body>
+                </Pressable>
+              </Link>
+            </FadeIn>
           ))}
         </View>
       </View>

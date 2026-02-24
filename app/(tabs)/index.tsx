@@ -1,12 +1,21 @@
 import { View } from "react-native";
+import Head from "expo-router/head";
 import { PageLayout, Section } from "@/components/layout";
 import { Hero, AnnouncementCard, QuickLinks, SubscribeCTA } from "@/components/home";
 import { H2, Body } from "@/components/ui/Typography";
+import { FadeIn } from "@/components/ui/FadeIn";
+import { FontAwesome } from "@expo/vector-icons";
 import { announcements, paramountKing } from "@/constants/mockData";
 
 export default function HomeScreen() {
   return (
     <PageLayout>
+      <Head>
+        <title>Akuapem Paramount King Council - Official Website</title>
+        <meta name="description" content="Official website of the Akuapem Paramount King Council. Discover the heritage, leadership, and community of the Akuapem Traditional Area in Ghana's Eastern Region." />
+        <meta property="og:title" content="Akuapem Paramount King Council - Official Website" />
+        <meta property="og:description" content="Discover the heritage, leadership, and community of the Akuapem Traditional Area in Ghana's Eastern Region." />
+      </Head>
       {/* Hero Section */}
       <Hero />
 
@@ -28,8 +37,12 @@ export default function HomeScreen() {
             </Body>
           </View>
           {/* Image placeholder */}
-          <View className="w-full md:w-80 h-64 bg-gray-warm rounded-xl items-center justify-center">
-            <Body className="text-gray-charcoal/50">Council Image</Body>
+          <View className="w-full md:w-80 h-64 bg-green-deep/5 rounded-xl items-center justify-center border border-green-deep/10">
+            <View className="w-16 h-16 bg-green-deep/10 rounded-full items-center justify-center mb-3">
+              <FontAwesome name="institution" size={28} color="#1B4D3E" />
+            </View>
+            <Body className="text-green-deep/60 font-body-semibold text-sm">Ahenfie (Royal Palace)</Body>
+            <Body className="text-xs text-gray-charcoal/40 mt-1">Akropong-Akuapem</Body>
           </View>
         </View>
       </Section>
@@ -52,19 +65,25 @@ export default function HomeScreen() {
 
       {/* Council Stats */}
       <Section background="warm">
-        <View className="flex-row flex-wrap justify-center gap-8">
-          <View className="items-center min-w-[150px]">
-            <Body className="text-5xl font-heading-bold text-gold mb-2">17</Body>
-            <Body className="text-gray-charcoal/70">Principal Towns</Body>
-          </View>
-          <View className="items-center min-w-[150px]">
-            <Body className="text-5xl font-heading-bold text-gold mb-2">100+</Body>
-            <Body className="text-gray-charcoal/70">Years of Heritage</Body>
-          </View>
-          <View className="items-center min-w-[150px]">
-            <Body className="text-5xl font-heading-bold text-gold mb-2">1</Body>
-            <Body className="text-gray-charcoal/70">United Kingdom</Body>
-          </View>
+        <View className="flex-row flex-wrap justify-center gap-8 md:gap-16">
+          <FadeIn delay={0}>
+            <View className="items-center min-w-[150px]">
+              <Body className="text-5xl font-heading-bold text-gold mb-2">17</Body>
+              <Body className="text-gray-charcoal/70">Principal Towns</Body>
+            </View>
+          </FadeIn>
+          <FadeIn delay={150}>
+            <View className="items-center min-w-[150px]">
+              <Body className="text-5xl font-heading-bold text-gold mb-2">100+</Body>
+              <Body className="text-gray-charcoal/70">Years of Heritage</Body>
+            </View>
+          </FadeIn>
+          <FadeIn delay={300}>
+            <View className="items-center min-w-[150px]">
+              <Body className="text-5xl font-heading-bold text-gold mb-2">1</Body>
+              <Body className="text-gray-charcoal/70">United Kingdom</Body>
+            </View>
+          </FadeIn>
         </View>
       </Section>
     </PageLayout>

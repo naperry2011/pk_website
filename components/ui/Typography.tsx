@@ -7,7 +7,8 @@ interface TypographyProps extends TextProps {
 export function H1({ children, className = "", ...props }: TypographyProps) {
   return (
     <RNText
-      className={`font-heading-bold text-h1 text-gray-charcoal ${className}`}
+      accessibilityRole="header"
+      className={`font-heading-bold text-h1 md:text-h1-desktop text-gray-charcoal ${className}`}
       {...props}
     >
       {children}
@@ -18,7 +19,8 @@ export function H1({ children, className = "", ...props }: TypographyProps) {
 export function H2({ children, className = "", ...props }: TypographyProps) {
   return (
     <RNText
-      className={`font-heading-bold text-h2 text-gray-charcoal ${className}`}
+      accessibilityRole="header"
+      className={`font-heading-bold text-h2 md:text-h2-desktop text-gray-charcoal ${className}`}
       {...props}
     >
       {children}
@@ -29,7 +31,8 @@ export function H2({ children, className = "", ...props }: TypographyProps) {
 export function H3({ children, className = "", ...props }: TypographyProps) {
   return (
     <RNText
-      className={`font-heading text-h3 text-gray-charcoal ${className}`}
+      accessibilityRole="header"
+      className={`font-heading text-h3 md:text-h3-desktop text-gray-charcoal ${className}`}
       {...props}
     >
       {children}
@@ -40,7 +43,8 @@ export function H3({ children, className = "", ...props }: TypographyProps) {
 export function H4({ children, className = "", ...props }: TypographyProps) {
   return (
     <RNText
-      className={`font-heading text-h4 text-gray-charcoal ${className}`}
+      accessibilityRole="header"
+      className={`font-heading text-h4 md:text-h4-desktop text-gray-charcoal ${className}`}
       {...props}
     >
       {children}
@@ -88,6 +92,7 @@ export function Accent({ children, className = "", ...props }: TypographyProps) 
 export function Link({ children, className = "", ...props }: TypographyProps) {
   return (
     <RNText
+      accessibilityRole="link"
       className={`font-body-medium text-blue-heritage underline ${className}`}
       {...props}
     >

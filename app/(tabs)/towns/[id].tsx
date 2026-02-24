@@ -37,7 +37,7 @@ export default function TownDetailScreen() {
   return (
     <PageLayout>
       {/* Hero */}
-      <View className="bg-green-deep py-16 px-4">
+      <View className="bg-green-deep py-16 md:py-20 px-4 md:px-8">
         <View className="max-w-4xl mx-auto items-center">
           <Body className="text-gold mb-2">Town of Akuapem</Body>
           <H1 className="text-white text-center mb-4">{town.name}</H1>
@@ -54,18 +54,17 @@ export default function TownDetailScreen() {
           <View className="flex-1">
             <H2 className="mb-4">About {town.name}</H2>
             <Body className="text-lg mb-6">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat.
+              {town.description ||
+                `${town.name} is one of the 17 principal towns of the Akuapem Traditional Area, situated along the historic Akuapem Ridge in the Eastern Region of Ghana.`}
             </Body>
 
-            <H3 className="mb-4">History</H3>
+            <H3 className="mb-4">Heritage & Traditions</H3>
             <Body className="mb-6">
-              Duis aute irure dolor in reprehenderit in voluptate velit esse
-              cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-              cupidatat non proident, sunt in culpa qui officia deserunt mollit
-              anim id est laborum.
+              As part of the Akuapem Traditional Area, {town.name} participates
+              in the annual Odwira Festival and other cultural celebrations that
+              honour the heritage of the Akuapem people. The town maintains its
+              traditional governance under the leadership of {town.chief} and
+              contributes to the collective stewardship of the Akuapem state.
             </Body>
 
             {/* Photo Gallery Placeholder */}
@@ -75,12 +74,13 @@ export default function TownDetailScreen() {
               showsHorizontalScrollIndicator={false}
               className="mb-6"
             >
-              {[1, 2, 3, 4].map((i) => (
+              {["Scenery", "Landmarks", "Festivals", "Community"].map((label) => (
                 <View
-                  key={i}
-                  className="w-48 h-36 bg-gray-warm rounded-lg mr-4 items-center justify-center"
+                  key={label}
+                  className="w-48 h-36 bg-green-deep/5 rounded-lg mr-4 items-center justify-center border border-green-deep/10"
                 >
-                  <FontAwesome name="image" size={30} color="#2C3E5030" />
+                  <FontAwesome name="camera" size={22} color="#1B4D3E" />
+                  <Body className="text-xs text-green-deep/50 mt-2">{label}</Body>
                 </View>
               ))}
             </ScrollView>
@@ -107,18 +107,14 @@ export default function TownDetailScreen() {
               <CardContent>
                 <H3 className="mb-4">Key Landmarks</H3>
                 <View className="gap-2">
-                  <View className="flex-row items-center gap-2">
-                    <FontAwesome name="map-marker" size={16} color="#D4AF37" />
-                    <Body>Chief's Palace</Body>
-                  </View>
-                  <View className="flex-row items-center gap-2">
-                    <FontAwesome name="map-marker" size={16} color="#D4AF37" />
-                    <Body>Presbyterian Church</Body>
-                  </View>
-                  <View className="flex-row items-center gap-2">
-                    <FontAwesome name="map-marker" size={16} color="#D4AF37" />
-                    <Body>Market Square</Body>
-                  </View>
+                  {(town.landmarks || ["Chief's Palace", "Presbyterian Church", "Market Square"]).map(
+                    (landmark: string, index: number) => (
+                      <View key={index} className="flex-row items-center gap-2">
+                        <FontAwesome name="map-marker" size={16} color="#D4AF37" />
+                        <Body>{landmark}</Body>
+                      </View>
+                    )
+                  )}
                 </View>
               </CardContent>
             </Card>
@@ -129,7 +125,7 @@ export default function TownDetailScreen() {
                 <View className="gap-2">
                   <View className="flex-row items-center gap-2">
                     <FontAwesome name="phone" size={16} color="#1B4D3E" />
-                    <Body>+233 XX XXX XXXX</Body>
+                    <Body>Contact Palace for details</Body>
                   </View>
                   <View className="flex-row items-center gap-2">
                     <FontAwesome name="envelope" size={16} color="#1B4D3E" />

@@ -1,14 +1,22 @@
 import { View, Image } from "react-native";
+import Head from "expo-router/head";
 import { PageLayout, Section } from "@/components/layout";
 import { H1, H2, H3, Body, Accent } from "@/components/ui/Typography";
 import { Card, CardContent } from "@/components/ui/Card";
+import { FontAwesome } from "@expo/vector-icons";
 import { paramountKing, councilHistory, towns } from "@/constants/mockData";
 
 export default function AboutScreen() {
   return (
     <PageLayout>
+      <Head>
+        <title>About the Council - Akuapem Paramount King Council</title>
+        <meta name="description" content="Learn about the history, leadership, and structure of the Akuapem Traditional Council. Meet the Okuapehene and the divisional chiefs of the 17 principal towns." />
+        <meta property="og:title" content="About the Council - Akuapem Paramount King Council" />
+        <meta property="og:description" content="Learn about the history, leadership, and structure of the Akuapem Traditional Council." />
+      </Head>
       {/* Hero */}
-      <View className="bg-green-deep py-16 px-4">
+      <View className="bg-green-deep py-16 md:py-20 px-4 md:px-8">
         <View className="max-w-4xl mx-auto items-center">
           <H1 className="text-white text-center mb-4">About the Council</H1>
           <Body className="text-white/90 text-center text-lg">
@@ -48,8 +56,12 @@ export default function AboutScreen() {
       <Section background="warm">
         <View className="md:flex-row gap-8 items-start">
           {/* Photo placeholder */}
-          <View className="w-full md:w-80 h-96 bg-white rounded-xl items-center justify-center border-4 border-gold">
-            <Body className="text-gray-charcoal/50">PK Photo</Body>
+          <View className="w-full md:w-80 h-96 bg-gold/5 rounded-xl items-center justify-center border-4 border-gold">
+            <View className="w-20 h-20 bg-gold/15 rounded-full items-center justify-center mb-4">
+              <FontAwesome name="user" size={36} color="#D4AF37" />
+            </View>
+            <Body className="text-gold font-body-semibold">Royal Portrait</Body>
+            <Body className="text-xs text-gray-charcoal/40 mt-1">Photo forthcoming</Body>
           </View>
           <View className="flex-1 mt-6 md:mt-0">
             <Accent className="mb-2">His Royal Majesty</Accent>

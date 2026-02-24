@@ -40,9 +40,13 @@ module.exports = {
       fontSize: {
         // Mobile-first sizes
         h1: ["36px", { lineHeight: "1.2" }],
+        "h1-desktop": ["48px", { lineHeight: "1.2" }],
         h2: ["28px", { lineHeight: "1.3" }],
+        "h2-desktop": ["36px", { lineHeight: "1.3" }],
         h3: ["24px", { lineHeight: "1.4" }],
+        "h3-desktop": ["28px", { lineHeight: "1.4" }],
         h4: ["20px", { lineHeight: "1.4" }],
+        "h4-desktop": ["24px", { lineHeight: "1.4" }],
         body: ["16px", { lineHeight: "1.6" }],
         "body-lg": ["18px", { lineHeight: "1.7" }],
       },

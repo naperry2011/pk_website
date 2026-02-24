@@ -29,7 +29,7 @@ export function AnnouncementCard({ announcement }: AnnouncementCardProps) {
 
   return (
     <Link href={`/community/announcements`} asChild>
-      <Card className="mb-4">
+      <Card className="mb-4" accessibilityLabel={`${announcement.type} announcement: ${announcement.title}`}>
         <CardHeader>
           <View className="flex-row items-center gap-2 mb-2">
             <FontAwesome name={config.icon as any} size={16} color={config.color} />
