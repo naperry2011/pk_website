@@ -1,4 +1,4 @@
-import { View, ScrollView, Platform } from "react-native";
+import { View, ScrollView } from "react-native";
 import { ReactNode } from "react";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
@@ -15,8 +15,6 @@ export function PageLayout({
   showHeader = true,
   showFooter = true,
 }: PageLayoutProps) {
-  const isWeb = Platform.OS === "web";
-
   return (
     <View className="flex-1 bg-white">
       {showHeader && <Header />}
@@ -24,7 +22,6 @@ export function PageLayout({
         className="flex-1"
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
-        stickyHeaderIndices={isWeb && showHeader ? [0] : undefined}
       >
         <View className="flex-1">{children}</View>
         {showFooter && <Footer />}
