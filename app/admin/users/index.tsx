@@ -1,11 +1,14 @@
 import { View, ScrollView, Text, Pressable } from "react-native";
+import { useState } from "react";
 import { router } from "expo-router";
 import { H2 } from "@/components/ui/Typography";
 import { Button } from "@/components/ui/Button";
 import { DataTable } from "@/components/admin/DataTable";
+import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { ProtectedRoute } from "@/components/admin/ProtectedRoute";
-import { useProfiles, useUpdateProfile } from "@/hooks/useProfiles";
-import type { UserRole } from "@/lib/database.types";
+import { useProfiles, useUpdateProfile, useDeleteUser } from "@/hooks/useProfiles";
+import { useAuth } from "@/context/AuthContext";
+import type { UserRole, Profile } from "@/lib/database.types";
 
 function RoleToggle({
   role,
@@ -18,10 +21,7 @@ function RoleToggle({
 
   const toggleRole = async () => {
     const newRole: UserRole = role === "admin" ? "editor" : "admin";
-    await updateProfile.mutateAsync({
-      id: userId,
-      data: { role: newRole },
-    });
+    await updateProfile.mutateAsync({ id: userId, role: newRole });
   };
 
   return (
@@ -42,6 +42,19 @@ function RoleToggle({
 
 function UsersContent() {
   const { data: profiles, isLoading } = useProfiles();
+  const { session } = useAuth();
+  const deleteMutation = useDeleteUser();
+  const [deleteTarget, setDeleteTarget] = useState<Profile | null>(null);
+
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    try {
+      await deleteMutation.mutateAsync(deleteTarget.id);
+    } catch (_e) {
+      // Error handled by mutation state
+    }
+    setDeleteTarget(null);
+  };
 
   return (
     <ScrollView className="flex-1 bg-gray-warm">
@@ -66,11 +79,38 @@ function UsersContent() {
                 <RoleToggle role={item.role} userId={item.id} />
               ),
             },
+            {
+              key: "id",
+              label: "",
+              render: (item) =>
+                item.id !== session?.user?.id ? (
+                  <Pressable
+                    onPress={() => setDeleteTarget(item)}
+                    className="px-3 py-1 rounded-full bg-red-kente/10 self-start min-h-[36px] items-center justify-center"
+                    accessibilityRole="button"
+                    accessibilityLabel={`Delete ${item.full_name || item.email}`}
+                  >
+                    <Text className="font-body-medium text-xs text-red-kente">
+                      Delete
+                    </Text>
+                  </Pressable>
+                ) : null,
+            },
           ]}
           loading={isLoading}
           emptyMessage="No users found"
         />
       </View>
+
+      <ConfirmDialog
+        visible={!!deleteTarget}
+        title="Delete User"
+        message={`Are you sure you want to delete ${deleteTarget?.full_name || deleteTarget?.email}? This action cannot be undone.`}
+        confirmLabel="Delete"
+        variant="danger"
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </ScrollView>
   );
 }
