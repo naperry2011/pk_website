@@ -5,6 +5,7 @@ import { H2 } from "@/components/ui/Typography";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { ProtectedRoute } from "@/components/admin/ProtectedRoute";
+import { useInviteUser } from "@/hooks/useProfiles";
 import type { UserRole } from "@/lib/database.types";
 
 const roles: { value: UserRole; label: string; desc: string }[] = [
@@ -15,17 +16,17 @@ const roles: { value: UserRole; label: string; desc: string }[] = [
 function InviteContent() {
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<UserRole>("editor");
-  const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+  const inviteMutation = useInviteUser();
 
   const handleSubmit = async () => {
-    setSubmitting(true);
+    setError("");
     try {
-      // Invite will be handled by the Supabase admin API
-      // This is a placeholder for the invite logic
+      await inviteMutation.mutateAsync({ email, role });
       setSuccess(true);
-    } finally {
-      setSubmitting(false);
+    } catch (e: any) {
+      setError(e.message || "Failed to send invitation");
     }
   };
 
@@ -53,10 +54,19 @@ function InviteContent() {
       <View className="p-4 max-w-2xl">
         <H2 className="mb-6">Invite User</H2>
 
+        {error ? (
+          <View className="bg-red-kente/10 border border-red-kente/30 rounded-lg p-3 mb-4">
+            <Text className="font-body text-sm text-red-kente">{error}</Text>
+          </View>
+        ) : null}
+
         <Input
           label="Email Address"
           value={email}
-          onChangeText={setEmail}
+          onChangeText={(text: string) => {
+            setEmail(text);
+            if (error) setError("");
+          }}
           placeholder="user@example.com"
           keyboardType="email-address"
           autoCapitalize="none"
@@ -112,7 +122,7 @@ function InviteContent() {
           <Button
             title="Send Invitation"
             onPress={handleSubmit}
-            loading={submitting}
+            loading={inviteMutation.isPending}
             disabled={!email}
           />
         </View>
