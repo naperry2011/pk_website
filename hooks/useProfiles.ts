@@ -39,28 +39,14 @@ export function useInviteUser() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ email, role }: { email: string; role: UserRole }) => {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const session = sessionData?.session;
-      if (!session) throw new Error("Not authenticated");
+      const { data, error } = await supabase.functions.invoke("invite-user", {
+        body: { email, role },
+      });
 
-      const res = await fetch(
-        `${process.env.EXPO_PUBLIC_SUPABASE_URL}/functions/v1/invite-user`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session.access_token}`,
-          },
-          body: JSON.stringify({ email, role }),
-        }
-      );
+      if (error) throw new Error(error.message || "Failed to invite user");
+      if (data?.error) throw new Error(data.error);
 
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Failed to invite user");
-      }
-
-      return res.json();
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["profiles"] });
