@@ -31,6 +31,50 @@ export default function TownsScreen() {
         </View>
       </View>
 
+      {/* Location & Boundaries */}
+      <Section background="warm">
+        <View className="max-w-4xl mx-auto">
+          <View className="md:flex-row gap-6 md:gap-10 mb-10">
+            {/* Location Info */}
+            <View className="flex-1">
+              <View className="flex-row items-center gap-3 mb-3">
+                <View className="w-10 h-10 bg-green-deep/10 rounded-full items-center justify-center">
+                  <FontAwesome name="globe" size={18} color="#1B4D3E" />
+                </View>
+                <H3>Location & Boundaries</H3>
+              </View>
+              <Body className="text-lg mb-4">
+                The Akuapem Traditional Area spans from the foothills to the ridge of the Akuapem Range in the Eastern Region of Ghana.
+              </Body>
+            </View>
+
+            {/* District Info */}
+            <View className="flex-1">
+              <View className="flex-row items-center gap-3 mb-3">
+                <View className="w-10 h-10 bg-green-deep/10 rounded-full items-center justify-center">
+                  <FontAwesome name="institution" size={16} color="#1B4D3E" />
+                </View>
+                <H3>Districts</H3>
+              </View>
+              <Body className="text-lg mb-4">
+                The traditional area forms part of the Akuapem South and Akuapem North districts.
+              </Body>
+            </View>
+          </View>
+
+          {/* Map Placeholder */}
+          <View className="h-96 bg-gray-warm rounded-xl items-center justify-center border-2 border-dashed border-green-deep/20">
+            <View className="w-20 h-20 bg-green-deep/10 rounded-full items-center justify-center mb-4">
+              <FontAwesome name="map-marker" size={36} color="#1B4D3E" />
+            </View>
+            <H3 className="mb-2 text-center">Map of Akuapem Traditional Area</H3>
+            <Body className="text-gray-charcoal/60 text-center px-4">
+              Coming Soon
+            </Body>
+          </View>
+        </View>
+      </Section>
+
       {/* Towns Grid */}
       <Section background="white">
         {isLoading ? (

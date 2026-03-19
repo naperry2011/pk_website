@@ -129,55 +129,145 @@ export default function CommunityScreen() {
 
       {/* Recent Updates */}
       <Section background="warm">
-        <H2 className="text-center mb-8">Recent Updates</H2>
-
         <View className="max-w-3xl mx-auto">
-          {/* Recent Obituary */}
-          {latestObituary && (
-            <View className="bg-white rounded-xl p-4 mb-4 flex-row items-center gap-4">
-              <View className="w-12 h-12 bg-red-kente/10 rounded-full items-center justify-center">
-                <FontAwesome name="heart" size={20} color="#8B0000" />
+          <View className="items-center mb-10">
+            <H2 className="text-center mb-2">Recent Updates</H2>
+            <View className="w-16 h-1 bg-gold rounded-full mt-1" />
+          </View>
+
+          {!latestObituary && !latestWedding && !latestAnnouncement ? (
+            <View className="bg-white rounded-2xl p-10 items-center border border-brown-earth/10">
+              <View className="w-20 h-20 bg-gold/10 rounded-full items-center justify-center mb-5">
+                <FontAwesome name="newspaper-o" size={36} color="#D4AF37" />
               </View>
-              <View className="flex-1">
-                <Body className="font-body-semibold">{latestObituary.name}</Body>
-                <Body className="text-sm text-gray-charcoal/70">
-                  Funeral: {new Date(latestObituary.funeral_date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })} • {getTownName(latestObituary.town_id)}
-                </Body>
-              </View>
+              <H3 className="text-center mb-2">No Updates Yet</H3>
+              <Body className="text-gray-charcoal/60 text-center max-w-md">
+                Community updates will appear here as they are published. Check back soon for obituaries, wedding announcements, and council news.
+              </Body>
+            </View>
+          ) : (
+            <View className="gap-5">
+              {/* Recent Obituary */}
+              {latestObituary && (
+                <View className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg border border-brown-earth/5" style={{ borderLeftWidth: 4, borderLeftColor: "#8B0000" }}>
+                  <View className="p-5">
+                    <View className={`${isMobile ? "flex-col gap-3" : "flex-row items-start gap-4"}`}>
+                      <View className="w-12 h-12 bg-red-kente/10 rounded-full items-center justify-center shrink-0">
+                        <FontAwesome name="heart" size={20} color="#8B0000" />
+                      </View>
+                      <View className="flex-1">
+                        <View className="flex-row items-center gap-2 mb-2 flex-wrap">
+                          <View className="px-3 py-1 rounded-full" style={{ backgroundColor: "#8B000018" }}>
+                            <Body className="text-xs font-body-semibold" style={{ color: "#8B0000" }}>Funeral</Body>
+                          </View>
+                          <View className="px-3 py-1 bg-gray-warm rounded-full flex-row items-center gap-1">
+                            <FontAwesome name="calendar-o" size={10} color="#2C3E50" />
+                            <Body className="text-xs text-gray-charcoal/70">
+                              {new Date(latestObituary.funeral_date).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}
+                            </Body>
+                          </View>
+                        </View>
+                        <Body className="font-body-semibold text-base mb-1">{latestObituary.name}</Body>
+                        <Body className="text-sm text-gray-charcoal/60">
+                          <FontAwesome name="map-marker" size={12} color="#8B4513" /> {getTownName(latestObituary.town_id)}
+                        </Body>
+                      </View>
+                      <Link href="/community/obituaries" asChild>
+                        <Pressable className="flex-row items-center gap-1 px-3 py-2 rounded-lg hover:bg-red-kente/5 active:bg-red-kente/10">
+                          <Body className="text-sm font-body-semibold" style={{ color: "#8B0000" }}>View All</Body>
+                          <FontAwesome name="chevron-right" size={10} color="#8B0000" />
+                        </Pressable>
+                      </Link>
+                    </View>
+                  </View>
+                </View>
+              )}
+
+              {/* Recent Wedding */}
+              {latestWedding && (
+                <View className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg border border-brown-earth/5" style={{ borderLeftWidth: 4, borderLeftColor: "#D4AF37" }}>
+                  <View className="p-5">
+                    <View className={`${isMobile ? "flex-col gap-3" : "flex-row items-start gap-4"}`}>
+                      <View className="w-12 h-12 bg-gold/10 rounded-full items-center justify-center shrink-0">
+                        <FontAwesome name="bell" size={20} color="#D4AF37" />
+                      </View>
+                      <View className="flex-1">
+                        <View className="flex-row items-center gap-2 mb-2 flex-wrap">
+                          <View className="px-3 py-1 rounded-full" style={{ backgroundColor: "#D4AF3718" }}>
+                            <Body className="text-xs font-body-semibold" style={{ color: "#B8960F" }}>Wedding</Body>
+                          </View>
+                          <View className="px-3 py-1 bg-gray-warm rounded-full flex-row items-center gap-1">
+                            <FontAwesome name="calendar-o" size={10} color="#2C3E50" />
+                            <Body className="text-xs text-gray-charcoal/70">
+                              {new Date(latestWedding.date).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}
+                            </Body>
+                          </View>
+                        </View>
+                        <Body className="font-body-semibold text-base mb-1">
+                          {latestWedding.bride} & {latestWedding.groom}
+                        </Body>
+                        <Body className="text-sm text-gray-charcoal/60">
+                          <FontAwesome name="map-marker" size={12} color="#8B4513" /> {latestWedding.venue}
+                        </Body>
+                      </View>
+                      <Link href="/community/weddings" asChild>
+                        <Pressable className="flex-row items-center gap-1 px-3 py-2 rounded-lg hover:bg-gold/5 active:bg-gold/10">
+                          <Body className="text-sm font-body-semibold" style={{ color: "#B8960F" }}>View All</Body>
+                          <FontAwesome name="chevron-right" size={10} color="#B8960F" />
+                        </Pressable>
+                      </Link>
+                    </View>
+                  </View>
+                </View>
+              )}
+
+              {/* Recent Announcement */}
+              {latestAnnouncement && (
+                <View className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg border border-brown-earth/5" style={{ borderLeftWidth: 4, borderLeftColor: "#1B4D3E" }}>
+                  <View className="p-5">
+                    <View className={`${isMobile ? "flex-col gap-3" : "flex-row items-start gap-4"}`}>
+                      <View className="w-12 h-12 bg-green-deep/10 rounded-full items-center justify-center shrink-0">
+                        <FontAwesome name="bullhorn" size={20} color="#1B4D3E" />
+                      </View>
+                      <View className="flex-1">
+                        <View className="flex-row items-center gap-2 mb-2 flex-wrap">
+                          <View className="px-3 py-1 rounded-full" style={{ backgroundColor: "#1B4D3E18" }}>
+                            <Body className="text-xs font-body-semibold" style={{ color: "#1B4D3E" }}>Announcement</Body>
+                          </View>
+                          <View className="px-3 py-1 bg-gray-warm rounded-full flex-row items-center gap-1">
+                            <FontAwesome name="calendar-o" size={10} color="#2C3E50" />
+                            <Body className="text-xs text-gray-charcoal/70">
+                              {new Date(latestAnnouncement.date).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}
+                            </Body>
+                          </View>
+                        </View>
+                        <Body className="font-body-semibold text-base mb-1">
+                          {latestAnnouncement.title}
+                        </Body>
+                      </View>
+                      <Link href="/community/announcements" asChild>
+                        <Pressable className="flex-row items-center gap-1 px-3 py-2 rounded-lg hover:bg-green-deep/5 active:bg-green-deep/10">
+                          <Body className="text-sm font-body-semibold" style={{ color: "#1B4D3E" }}>View All</Body>
+                          <FontAwesome name="chevron-right" size={10} color="#1B4D3E" />
+                        </Pressable>
+                      </Link>
+                    </View>
+                  </View>
+                </View>
+              )}
             </View>
           )}
 
-          {/* Recent Wedding */}
-          {latestWedding && (
-            <View className="bg-white rounded-xl p-4 mb-4 flex-row items-center gap-4">
-              <View className="w-12 h-12 bg-gold/10 rounded-full items-center justify-center">
-                <FontAwesome name="bell" size={20} color="#D4AF37" />
-              </View>
-              <View className="flex-1">
-                <Body className="font-body-semibold">
-                  {latestWedding.bride} & {latestWedding.groom}
-                </Body>
-                <Body className="text-sm text-gray-charcoal/70">
-                  {new Date(latestWedding.date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })} • {latestWedding.venue}
-                </Body>
-              </View>
-            </View>
-          )}
-
-          {/* Recent Announcement */}
-          {latestAnnouncement && (
-            <View className="bg-white rounded-xl p-4 flex-row items-center gap-4">
-              <View className="w-12 h-12 bg-green-deep/10 rounded-full items-center justify-center">
-                <FontAwesome name="bullhorn" size={20} color="#1B4D3E" />
-              </View>
-              <View className="flex-1">
-                <Body className="font-body-semibold">
-                  {latestAnnouncement.title}
-                </Body>
-                <Body className="text-sm text-gray-charcoal/70">
-                  {new Date(latestAnnouncement.date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
-                </Body>
-              </View>
+          {/* See All Community Updates Button */}
+          {(latestObituary || latestWedding || latestAnnouncement) && (
+            <View className="items-center mt-10">
+              <Link href="/community/announcements" asChild>
+                <Pressable className="bg-green-deep hover:bg-green-deep/90 active:bg-green-deep/80 px-8 py-4 rounded-xl flex-row items-center gap-3 shadow-sm hover:shadow-md">
+                  <FontAwesome name="th-large" size={16} color="#FFFFFF" />
+                  <Body className="text-white font-body-semibold text-base">See All Community Updates</Body>
+                  <FontAwesome name="arrow-right" size={14} color="#D4AF37" />
+                </Pressable>
+              </Link>
             </View>
           )}
         </View>

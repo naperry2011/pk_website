@@ -137,6 +137,46 @@ export default function SubscribeScreen() {
         </View>
       </Section>
 
+      {/* Benefits */}
+      <Section background="warm">
+        <H2 className="text-center mb-8">Why Subscribe?</H2>
+        <View className="flex-row flex-wrap justify-center gap-6">
+          {[
+            {
+              icon: "envelope",
+              title: "Direct Updates",
+              text: "Get announcements delivered to your inbox",
+            },
+            {
+              icon: "filter",
+              title: "Personalized",
+              text: "Only receive what matters to you",
+            },
+            {
+              icon: "clock-o",
+              title: "Timely",
+              text: "Never miss important community news",
+            },
+          ].map((benefit, index) => (
+            <View key={index} className="items-center w-64">
+              <View className="w-16 h-16 bg-gold/10 rounded-full items-center justify-center mb-4">
+                <FontAwesome
+                  name={benefit.icon as any}
+                  size={24}
+                  color="#D4AF37"
+                />
+              </View>
+              <Body className="font-body-semibold text-center mb-1">
+                {benefit.title}
+              </Body>
+              <Body className="text-sm text-gray-charcoal/70 text-center">
+                {benefit.text}
+              </Body>
+            </View>
+          ))}
+        </View>
+      </Section>
+
       {/* Subscription Form */}
       <Section background="white">
         <View className="max-w-2xl mx-auto">
@@ -328,45 +368,6 @@ export default function SubscribeScreen() {
         </View>
       </Section>
 
-      {/* Benefits */}
-      <Section background="warm">
-        <H2 className="text-center mb-8">Why Subscribe?</H2>
-        <View className="flex-row flex-wrap justify-center gap-6">
-          {[
-            {
-              icon: "envelope",
-              title: "Direct Updates",
-              text: "Get announcements delivered to your inbox",
-            },
-            {
-              icon: "filter",
-              title: "Personalized",
-              text: "Only receive what matters to you",
-            },
-            {
-              icon: "clock-o",
-              title: "Timely",
-              text: "Never miss important community news",
-            },
-          ].map((benefit, index) => (
-            <View key={index} className="items-center w-64">
-              <View className="w-16 h-16 bg-gold/10 rounded-full items-center justify-center mb-4">
-                <FontAwesome
-                  name={benefit.icon as any}
-                  size={24}
-                  color="#D4AF37"
-                />
-              </View>
-              <Body className="font-body-semibold text-center mb-1">
-                {benefit.title}
-              </Body>
-              <Body className="text-sm text-gray-charcoal/70 text-center">
-                {benefit.text}
-              </Body>
-            </View>
-          ))}
-        </View>
-      </Section>
     </PageLayout>
   );
 }

@@ -33,26 +33,6 @@ export default function AboutScreen() {
       <Section background="white">
         <H2 className="mb-6">Our History</H2>
         <Body className="text-base mb-4">{councilHistory.summary}</Body>
-        <View className="flex-row flex-wrap gap-6 mt-8">
-          <View className="bg-gray-warm p-4 rounded-lg min-w-[150px]">
-            <Body className="text-sm text-gray-charcoal/60 mb-1">Founded</Body>
-            <Body className="font-body-semibold">{councilHistory.founded}</Body>
-          </View>
-          <View className="bg-gray-warm p-4 rounded-lg min-w-[150px]">
-            <Body className="text-sm text-gray-charcoal/60 mb-1">
-              Headquarters
-            </Body>
-            <Body className="font-body-semibold">
-              {councilHistory.headquarters}
-            </Body>
-          </View>
-          <View className="bg-gray-warm p-4 rounded-lg min-w-[150px]">
-            <Body className="text-sm text-gray-charcoal/60 mb-1">
-              Principal Towns
-            </Body>
-            <Body className="font-body-semibold">17</Body>
-          </View>
-        </View>
       </Section>
 
       {/* Our Structure */}
@@ -155,30 +135,62 @@ export default function AboutScreen() {
         </View>
       </Section>
 
-      {/* Our Role */}
-      <Section background="green">
-        <H2 className="text-white text-center mb-8">Our Role</H2>
-        <View className="max-w-3xl mx-auto">
-          <Body className="text-white/90 text-base text-center mb-6">
-            The Akuapem Traditional Council serves as the vital interface
-            between the government of Ghana and the people of Akuapem. Our
-            responsibilities include:
-          </Body>
-          <View className="gap-4">
-            {[
-              "Preserving and promoting Akuapem culture and traditions",
-              "Settling disputes and maintaining peace in our communities",
-              "Overseeing land administration within the traditional area",
-              "Coordinating development initiatives with government agencies",
-              "Representing the interests of Akuapem people at all levels",
-            ].map((role, index) => (
-              <View key={index} className="flex-row items-start gap-3">
-                <View className="w-6 h-6 bg-gold rounded-full items-center justify-center mt-1">
-                  <Body className="text-white text-sm">{index + 1}</Body>
-                </View>
-                <Body className="text-white flex-1">{role}</Body>
+      {/* Our Role, Vision & Mission */}
+      <Section background="warm">
+        <View className={`${isMobile ? "flex-col" : "flex-row"} gap-6 max-w-5xl mx-auto`}>
+          {/* Our Role */}
+          <View className="flex-1 bg-white rounded-xl border border-gold/30 p-6 items-center">
+            <View className="w-14 h-14 bg-green-deep/10 rounded-full items-center justify-center mb-4">
+              <FontAwesome name="balance-scale" size={24} color="#1B4D3E" />
+            </View>
+            <H3 className="text-center mb-3">Our Role</H3>
+            <Body className="text-center text-base leading-relaxed">
+              The Akuapem Traditional Council is the governing traditional
+              institution responsible for the installation of chiefs, dispute
+              resolution, land administration, enforcement of customary laws,
+              and unifying all towns under its jurisdiction.
+            </Body>
+          </View>
+
+          {/* Our Vision */}
+          <View className="flex-1 bg-white rounded-xl border border-gold/30 p-6 items-center">
+            <View className="w-14 h-14 bg-gold/10 rounded-full items-center justify-center mb-4">
+              <FontAwesome name="eye" size={24} color="#D4AF37" />
+            </View>
+            <H3 className="text-center mb-3">Our Vision</H3>
+            <Body className="text-center text-base leading-relaxed">
+              To preserve and promote our cultural identity, peace, and unity
+              while fostering development and progress for future generations.
+            </Body>
+          </View>
+
+          {/* Our Mission */}
+          <View className="flex-1 bg-white rounded-xl border border-gold/30 p-6 items-center">
+            <View className="w-14 h-14 bg-blue-heritage/10 rounded-full items-center justify-center mb-4">
+              <FontAwesome name="flag" size={24} color="#1E4D8B" />
+            </View>
+            <H3 className="text-center mb-3">Our Mission</H3>
+            <View className="gap-3 w-full">
+              <View className="flex-row items-start gap-2">
+                <View className="w-2 h-2 bg-gold rounded-full mt-2" />
+                <Body className="flex-1 text-base leading-relaxed">
+                  Uphold customs and traditions
+                </Body>
               </View>
-            ))}
+              <View className="flex-row items-start gap-2">
+                <View className="w-2 h-2 bg-gold rounded-full mt-2" />
+                <Body className="flex-1 text-base leading-relaxed">
+                  Promote peaceful coexistence and justice
+                </Body>
+              </View>
+              <View className="flex-row items-start gap-2">
+                <View className="w-2 h-2 bg-gold rounded-full mt-2" />
+                <Body className="flex-1 text-base leading-relaxed">
+                  Collaborate with government, NGOs, and stakeholders for
+                  community development
+                </Body>
+              </View>
+            </View>
           </View>
         </View>
       </Section>

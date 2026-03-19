@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { View, ScrollView } from "react-native";
 import Head from "expo-router/head";
 import { PageLayout, Section } from "@/components/layout";
 import { Hero, AnnouncementCard, QuickLinks, SubscribeCTA, ImageCarousel } from "@/components/home";
@@ -54,26 +54,6 @@ export default function HomeScreen() {
         </View>
       </Section>
 
-      {/* Quick Links */}
-      <QuickLinks />
-
-      {/* Latest Announcements */}
-      <Section background="white">
-        <H2 className="text-center mb-8">Latest Announcements</H2>
-        <View className="max-w-2xl mx-auto">
-          {isLoading ? (
-            <LoadingState message="Loading announcements..." />
-          ) : (
-            (announcements ?? []).slice(0, 3).map((announcement) => (
-              <AnnouncementCard key={announcement.id} announcement={announcement} />
-            ))
-          )}
-        </View>
-      </Section>
-
-      {/* Subscribe CTA */}
-      <SubscribeCTA />
-
       {/* Council Stats */}
       <Section background="warm">
         <View className="flex-row flex-wrap justify-center gap-8 md:gap-16">
@@ -97,6 +77,36 @@ export default function HomeScreen() {
           </FadeIn>
         </View>
       </Section>
+
+      {/* Quick Links */}
+      <QuickLinks />
+
+      {/* Latest Announcements */}
+      <Section background="white">
+        <H2 className="text-center mb-2">Latest Announcements</H2>
+        <Body className="text-center text-gray-charcoal/60 mb-6">
+          Stay informed with the latest news from the Council
+        </Body>
+        {isLoading ? (
+          <LoadingState message="Loading announcements..." />
+        ) : (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ paddingHorizontal: 4, gap: 16 }}
+            className="py-2"
+          >
+            {(announcements ?? []).slice(0, 5).map((announcement) => (
+              <View key={announcement.id} className="w-[300px] md:w-[340px]">
+                <AnnouncementCard announcement={announcement} />
+              </View>
+            ))}
+          </ScrollView>
+        )}
+      </Section>
+
+      {/* Subscribe CTA */}
+      <SubscribeCTA />
     </PageLayout>
   );
 }

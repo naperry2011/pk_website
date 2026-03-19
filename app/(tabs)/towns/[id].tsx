@@ -57,6 +57,19 @@ export default function TownDetailScreen() {
         </View>
       </View>
 
+      {/* Town Photos Placeholder */}
+      <Section background="warm">
+        <View className="h-72 md:h-96 bg-gray-warm rounded-xl items-center justify-center border-2 border-dashed border-green-deep/20">
+          <View className="w-20 h-20 bg-green-deep/10 rounded-full items-center justify-center mb-4">
+            <FontAwesome name="camera" size={36} color="#1B4D3E" />
+          </View>
+          <H3 className="mb-2 text-center">Town photos coming soon</H3>
+          <Body className="text-gray-charcoal/60 text-center px-4">
+            Photos of {town.name} and its landmarks will be added here
+          </Body>
+        </View>
+      </Section>
+
       {/* Town Info */}
       <Section background="white">
         <View className="md:flex-row gap-8">
