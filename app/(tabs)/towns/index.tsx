@@ -1,4 +1,4 @@
-import { View, Pressable, useWindowDimensions } from "react-native";
+import { View, Pressable, useWindowDimensions, Platform } from "react-native";
 import { Link } from "expo-router";
 import Head from "expo-router/head";
 import { PageLayout, Section } from "@/components/layout";
@@ -62,16 +62,31 @@ export default function TownsScreen() {
             </View>
           </View>
 
-          {/* Map Placeholder */}
-          <View className="h-96 bg-gray-warm rounded-xl items-center justify-center border-2 border-dashed border-green-deep/20">
-            <View className="w-20 h-20 bg-green-deep/10 rounded-full items-center justify-center mb-4">
-              <FontAwesome name="map-marker" size={36} color="#1B4D3E" />
+          {/* Map */}
+          <H3 className="mb-3 text-center">Map of Akuapem Traditional Area</H3>
+          {Platform.OS === "web" ? (
+            <View className="h-96 rounded-xl overflow-hidden border border-green-deep/20">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d63614.94!2d-0.1!3d5.95!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xfdf834e45f6bbd7%3A0x3a10a41b21e4f06f!2sAkropong%2C%20Ghana!5e0!3m2!1sen!2sus!4v1710000000000"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Map of Akuapem Traditional Area"
+              />
             </View>
-            <H3 className="mb-2 text-center">Map of Akuapem Traditional Area</H3>
-            <Body className="text-gray-charcoal/60 text-center px-4">
-              Coming Soon
-            </Body>
-          </View>
+          ) : (
+            <View className="h-96 bg-gray-warm rounded-xl items-center justify-center border-2 border-dashed border-green-deep/20">
+              <View className="w-20 h-20 bg-green-deep/10 rounded-full items-center justify-center mb-4">
+                <FontAwesome name="map-marker" size={36} color="#1B4D3E" />
+              </View>
+              <Body className="text-gray-charcoal/60 text-center px-4">
+                Map available on web version
+              </Body>
+            </View>
+          )}
         </View>
       </Section>
 
@@ -118,21 +133,6 @@ export default function TownsScreen() {
         )}
       </Section>
 
-      {/* Map Section Placeholder */}
-      <Section background="warm">
-        <H3 className="text-center mb-6">Akuapem Ridge Map</H3>
-        <View className="h-80 bg-green-deep/5 rounded-xl items-center justify-center border-2 border-dashed border-green-deep/20">
-          <View className="w-16 h-16 bg-green-deep/10 rounded-full items-center justify-center mb-4">
-            <FontAwesome name="map" size={28} color="#1B4D3E" />
-          </View>
-          <Body className="font-body-semibold text-green-deep mb-1">
-            Map Coming Soon
-          </Body>
-          <Body className="text-sm text-gray-charcoal/60 text-center px-4">
-            An interactive map of the Akuapem Ridge and its 17 principal towns is being developed.
-          </Body>
-        </View>
-      </Section>
     </PageLayout>
   );
 }

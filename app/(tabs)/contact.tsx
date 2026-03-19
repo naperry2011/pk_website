@@ -1,4 +1,4 @@
-import { View, Pressable, Linking } from "react-native";
+import { View, Pressable, Linking, Platform } from "react-native";
 import { useState } from "react";
 import Head from "expo-router/head";
 import { PageLayout, Section } from "@/components/layout";
@@ -228,23 +228,35 @@ export default function ContactScreen() {
         </View>
       </Section>
 
-      {/* Map Placeholder */}
+      {/* Map */}
       <Section background="warm">
         <H2 className="text-center mb-6">Find Us</H2>
-        <View className="h-80 bg-green-deep/5 rounded-xl items-center justify-center border-2 border-dashed border-green-deep/20" accessibilityLabel="Map placeholder for Ahenfie Royal Palace, Akropong-Akuapem">
-          <View className="w-16 h-16 bg-green-deep/10 rounded-full items-center justify-center mb-4">
-            <FontAwesome name="map" size={28} color="#1B4D3E" />
+        {Platform.OS === "web" ? (
+          <View className="h-80 rounded-xl overflow-hidden border border-green-deep/20">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3970.5!2d-0.0833!3d5.9667!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xfdf834e45f6bbd7%3A0x3a10a41b21e4f06f!2sAkropong%2C%20Ghana!5e0!3m2!1sen!2sus!4v1710000000000"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Ahenfie Royal Palace, Akropong-Akuapem"
+            />
           </View>
-          <Body className="font-body-semibold text-green-deep mb-1">
-            Map Coming Soon
-          </Body>
-          <Body className="text-sm text-gray-charcoal/60 text-center px-4">
-            Ahenfie (Royal Palace), Akropong-Akuapem, Eastern Region, Ghana
-          </Body>
-          <Body className="text-xs text-gray-charcoal/40 mt-2">
-            GPS: 5.9667° N, 0.0833° W
-          </Body>
-        </View>
+        ) : (
+          <View className="h-80 bg-green-deep/5 rounded-xl items-center justify-center border-2 border-dashed border-green-deep/20">
+            <View className="w-16 h-16 bg-green-deep/10 rounded-full items-center justify-center mb-4">
+              <FontAwesome name="map" size={28} color="#1B4D3E" />
+            </View>
+            <Body className="text-gray-charcoal/60 text-center px-4">
+              Map available on web version
+            </Body>
+          </View>
+        )}
+        <Body className="text-sm text-gray-charcoal/60 text-center mt-3">
+          Ahenfie (Royal Palace), Akropong-Akuapem, Eastern Region, Ghana
+        </Body>
       </Section>
     </PageLayout>
   );
