@@ -25,10 +25,14 @@ export interface Obituary {
   birthDate: string;
   passedDate: string;
   funeralDate: string;
+  funeralEndDate?: string;
   townId: string;
   photo: string | null;
   biography?: string;
   familyContact?: string;
+  submittedByName?: string;
+  submittedByEmail?: string;
+  submittedByPhone?: string;
 }
 
 export interface Wedding {
@@ -36,9 +40,13 @@ export interface Wedding {
   bride: string;
   groom: string;
   date: string;
+  endDate?: string;
   townId: string;
   venue: string;
   photos?: string[];
+  submittedByName?: string;
+  submittedByEmail?: string;
+  submittedByPhone?: string;
 }
 
 export interface ParamountKing {
@@ -51,9 +59,15 @@ export interface ParamountKing {
 }
 
 export interface SubscriptionPreferences {
+  firstName: string;
+  lastName: string;
   email: string;
+  phone: string;
+  currentLocation: string;
+  birthday: string;
   obituaries: boolean;
   weddings: boolean;
   councilBusiness: boolean;
   events: boolean;
+  townFilters: string[];
 }

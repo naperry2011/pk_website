@@ -8,6 +8,7 @@ import { useAnnouncements } from "@/hooks/useAnnouncements";
 import { useObituaries } from "@/hooks/useObituaries";
 import { useWeddings } from "@/hooks/useWeddings";
 import { useTowns } from "@/hooks/useTowns";
+import { HelpfulResources } from "@/components/community";
 
 export default function CommunityScreen() {
   const { width } = useWindowDimensions();
@@ -73,6 +74,18 @@ export default function CommunityScreen() {
           </Body>
         </View>
       </View>
+
+      {/* Community Intro */}
+      <Section background="warm">
+        <View className="max-w-3xl mx-auto">
+          <Body className="text-gray-charcoal text-center text-base leading-relaxed">
+            Welcome to the Akuapem Community Hub — your central place for staying informed
+            about life events across all 17 towns in the Akuapem Traditional Area. Here you
+            can find funeral announcements, wedding celebrations, and official council news.
+            Community members can also submit their own announcements for review and publication.
+          </Body>
+        </View>
+      </Section>
 
       {/* Section Cards */}
       <Section background="white">
@@ -167,6 +180,13 @@ export default function CommunityScreen() {
               </View>
             </View>
           )}
+        </View>
+      </Section>
+
+      {/* Helpful Resources */}
+      <Section background="white">
+        <View className={`max-w-4xl mx-auto ${isMobile ? "" : "max-w-sm"}`}>
+          <HelpfulResources />
         </View>
       </Section>
     </PageLayout>

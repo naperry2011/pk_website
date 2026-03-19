@@ -50,12 +50,11 @@ export function QuickLinks() {
               <Link href={link.href as any} asChild>
                 <Pressable
                   className={`
-                    bg-white rounded-xl p-6 items-center
+                    bg-white rounded-xl p-6 items-center justify-center
                     border border-brown-earth/10
                     hover:border-gold/30 hover:shadow-md
                     active:bg-gold-light
-                    min-h-[44px]
-                    ${isMobile ? "w-full" : "w-[200px]"}
+                    ${isMobile ? "w-full h-[160px]" : "w-[200px] h-[200px]"}
                   `}
                   accessibilityRole="link"
                   accessibilityLabel={`${link.title}: ${link.description}`}

@@ -1,5 +1,6 @@
-import { View, Pressable, Switch } from "react-native";
+import { View, Pressable, Switch, ScrollView, useWindowDimensions } from "react-native";
 import { useState } from "react";
+import { Link } from "expo-router";
 import Head from "expo-router/head";
 import { PageLayout, Section } from "@/components/layout";
 import { H1, H2, H3, Body } from "@/components/ui/Typography";
@@ -7,6 +8,13 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardContent } from "@/components/ui/Card";
 import { FontAwesome } from "@expo/vector-icons";
+
+const ALL_TOWNS = [
+  "Akropong", "Abiriw", "Amanokrom", "Awukugua", "Berekuso",
+  "Tutu", "Mamfe", "Larteh", "Adukrom", "Mampong",
+  "Obosomase", "Apirede", "Aseseeso", "Dawu", "Koforidua",
+  "Nsawam", "Suhum",
+];
 
 const subscriptionOptions = [
   {
@@ -40,37 +48,58 @@ const subscriptionOptions = [
 ];
 
 export default function SubscribeScreen() {
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
+
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [currentLocation, setCurrentLocation] = useState("");
+  const [birthday, setBirthday] = useState("");
+  const [selectedTowns, setSelectedTowns] = useState<string[]>([]);
   const [preferences, setPreferences] = useState<Record<string, boolean>>({
     obituaries: true,
     weddings: true,
     council: true,
     events: true,
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [subSuccess, setSubSuccess] = useState(false);
 
   const togglePreference = (id: string) => {
     setPreferences((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const [emailError, setEmailError] = useState("");
-  const [subSuccess, setSubSuccess] = useState(false);
+  const toggleTown = (town: string) => {
+    setSelectedTowns((prev) =>
+      prev.includes(town) ? prev.filter((t) => t !== town) : [...prev, town]
+    );
+  };
 
   const validateEmail = (value: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
+  const validateBirthday = (value: string) =>
+    /^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])$/.test(value);
+
   const handleSubscribe = () => {
-    if (!email.trim()) {
-      setEmailError("Email address is required");
-      return;
+    const newErrors: Record<string, string> = {};
+    if (!firstName.trim()) newErrors.firstName = "First name is required";
+    if (!lastName.trim()) newErrors.lastName = "Last name is required";
+    if (!email.trim()) newErrors.email = "Email address is required";
+    else if (!validateEmail(email)) newErrors.email = "Please enter a valid email address";
+    if (birthday.trim() && !validateBirthday(birthday)) {
+      newErrors.birthday = "Please use MM/DD format";
     }
-    if (!validateEmail(email)) {
-      setEmailError("Please enter a valid email address");
-      return;
-    }
-    setEmailError("");
+
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) return;
+
     setSubSuccess(true);
-    setEmail("");
   };
+
+  const hasAnyContentPref = preferences.obituaries || preferences.weddings || preferences.events;
 
   return (
     <PageLayout>
@@ -86,34 +115,106 @@ export default function SubscribeScreen() {
         <View className="max-w-4xl mx-auto items-center">
           <H1 className="text-white text-center mb-4">Stay Connected</H1>
           <Body className="text-white/90 text-center text-lg">
-            Subscribe to receive updates that matter to you
+            Subscribe to receive updates that matter to you from across the
+            Akuapem Traditional Area. Get notified about community events,
+            announcements, and celebrations.
           </Body>
         </View>
       </View>
+
+      {/* Council Announcements Link */}
+      <Section background="warm">
+        <View className="max-w-2xl mx-auto">
+          <Link href="/community/announcements" asChild>
+            <Pressable className="flex-row items-center justify-center gap-3 bg-green-deep/10 border border-green-deep/20 rounded-xl p-4 min-h-[44px]">
+              <FontAwesome name="bullhorn" size={20} color="#1B4D3E" />
+              <Body className="text-green-deep font-body-semibold">
+                View Latest Council Announcements
+              </Body>
+              <FontAwesome name="arrow-right" size={14} color="#1B4D3E" />
+            </Pressable>
+          </Link>
+        </View>
+      </Section>
 
       {/* Subscription Form */}
       <Section background="white">
         <View className="max-w-2xl mx-auto">
           <Card>
             <CardContent>
-              <H2 className="mb-6 text-center">Choose Your Preferences</H2>
+              {/* Personal Information */}
+              <H2 className="mb-6 text-center">Your Information</H2>
 
-              {/* Email Input */}
+              <View className="flex-row gap-4 flex-wrap">
+                <View className="flex-1 min-w-[200px]">
+                  <Input
+                    label="First Name *"
+                    placeholder="First name"
+                    value={firstName}
+                    onChangeText={(text) => {
+                      setFirstName(text);
+                      if (errors.firstName) setErrors((prev) => ({ ...prev, firstName: "" }));
+                    }}
+                    error={errors.firstName}
+                  />
+                </View>
+                <View className="flex-1 min-w-[200px]">
+                  <Input
+                    label="Last Name *"
+                    placeholder="Last name"
+                    value={lastName}
+                    onChangeText={(text) => {
+                      setLastName(text);
+                      if (errors.lastName) setErrors((prev) => ({ ...prev, lastName: "" }));
+                    }}
+                    error={errors.lastName}
+                  />
+                </View>
+              </View>
+
               <Input
-                label="Email Address"
+                label="Email Address *"
                 placeholder="your.email@example.com"
                 keyboardType="email-address"
                 autoCapitalize="none"
                 value={email}
                 onChangeText={(text) => {
                   setEmail(text);
-                  if (emailError) setEmailError("");
+                  if (errors.email) setErrors((prev) => ({ ...prev, email: "" }));
                 }}
-                error={emailError}
-                accessibilityHint="Enter your email to subscribe to updates"
+                error={errors.email}
               />
 
-              {/* Preference Toggles */}
+              <Input
+                label="Phone Number"
+                placeholder="+233 XX XXX XXXX"
+                keyboardType="phone-pad"
+                value={phone}
+                onChangeText={setPhone}
+              />
+
+              <Input
+                label="Current Location"
+                placeholder="City, Country"
+                value={currentLocation}
+                onChangeText={setCurrentLocation}
+              />
+
+              <Input
+                label="Birthday (MM/DD)"
+                placeholder="MM/DD"
+                value={birthday}
+                onChangeText={(text) => {
+                  setBirthday(text);
+                  if (errors.birthday) setErrors((prev) => ({ ...prev, birthday: "" }));
+                }}
+                error={errors.birthday}
+                accessibilityHint="Enter your birthday in MM/DD format, no year"
+              />
+
+              {/* Preferences */}
+              <H2 className="mb-6 mt-6 text-center">Choose Your Preferences</H2>
+
               <Body className="font-body-medium text-gray-charcoal mb-4">
                 What would you like to receive?
               </Body>
@@ -158,6 +259,47 @@ export default function SubscribeScreen() {
                   </Pressable>
                 ))}
               </View>
+
+              {/* Town-based Filtering */}
+              {hasAnyContentPref && (
+                <View className="mb-6">
+                  <Body className="font-body-medium text-gray-charcoal mb-2">
+                    Filter updates by town (optional)
+                  </Body>
+                  <Body className="text-sm text-gray-charcoal/60 mb-3">
+                    Select specific towns to receive updates from, or leave empty for all towns
+                  </Body>
+                  <View className="flex-row flex-wrap gap-2">
+                    {ALL_TOWNS.map((town) => (
+                      <Pressable
+                        key={town}
+                        onPress={() => toggleTown(town)}
+                        className={`px-3 py-2 rounded-lg border min-h-[36px] justify-center ${
+                          selectedTowns.includes(town)
+                            ? "bg-gold border-gold"
+                            : "bg-white border-brown-earth/30"
+                        }`}
+                        accessibilityRole="checkbox"
+                        accessibilityLabel={town}
+                        accessibilityState={{ checked: selectedTowns.includes(town) }}
+                      >
+                        <Body
+                          className={`text-sm ${
+                            selectedTowns.includes(town) ? "text-white" : "text-gray-charcoal"
+                          }`}
+                        >
+                          {town}
+                        </Body>
+                      </Pressable>
+                    ))}
+                  </View>
+                  {selectedTowns.length > 0 && (
+                    <Pressable onPress={() => setSelectedTowns([])} className="mt-2">
+                      <Body className="text-sm text-gold">Clear selection ({selectedTowns.length} selected)</Body>
+                    </Pressable>
+                  )}
+                </View>
+              )}
 
               {subSuccess ? (
                 <View className="bg-green-deep/10 border border-green-deep/30 rounded-lg p-4 items-center">

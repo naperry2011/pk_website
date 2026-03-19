@@ -1,14 +1,14 @@
-import { View } from "react-native";
+import { View, useWindowDimensions } from "react-native";
 import Head from "expo-router/head";
 import { PageLayout, Section } from "@/components/layout";
 import { H1, H2, H3, Body, Accent } from "@/components/ui/Typography";
 import { Card, CardContent } from "@/components/ui/Card";
 import { FontAwesome } from "@expo/vector-icons";
 import { paramountKing, councilHistory } from "@/constants/mockData";
-import { useTowns } from "@/hooks/useTowns";
 
 export default function AboutScreen() {
-  const { data: towns } = useTowns();
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
 
   return (
     <PageLayout>
@@ -32,7 +32,7 @@ export default function AboutScreen() {
       {/* History Section */}
       <Section background="white">
         <H2 className="mb-6">Our History</H2>
-        <Body className="text-lg mb-4">{councilHistory.summary}</Body>
+        <Body className="text-base mb-4">{councilHistory.summary}</Body>
         <View className="flex-row flex-wrap gap-6 mt-8">
           <View className="bg-gray-warm p-4 rounded-lg min-w-[150px]">
             <Body className="text-sm text-gray-charcoal/60 mb-1">Founded</Body>
@@ -55,94 +55,103 @@ export default function AboutScreen() {
         </View>
       </Section>
 
-      {/* Paramount King Section */}
+      {/* Our Structure */}
       <Section background="warm">
-        <View className="md:flex-row gap-8 items-start">
+        <H2 className="text-center mb-6">Our Structure</H2>
+        <View className="max-w-3xl mx-auto mb-8">
+          <Body className="text-base text-center leading-relaxed">
+            The council is led by the Omanhene (Paramount Chief), supported by 17
+            divisional and sub-divisional chiefs, queen mothers, and elders. It
+            operates through traditional committees and councils that address
+            chieftaincy, land, development, and cultural affairs.
+          </Body>
+        </View>
+
+        {/* Visual Hierarchy */}
+        <View className="items-center">
+          {/* Omanhene */}
+          <View className="bg-gold px-8 py-4 rounded-xl mb-2">
+            <Body className="text-white font-body-semibold text-center text-lg">
+              Omanhene
+            </Body>
+            <Body className="text-white/80 text-sm text-center">
+              Paramount Chief
+            </Body>
+          </View>
+
+          <View className="h-8 w-0.5 bg-gold" />
+
+          {/* Second Level */}
+          <View className={`${isMobile ? "flex-col items-center" : "flex-row"} gap-4 mb-2`}>
+            <View className="bg-green-deep px-6 py-3 rounded-xl">
+              <Body className="text-white font-body-semibold text-center">
+                Divisional Chiefs
+              </Body>
+            </View>
+            <View className="bg-green-deep px-6 py-3 rounded-xl">
+              <Body className="text-white font-body-semibold text-center">
+                Queen Mothers
+              </Body>
+            </View>
+          </View>
+
+          <View className="h-8 w-0.5 bg-gold" />
+
+          {/* Elders */}
+          <View className="bg-blue-heritage px-6 py-3 rounded-xl mb-2">
+            <Body className="text-white font-body-semibold text-center">
+              Elders
+            </Body>
+          </View>
+
+          <View className="h-8 w-0.5 bg-gold" />
+
+          {/* Committees */}
+          <View className={`${isMobile ? "flex-col items-center" : "flex-row flex-wrap justify-center"} gap-3`}>
+            {["Chieftaincy", "Land", "Development", "Cultural Affairs"].map((committee) => (
+              <View key={committee} className="bg-white border-2 border-gold px-5 py-3 rounded-xl">
+                <Body className="text-gold font-body-semibold text-center">
+                  {committee}
+                </Body>
+              </View>
+            ))}
+          </View>
+        </View>
+      </Section>
+
+      {/* Paramount King Section */}
+      <Section background="white">
+        <View className="max-w-3xl mx-auto items-center">
           {/* Photo placeholder */}
-          <View className="w-full md:w-80 h-96 bg-gold/5 rounded-xl items-center justify-center border-4 border-gold">
+          <View className="w-full max-w-sm h-96 bg-gold/5 rounded-xl items-center justify-center border-4 border-gold mb-6">
             <View className="w-20 h-20 bg-gold/15 rounded-full items-center justify-center mb-4">
               <FontAwesome name="user" size={36} color="#D4AF37" />
             </View>
             <Body className="text-gold font-body-semibold">Royal Portrait</Body>
             <Body className="text-xs text-gray-charcoal/40 mt-1">Photo forthcoming</Body>
           </View>
-          <View className="flex-1 mt-6 md:mt-0">
-            <Accent className="mb-2">His Royal Majesty</Accent>
-            <H2 className="mb-2">{paramountKing.name}</H2>
-            <Body className="text-gold font-body-semibold text-lg mb-4">
-              {paramountKing.title} • {paramountKing.lineage}
+
+          <Accent className="mb-2">His Royal Majesty</Accent>
+          <H2 className="text-center mb-2">{paramountKing.name}</H2>
+          <Body className="text-gold font-body-semibold text-lg text-center mb-4">
+            {paramountKing.title} | {paramountKing.lineage}
+          </Body>
+          <Body className="text-base text-center mb-6">{paramountKing.biography}</Body>
+          <View className="bg-gray-warm p-4 rounded-lg">
+            <Body className="text-sm text-gray-charcoal/60 mb-1 text-center">
+              Enstooled
             </Body>
-            <Body className="text-lg mb-4">{paramountKing.biography}</Body>
-            <View className="bg-white p-4 rounded-lg">
-              <Body className="text-sm text-gray-charcoal/60 mb-1">
-                Enstooled
-              </Body>
-              <Body className="font-body-semibold">
-                {new Date(paramountKing.enstoolmentDate).toLocaleDateString(
-                  "en-GB",
-                  {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  }
-                )}
-              </Body>
-            </View>
+            <Body className="font-body-semibold text-center">
+              {new Date(paramountKing.enstoolmentDate).toLocaleDateString(
+                "en-GB",
+                {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                }
+              )}
+            </Body>
           </View>
-        </View>
-      </Section>
-
-      {/* Council Structure */}
-      <Section background="white">
-        <H2 className="text-center mb-8">Council Structure</H2>
-
-        {/* Org Chart Placeholder */}
-        <View className="bg-gray-warm rounded-xl p-8 mb-8">
-          <View className="items-center mb-8">
-            <View className="bg-gold px-6 py-3 rounded-lg">
-              <Body className="text-white font-body-semibold text-center">
-                Okuapehene
-              </Body>
-              <Body className="text-white/80 text-sm text-center">
-                Paramount King
-              </Body>
-            </View>
-          </View>
-
-          <View className="h-8 w-0.5 bg-gold mx-auto" />
-
-          <View className="items-center mb-8">
-            <View className="bg-green-deep px-6 py-3 rounded-lg">
-              <Body className="text-white font-body-semibold text-center">
-                Executive Council
-              </Body>
-            </View>
-          </View>
-
-          <View className="h-8 w-0.5 bg-gold mx-auto" />
-
-          <View className="items-center">
-            <View className="bg-blue-heritage px-6 py-3 rounded-lg">
-              <Body className="text-white font-body-semibold text-center">
-                17 Divisional Chiefs
-              </Body>
-            </View>
-          </View>
-        </View>
-
-        {/* Divisional Chiefs */}
-        <H3 className="mb-6">Divisional Chiefs</H3>
-        <View className="flex-row flex-wrap gap-4">
-          {(towns ?? []).slice(0, 8).map((town) => (
-            <Card key={town.id} className="min-w-[200px] flex-1">
-              <CardContent>
-                <Body className="font-body-semibold">{town.name}</Body>
-                <Body className="text-sm text-gray-charcoal/70">
-                  {town.chief}
-                </Body>
-              </CardContent>
-            </Card>
-          ))}
         </View>
       </Section>
 
@@ -150,7 +159,7 @@ export default function AboutScreen() {
       <Section background="green">
         <H2 className="text-white text-center mb-8">Our Role</H2>
         <View className="max-w-3xl mx-auto">
-          <Body className="text-white/90 text-lg text-center mb-6">
+          <Body className="text-white/90 text-base text-center mb-6">
             The Akuapem Traditional Council serves as the vital interface
             between the government of Ghana and the people of Akuapem. Our
             responsibilities include:

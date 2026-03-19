@@ -108,6 +108,15 @@ export function Header() {
                 <Text className="font-body-semibold text-white">Subscribe</Text>
               </Pressable>
             </Link>
+            <Pressable
+              onPress={() => {}}
+              className="border-2 border-gold bg-gold/10 px-4 py-2 rounded-lg min-h-[44px] flex-row items-center justify-center gap-2 hover:bg-gold/20 active:bg-gold/30"
+              accessibilityRole="link"
+              accessibilityLabel="Donate to PK Foundation"
+            >
+              <FontAwesome name="heart" size={14} color="#D4AF37" />
+              <Text className="font-body-semibold text-gold">Donate</Text>
+            </Pressable>
           </View>
         )}
 
@@ -176,6 +185,18 @@ export function Header() {
               </Link>
             );
           })}
+          {/* Donate Button */}
+          <Pressable
+            onPress={() => {
+              closeMenu();
+            }}
+            className="py-3 pl-4 border-b border-gray-warm min-h-[44px] flex-row items-center gap-2"
+            accessibilityRole="link"
+            accessibilityLabel="Donate to PK Foundation"
+          >
+            <FontAwesome name="heart" size={16} color="#D4AF37" />
+            <Text className="font-body-medium text-lg text-gold">Donate</Text>
+          </Pressable>
         </View>
       )}
     </View>

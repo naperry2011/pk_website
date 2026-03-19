@@ -1,7 +1,7 @@
 import { View } from "react-native";
 import Head from "expo-router/head";
 import { PageLayout, Section } from "@/components/layout";
-import { Hero, AnnouncementCard, QuickLinks, SubscribeCTA } from "@/components/home";
+import { Hero, AnnouncementCard, QuickLinks, SubscribeCTA, ImageCarousel } from "@/components/home";
 import { H2, Body } from "@/components/ui/Typography";
 import { FadeIn } from "@/components/ui/FadeIn";
 import { FontAwesome } from "@expo/vector-icons";
@@ -23,17 +23,20 @@ export default function HomeScreen() {
       {/* Hero Section */}
       <Hero />
 
+      {/* Image Carousel */}
+      <ImageCarousel />
+
       {/* Welcome Message */}
       <Section background="white">
         <View className="md:flex-row gap-8 items-center">
           <View className="flex-1">
             <H2 className="mb-4">Welcome to the Akuapem Traditional Council</H2>
-            <Body className="text-lg mb-4">
+            <Body className="text-base mb-4">
               The Akuapem Traditional Council serves as the custodian of our
               rich cultural heritage and the bridge between the government and
               our people.
             </Body>
-            <Body>
+            <Body className="text-base">
               Under the leadership of {paramountKing.name}, the{" "}
               {paramountKing.title}, we continue to uphold the traditions of our
               ancestors while embracing progress and development for our
