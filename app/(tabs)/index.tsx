@@ -39,7 +39,7 @@ export default function HomeScreen() {
               {/* Image column - 55% */}
               <View style={[styles.welcomeImage, isMobile && styles.welcomeImageMobile, { borderRadius: 12, overflow: "hidden" }]}>
                 <Image
-                  source={require("@/ghana_images/Akuapem_Heritage.jpg")}
+                  source={require("@/assets/images/hero/akuapem-heritage.jpg")}
                   style={{ width: "100%", height: isMobile ? 300 : 450 }}
                   resizeMode="cover"
                   accessibilityLabel="Akuapem chiefs and community gathered together"

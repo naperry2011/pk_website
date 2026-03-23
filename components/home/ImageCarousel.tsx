@@ -7,23 +7,23 @@ import { LinearGradient } from "expo-linear-gradient";
 
 const slides = [
   {
-    image: require("@/ghana_images/emmanuel-yeboah-okine-pq66fmckyGE-unsplash.jpg"),
+    image: require("@/assets/images/community/traditional-drumming.jpg"),
     caption: "Celebrating Our Heritage — Traditional Drumming",
   },
   {
-    image: require("@/ghana_images/emmanuel-yeboah-okine-Ji7swF510oM-unsplash.jpg"),
+    image: require("@/assets/images/community/traditional-dance.jpg"),
     caption: "Traditional Dance — Keeping Culture Alive",
   },
   {
-    image: require("@/ghana_images/emmanuel-yeboah-okine-xx5edq1V4Ns-unsplash.jpg"),
+    image: require("@/assets/images/community/cultural-dancer.jpg"),
     caption: "Our Cultural Identity — The Heart of Akuapem",
   },
   {
-    image: require("@/ghana_images/jeffrey-ofori-tOshpNl-sW4-unsplash.jpg"),
+    image: require("@/assets/images/hero/sunset-scene.jpg"),
     caption: "The Akuapem Spirit — Rooted in Tradition",
   },
   {
-    image: require("@/ghana_images/photo4.jpeg"),
+    image: require("@/assets/images/hero/akuapem-ridge.jpg"),
     caption: "The Akuapem Ridge — Lush and Beautiful",
   },
 ];

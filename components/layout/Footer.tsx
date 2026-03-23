@@ -8,6 +8,7 @@ const quickLinks = [
   { href: "/community", label: "Community Updates" },
   { href: "/contact", label: "Contact" },
   { href: "/subscribe", label: "Subscribe" },
+  { href: "/admin", label: "Admin Portal" },
 ];
 
 const socialLinks = [

@@ -48,7 +48,7 @@ export default function AboutScreen() {
               <View style={[styles.historyImage, isMobile && styles.historyImageMobile]}>
                 <View style={{ borderRadius: 12, overflow: "hidden" }}>
                   <Image
-                    source={require("@/ghana_images/historic_photo.jpg")}
+                    source={require("@/assets/images/about/historic-monument.jpg")}
                     style={{ height: isMobile ? 280 : 400, width: "100%", borderRadius: 12 }}
                     resizeMode="cover"
                   />
@@ -136,7 +136,7 @@ export default function AboutScreen() {
               <View style={[styles.portraitImage, isMobile && styles.portraitImageMobile]}>
                 <View style={{ borderRadius: 12, overflow: "hidden" }}>
                   <Image
-                    source={require("@/ghana_images/Okuapehene.jpg")}
+                    source={require("@/assets/images/about/okuapehene-portrait.jpg")}
                     style={{ height: isMobile ? 350 : 480, width: "100%", borderRadius: 12 }}
                     resizeMode="cover"
                   />
