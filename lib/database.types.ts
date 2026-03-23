@@ -80,6 +80,17 @@ export interface Wedding {
   updated_at: string;
 }
 
+export interface TownPhoto {
+  id: string;
+  town_id: string;
+  image_url: string;
+  caption: string | null;
+  display_order: number;
+  uploaded_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -107,6 +118,11 @@ export interface Database {
         Row: Wedding;
         Insert: Omit<Wedding, "id" | "created_at" | "updated_at">;
         Update: Partial<Omit<Wedding, "id" | "created_at">>;
+      };
+      town_photos: {
+        Row: TownPhoto;
+        Insert: Omit<TownPhoto, "id" | "created_at" | "updated_at">;
+        Update: Partial<Omit<TownPhoto, "id" | "created_at">>;
       };
     };
   };

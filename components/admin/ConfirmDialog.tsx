@@ -1,4 +1,4 @@
-import { View, Text, Pressable, Modal } from "react-native";
+import { View, Text, Pressable, Modal, Platform } from "react-native";
 import { Button } from "@/components/ui/Button";
 
 interface ConfirmDialogProps {
@@ -35,7 +35,8 @@ export function ConfirmDialog({
       >
         <Pressable
           onPress={(e) => e.stopPropagation()}
-          className="bg-white rounded-xl p-6 w-full max-w-[400px] shadow-lg"
+          className="bg-white rounded-xl p-6 w-full max-w-[400px]"
+          style={Platform.OS === "web" ? { boxShadow: "0px 8px 30px rgba(0, 0, 0, 0.15)", borderWidth: 1, borderColor: "rgba(212, 168, 67, 0.15)" } : undefined}
           accessibilityRole="alert"
         >
           <Text className="font-heading-bold text-lg text-gray-charcoal mb-2">

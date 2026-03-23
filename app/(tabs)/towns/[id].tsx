@@ -1,4 +1,4 @@
-import { View, ScrollView, Pressable } from "react-native";
+import { View, ScrollView, Pressable, Image } from "react-native";
 import { useLocalSearchParams, Link } from "expo-router";
 import { PageLayout, Section } from "@/components/layout";
 import { H1, H2, H3, Body } from "@/components/ui/Typography";
@@ -9,8 +9,11 @@ import { useTown } from "@/hooks/useTowns";
 import { useObituaries } from "@/hooks/useObituaries";
 import { useWeddings } from "@/hooks/useWeddings";
 import { useAnnouncements } from "@/hooks/useAnnouncements";
+import { useTownPhotos } from "@/hooks/useTownPhotos";
+import { useResponsive } from "@/hooks/useResponsive";
 import { LoadingState } from "@/components/ui/LoadingState";
 import { ErrorState } from "@/components/ui/ErrorState";
+import { AnimateOnScroll } from "@/components/ui/AnimateOnScroll";
 
 export default function TownDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -18,6 +21,8 @@ export default function TownDetailScreen() {
   const { data: townObituaries } = useObituaries({ townId: id, status: "approved" });
   const { data: townWeddings } = useWeddings({ townId: id, status: "approved" });
   const { data: townAnnouncements } = useAnnouncements(id);
+  const { data: townPhotos } = useTownPhotos(id);
+  const { isMobile } = useResponsive();
 
   if (isLoading) {
     return (
@@ -43,6 +48,10 @@ export default function TownDetailScreen() {
   const obituaries = townObituaries ?? [];
   const weddings = townWeddings ?? [];
   const announcements = townAnnouncements ?? [];
+  const photos = townPhotos ?? [];
+
+  const heroImageUrl = town.image_url || (photos.length > 0 ? photos[0].url : null);
+  const numColumns = isMobile ? 2 : 3;
 
   return (
     <PageLayout>
@@ -57,17 +66,29 @@ export default function TownDetailScreen() {
         </View>
       </View>
 
-      {/* Town Photos Placeholder */}
+      {/* Town Hero Photo */}
       <Section background="warm">
-        <View className="h-72 md:h-96 bg-gray-warm rounded-xl items-center justify-center border-2 border-dashed border-green-deep/20">
-          <View className="w-20 h-20 bg-green-deep/10 rounded-full items-center justify-center mb-4">
-            <FontAwesome name="camera" size={36} color="#1B4D3E" />
+        {heroImageUrl ? (
+          <Image
+            source={{ uri: heroImageUrl }}
+            style={{
+              width: "100%",
+              height: isMobile ? 300 : 400,
+              borderRadius: 12,
+            }}
+            resizeMode="cover"
+          />
+        ) : (
+          <View className="h-72 md:h-96 bg-gray-warm rounded-xl items-center justify-center border-2 border-dashed border-green-deep/20">
+            <View className="w-20 h-20 bg-green-deep/10 rounded-full items-center justify-center mb-4">
+              <FontAwesome name="camera" size={36} color="#1a5632" />
+            </View>
+            <H3 className="mb-2 text-center">Town photos coming soon</H3>
+            <Body className="text-gray-charcoal/60 text-center px-4">
+              Photos of {town.name} and its landmarks will be added here
+            </Body>
           </View>
-          <H3 className="mb-2 text-center">Town photos coming soon</H3>
-          <Body className="text-gray-charcoal/60 text-center px-4">
-            Photos of {town.name} and its landmarks will be added here
-          </Body>
-        </View>
+        )}
       </Section>
 
       {/* Town Info */}
@@ -90,23 +111,52 @@ export default function TownDetailScreen() {
               contributes to the collective stewardship of the Akuapem state.
             </Body>
 
-            {/* Photo Gallery Placeholder */}
+            {/* Photo Gallery */}
             <H3 className="mb-4">Photo Gallery</H3>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              className="mb-6"
-            >
-              {["Scenery", "Landmarks", "Festivals", "Community"].map((label) => (
-                <View
-                  key={label}
-                  className="w-48 h-36 bg-green-deep/5 rounded-lg mr-4 items-center justify-center border border-green-deep/10"
-                >
-                  <FontAwesome name="camera" size={22} color="#1B4D3E" />
-                  <Body className="text-xs text-green-deep/50 mt-2">{label}</Body>
-                </View>
-              ))}
-            </ScrollView>
+            {photos.length > 0 ? (
+              <View
+                style={{
+                  flexDirection: "row",
+                  flexWrap: "wrap",
+                  marginHorizontal: -6,
+                  marginBottom: 24,
+                }}
+              >
+                {photos.map((photo: any, index: number) => (
+                  <AnimateOnScroll
+                    key={photo.id || index}
+                    delay={index * 100}
+                    style={{
+                      width: `${100 / numColumns}%`,
+                      paddingHorizontal: 6,
+                      marginBottom: 16,
+                    }}
+                  >
+                    <Image
+                      source={{ uri: photo.url }}
+                      style={{
+                        width: "100%",
+                        height: 200,
+                        borderRadius: 12,
+                      }}
+                      resizeMode="cover"
+                    />
+                    {photo.caption ? (
+                      <Body className="text-xs text-gray-charcoal/50 mt-1">
+                        {photo.caption}
+                      </Body>
+                    ) : null}
+                  </AnimateOnScroll>
+                ))}
+              </View>
+            ) : (
+              <View className="py-6 items-center mb-6">
+                <FontAwesome name="camera" size={20} color="#2d2d2d50" />
+                <Body className="text-sm text-gray-charcoal/40 mt-2">
+                  Photos coming soon
+                </Body>
+              </View>
+            )}
           </View>
 
           {/* Sidebar */}
@@ -115,7 +165,7 @@ export default function TownDetailScreen() {
               <CardContent>
                 <H3 className="mb-4">Current Chief</H3>
                 <View className="w-20 h-20 bg-gray-warm rounded-full mx-auto mb-4 items-center justify-center">
-                  <FontAwesome name="user" size={30} color="#2C3E5050" />
+                  <FontAwesome name="user" size={30} color="#2d2d2d50" />
                 </View>
                 <Body className="font-body-semibold text-center">
                   {town.chief}
@@ -135,7 +185,7 @@ export default function TownDetailScreen() {
                     : ["Chief's Palace", "Presbyterian Church", "Market Square"]
                   ).map((landmark: string, index: number) => (
                     <View key={index} className="flex-row items-center gap-2">
-                      <FontAwesome name="map-marker" size={16} color="#D4AF37" />
+                      <FontAwesome name="map-marker" size={16} color="#d4a843" />
                       <Body>{landmark}</Body>
                     </View>
                   ))}
@@ -148,11 +198,11 @@ export default function TownDetailScreen() {
                 <H3 className="mb-4">Contact</H3>
                 <View className="gap-2">
                   <View className="flex-row items-center gap-2">
-                    <FontAwesome name="phone" size={16} color="#1B4D3E" />
+                    <FontAwesome name="phone" size={16} color="#1a5632" />
                     <Body>Contact Palace for details</Body>
                   </View>
                   <View className="flex-row items-center gap-2">
-                    <FontAwesome name="envelope" size={16} color="#1B4D3E" />
+                    <FontAwesome name="envelope" size={16} color="#1a5632" />
                     <Body className="text-sm">
                       {town.id}@akuapemcouncil.org
                     </Body>
@@ -193,7 +243,7 @@ export default function TownDetailScreen() {
                               : "bullhorn"
                           }
                           size={12}
-                          color="#D4AF37"
+                          color="#d4a843"
                         />
                         <Body className="text-xs text-gold uppercase font-body-medium">
                           {announcement.type}
@@ -222,7 +272,7 @@ export default function TownDetailScreen() {
             <Link href="/community/obituaries" asChild>
               <Pressable className="flex-row items-center gap-1">
                 <Body className="text-gold text-sm">View all</Body>
-                <FontAwesome name="arrow-right" size={12} color="#D4AF37" />
+                <FontAwesome name="arrow-right" size={12} color="#d4a843" />
               </Pressable>
             </Link>
           </View>
@@ -232,7 +282,7 @@ export default function TownDetailScreen() {
                 <CardContent>
                   <View className="flex-row gap-4">
                     <View className="w-16 h-16 bg-gray-warm rounded-lg items-center justify-center">
-                      <FontAwesome name="user" size={24} color="#2C3E5030" />
+                      <FontAwesome name="user" size={24} color="#2d2d2d30" />
                     </View>
                     <View className="flex-1">
                       <Body className="font-body-semibold mb-1">
@@ -273,7 +323,7 @@ export default function TownDetailScreen() {
             <Link href="/community/weddings" asChild>
               <Pressable className="flex-row items-center gap-1">
                 <Body className="text-gold text-sm">View all</Body>
-                <FontAwesome name="arrow-right" size={12} color="#D4AF37" />
+                <FontAwesome name="arrow-right" size={12} color="#d4a843" />
               </Pressable>
             </Link>
           </View>
@@ -284,7 +334,7 @@ export default function TownDetailScreen() {
                   <View className="flex-row items-center gap-4">
                     <View className="flex-row items-center gap-2">
                       <View className="w-12 h-12 bg-gold/10 rounded-full items-center justify-center">
-                        <FontAwesome name="heart" size={18} color="#D4AF37" />
+                        <FontAwesome name="heart" size={18} color="#d4a843" />
                       </View>
                     </View>
                     <View className="flex-1">
@@ -292,7 +342,7 @@ export default function TownDetailScreen() {
                         {wedding.bride} & {wedding.groom}
                       </Body>
                       <View className="flex-row items-center gap-2 mb-1">
-                        <FontAwesome name="calendar" size={12} color="#D4AF37" />
+                        <FontAwesome name="calendar" size={12} color="#d4a843" />
                         <Body className="text-sm">
                           {new Date(wedding.date).toLocaleDateString("en-GB", {
                             weekday: "short",
@@ -306,7 +356,7 @@ export default function TownDetailScreen() {
                         <FontAwesome
                           name="map-marker"
                           size={12}
-                          color="#1B4D3E"
+                          color="#1a5632"
                         />
                         <Body className="text-sm text-gray-charcoal/70">
                           {wedding.venue}
@@ -327,7 +377,7 @@ export default function TownDetailScreen() {
         announcements.length === 0 && (
           <Section background="warm">
             <View className="items-center py-8">
-              <FontAwesome name="calendar-o" size={48} color="#2C3E5030" />
+              <FontAwesome name="calendar-o" size={48} color="#2d2d2d30" />
               <Body className="text-gray-charcoal/50 mt-4 text-center">
                 No current announcements, obituaries, or weddings in {town.name}
               </Body>

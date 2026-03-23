@@ -33,9 +33,14 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { width } = useWindowDimensions();
   const pathname = usePathname();
-  const { session, signOut } = useAuth();
+  const { session, role, signOut } = useAuth();
   const isMobile = width < 768;
   const isWeb = Platform.OS === "web";
+
+  // Filter nav items based on role — editors cannot see user management
+  const filteredNavItems = navItems.filter(
+    (item) => item.href !== "/admin/users" || role === "admin"
+  );
 
   const closeDrawer = useCallback(() => setDrawerOpen(false), []);
 
@@ -58,7 +63,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
       {/* Nav Items */}
       <View className="py-2">
-        {navItems.map((item) => {
+        {filteredNavItems.map((item) => {
           const active = isActive(pathname, item.href);
           return (
             <Link key={item.href} href={item.href as any} asChild>
@@ -67,6 +72,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 className={`flex-row items-center px-4 py-3 mx-2 rounded-lg min-h-[44px] ${
                   active ? "bg-gold" : ""
                 }`}
+                style={({ hovered }: any) => [
+                  Platform.OS === "web" ? { transition: "background-color 0.2s ease" } : undefined,
+                  !active && Platform.OS === "web" && hovered ? { backgroundColor: "rgba(255,255,255,0.08)" } : undefined,
+                ]}
                 accessibilityRole="link"
                 accessibilityLabel={item.label}
                 accessibilityState={{ selected: active }}
@@ -74,7 +83,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 <FontAwesome
                   name={item.icon}
                   size={18}
-                  color={active ? "#1B4D3E" : "#FFFFFF"}
+                  color={active ? "#1a5632" : "#FFFFFF"}
                   style={{ width: 24 }}
                 />
                 <Text
@@ -134,7 +143,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         {/* Top Bar */}
         <View
           className="bg-white border-b border-brown-earth/20 px-4 py-3 flex-row items-center justify-between"
-          style={isWeb ? { position: "sticky" as any, top: 0, zIndex: 30 } : undefined}
+          style={[
+            isWeb ? { position: "sticky" as any, top: 0, zIndex: 30 } : undefined,
+            isWeb ? { boxShadow: "0 1px 3px rgba(0,0,0,0.08)" } : undefined,
+          ]}
         >
           <View className="flex-row items-center">
             {isMobile && (
@@ -149,7 +161,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 <FontAwesome
                   name={drawerOpen ? "times" : "bars"}
                   size={22}
-                  color="#2C3E50"
+                  color="#2d2d2d"
                 />
               </Pressable>
             )}
@@ -162,10 +174,14 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             <Pressable
               onPress={signOut}
               className="bg-gray-warm px-3 py-2 rounded-lg min-h-[44px] items-center justify-center"
+              style={({ hovered }: any) => [
+                Platform.OS === "web" ? { transition: "background-color 0.2s ease" } : undefined,
+                Platform.OS === "web" && hovered ? { backgroundColor: "#e8e5de" } : undefined,
+              ]}
               accessibilityRole="button"
               accessibilityLabel="Sign out"
             >
-              <FontAwesome name="sign-out" size={16} color="#2C3E50" />
+              <FontAwesome name="sign-out" size={16} color="#2d2d2d" />
             </Pressable>
           </View>
         </View>

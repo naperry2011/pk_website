@@ -1,4 +1,4 @@
-import { View, Text, Pressable, ActivityIndicator, useWindowDimensions } from "react-native";
+import { View, Text, Pressable, ActivityIndicator, useWindowDimensions, Platform } from "react-native";
 import { ReactNode } from "react";
 import { FontAwesome } from "@expo/vector-icons";
 
@@ -29,7 +29,7 @@ export function DataTable({
   if (loading) {
     return (
       <View className="py-12 items-center justify-center">
-        <ActivityIndicator size="large" color="#D4AF37" />
+        <ActivityIndicator size="large" color="#d4a843" />
       </View>
     );
   }
@@ -37,7 +37,7 @@ export function DataTable({
   if (data.length === 0) {
     return (
       <View className="py-12 items-center justify-center">
-        <FontAwesome name="inbox" size={40} color="#2C3E5066" />
+        <FontAwesome name="inbox" size={40} color="#2d2d2d66" />
         <Text className="font-body text-base text-gray-charcoal/50 mt-3">
           {emptyMessage}
         </Text>
@@ -53,6 +53,7 @@ export function DataTable({
             key={item.id ?? index}
             onPress={() => onRowPress?.(item)}
             className="bg-white rounded-xl p-4 border border-gray-warm active:bg-gray-warm"
+            style={Platform.OS === "web" ? { boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.04)" } : undefined}
             accessibilityRole={onRowPress ? "button" : undefined}
           >
             {columns.map((col) => (
@@ -78,7 +79,10 @@ export function DataTable({
   }
 
   return (
-    <View className="bg-white rounded-xl border border-gray-warm overflow-hidden">
+    <View
+      className="bg-white rounded-xl border border-gray-warm overflow-hidden"
+      style={Platform.OS === "web" ? { boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.04)" } : undefined}
+    >
       {/* Header Row */}
       <View className="flex-row bg-gray-warm/50 border-b border-gray-warm px-4 py-3">
         {columns.map((col) => (
@@ -99,6 +103,10 @@ export function DataTable({
           className={`flex-row px-4 py-3 items-center ${
             index < data.length - 1 ? "border-b border-gray-warm" : ""
           } ${onRowPress ? "hover:bg-gray-warm/30 active:bg-gray-warm/50" : ""}`}
+          style={({ hovered }: any) => [
+            Platform.OS === "web" ? { transition: "background-color 0.2s ease" } : undefined,
+            Platform.OS === "web" && hovered ? { backgroundColor: "#f5f2eb80" } : undefined,
+          ]}
           accessibilityRole={onRowPress ? "button" : undefined}
         >
           {columns.map((col) => (

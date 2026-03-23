@@ -1,4 +1,4 @@
-import { View, ScrollView, ActivityIndicator } from "react-native";
+import { View, ScrollView, Text, ActivityIndicator, Platform } from "react-native";
 import { useState, useEffect } from "react";
 import { router, useLocalSearchParams } from "expo-router";
 import { H2 } from "@/components/ui/Typography";
@@ -14,6 +14,15 @@ import {
   useRejectObituary,
   useDeleteObituary,
 } from "@/hooks/useObituaries";
+import { useResponsive } from "@/hooks/useResponsive";
+
+const cardStyle = Platform.OS === "web" ? {
+  boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.06)",
+  borderWidth: 1,
+  borderColor: "rgba(212, 168, 67, 0.15)",
+  borderRadius: 12,
+  padding: 32,
+} : undefined;
 
 export default function EditObituary() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -22,6 +31,7 @@ export default function EditObituary() {
   const approveObituary = useApproveObituary();
   const rejectObituary = useRejectObituary();
   const deleteObituary = useDeleteObituary();
+  const { isMobile } = useResponsive();
 
   const [name, setName] = useState("");
   const [birthDate, setBirthDate] = useState("");
@@ -50,7 +60,7 @@ export default function EditObituary() {
   if (isLoading) {
     return (
       <View className="flex-1 items-center justify-center bg-gray-warm">
-        <ActivityIndicator size="large" color="#D4AF37" />
+        <ActivityIndicator size="large" color="#d4a843" />
       </View>
     );
   }
@@ -90,64 +100,88 @@ export default function EditObituary() {
 
   return (
     <ScrollView className="flex-1 bg-gray-warm">
-      <View className="p-4 max-w-2xl">
+      <View className="p-6 md:p-8 max-w-[700px] mx-auto w-full">
+        <Text style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: 3, color: "#d4a843", fontWeight: "700", fontFamily: "Inter_600SemiBold, sans-serif", marginBottom: 8 }}>
+          REVIEW OBITUARY
+        </Text>
         <View className="flex-row items-center gap-3 mb-6">
           <H2>Edit Obituary</H2>
           {obituary && <StatusBadge status={obituary.status} />}
         </View>
 
-        <ImageUpload
-          value={photoUrl || undefined}
-          onUpload={setPhotoUrl}
-          label="Photo"
-        />
+        <View className="bg-white rounded-xl p-6 md:p-8" style={cardStyle}>
+          <ImageUpload
+            value={photoUrl || undefined}
+            onUpload={setPhotoUrl}
+            label="Photo"
+          />
 
-        <Input
-          label="Name"
-          value={name}
-          onChangeText={setName}
-          placeholder="Full name"
-        />
+          <Input
+            label="Name"
+            value={name}
+            onChangeText={setName}
+            placeholder="Full name"
+          />
 
-        <Input
-          label="Birth Date"
-          value={birthDate}
-          onChangeText={setBirthDate}
-          placeholder="YYYY-MM-DD"
-        />
+          <Input
+            label="Birth Date"
+            value={birthDate}
+            onChangeText={setBirthDate}
+            placeholder="YYYY-MM-DD"
+          />
 
-        <Input
-          label="Passed Date"
-          value={passedDate}
-          onChangeText={setPassedDate}
-          placeholder="YYYY-MM-DD"
-        />
+          <Input
+            label="Passed Date"
+            value={passedDate}
+            onChangeText={setPassedDate}
+            placeholder="YYYY-MM-DD"
+          />
 
-        <Input
-          label="Funeral Date"
-          value={funeralDate}
-          onChangeText={setFuneralDate}
-          placeholder="YYYY-MM-DD"
-        />
+          <Input
+            label="Funeral Date"
+            value={funeralDate}
+            onChangeText={setFuneralDate}
+            placeholder="YYYY-MM-DD"
+          />
 
-        <TextArea
-          label="Biography"
-          value={biography}
-          onChangeText={setBiography}
-          placeholder="Life story..."
-          numberOfLines={6}
-        />
+          <TextArea
+            label="Biography"
+            value={biography}
+            onChangeText={setBiography}
+            placeholder="Life story..."
+            numberOfLines={6}
+          />
 
-        <Input
-          label="Family Contact"
-          value={familyContact}
-          onChangeText={setFamilyContact}
-          placeholder="Contact information"
-        />
+          <Input
+            label="Family Contact"
+            value={familyContact}
+            onChangeText={setFamilyContact}
+            placeholder="Contact information"
+          />
+
+          <View className="flex-row gap-3 mt-6">
+            <Button
+              title="Cancel"
+              onPress={() => router.back()}
+              variant="outline"
+            />
+            <Button
+              title="Save Changes"
+              onPress={handleSave}
+              loading={updateObituary.isPending}
+              disabled={!name || !passedDate || !funeralDate}
+            />
+            <Button
+              title="Delete"
+              onPress={() => setShowDelete(true)}
+              variant="danger"
+            />
+          </View>
+        </View>
 
         {/* Approval Actions */}
         {obituary?.status === "pending" && (
-          <View className="bg-white rounded-xl p-4 border border-gray-warm mb-4">
+          <View className="bg-white rounded-xl p-6 md:p-8 mt-6" style={cardStyle}>
             <TextArea
               label="Review Notes"
               value={reviewNotes}
@@ -169,25 +203,6 @@ export default function EditObituary() {
             </View>
           </View>
         )}
-
-        <View className="flex-row gap-3 mt-4">
-          <Button
-            title="Cancel"
-            onPress={() => router.back()}
-            variant="outline"
-          />
-          <Button
-            title="Save Changes"
-            onPress={handleSave}
-            loading={updateObituary.isPending}
-            disabled={!name || !passedDate || !funeralDate}
-          />
-          <Button
-            title="Delete"
-            onPress={() => setShowDelete(true)}
-            variant="danger"
-          />
-        </View>
       </View>
 
       <ConfirmDialog

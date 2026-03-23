@@ -1,5 +1,6 @@
 import { View, Text, Pressable, Image } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
 
 interface ImageUploadProps {
   value?: string;
@@ -13,8 +14,14 @@ export function ImageUpload({
   label = "Upload Image",
 }: ImageUploadProps) {
   const handlePress = async () => {
-    // Image picker integration will be added when expo-image-picker is configured
-    // For now, this serves as the upload UI placeholder
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      quality: 0.8,
+    });
+    if (!result.canceled && result.assets[0]) {
+      onUpload(result.assets[0].uri);
+    }
   };
 
   return (
@@ -44,11 +51,12 @@ export function ImageUpload({
       ) : (
         <Pressable
           onPress={handlePress}
-          className="border-2 border-dashed border-brown-earth/30 rounded-lg py-8 items-center justify-center bg-gray-warm/30 min-h-[120px]"
+          className="border-2 border-dashed rounded-lg py-8 items-center justify-center bg-gray-warm/30 min-h-[120px]"
+          style={{ borderColor: "rgba(212, 168, 67, 0.3)" }}
           accessibilityRole="button"
           accessibilityLabel={label}
         >
-          <FontAwesome name="camera" size={28} color="#2C3E5044" />
+          <FontAwesome name="camera" size={28} color="#6b6b6b44" />
           <Text className="font-body text-sm text-gray-charcoal/40 mt-2">
             Tap to upload
           </Text>

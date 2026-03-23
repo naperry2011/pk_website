@@ -1,4 +1,4 @@
-import { View, ScrollView, Text, Pressable } from "react-native";
+import { View, ScrollView, Text, Pressable, Platform } from "react-native";
 import { useState, useMemo } from "react";
 import { router } from "expo-router";
 import { H2, Body } from "@/components/ui/Typography";
@@ -6,6 +6,7 @@ import { DataTable } from "@/components/admin/DataTable";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { SearchBar } from "@/components/admin/SearchBar";
 import { useWeddings } from "@/hooks/useWeddings";
+import { useResponsive } from "@/hooks/useResponsive";
 import type { ApprovalStatus } from "@/lib/database.types";
 
 const tabs: { value: ApprovalStatus | "all"; label: string }[] = [
@@ -21,6 +22,7 @@ export default function WeddingsList() {
   const { data: weddings, isLoading } = useWeddings(
     statusFilter === "all" ? {} : { status: statusFilter }
   );
+  const { isMobile } = useResponsive();
 
   const filtered = useMemo(() => {
     if (!weddings) return [];
@@ -35,11 +37,14 @@ export default function WeddingsList() {
 
   return (
     <ScrollView className="flex-1 bg-gray-warm">
-      <View className="p-4 max-w-5xl">
-        <H2 className="mb-4">Weddings</H2>
+      <View className="p-6 md:p-8 max-w-[1200px] mx-auto w-full">
+        <Text style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: 3, color: "#d4a843", fontWeight: "700", fontFamily: "Inter_600SemiBold, sans-serif", marginBottom: 8 }}>
+          APPROVALS
+        </Text>
+        <H2 className="mb-8">Weddings</H2>
 
         {/* Status Tabs */}
-        <View className="flex-row gap-2 mb-4">
+        <View className="flex-row gap-2 mb-8">
           {tabs.map((tab) => (
             <Pressable
               key={tab.value}
@@ -49,22 +54,26 @@ export default function WeddingsList() {
                   ? "bg-green-deep"
                   : "bg-white border border-brown-earth/30"
               }`}
+              style={Platform.OS === "web" ? { transition: "all 0.2s ease" } : undefined}
               accessibilityRole="button"
               accessibilityState={{ selected: statusFilter === tab.value }}
               accessibilityLabel={`Filter: ${tab.label}`}
             >
-              <Text
-                className={`font-body-medium text-sm ${
-                  statusFilter === tab.value ? "text-white" : "text-gray-charcoal"
-                }`}
-              >
-                {tab.label}
-              </Text>
+              {({ hovered }: any) => (
+                <Text
+                  className={`font-body-medium text-sm ${
+                    statusFilter === tab.value ? "text-white" : "text-gray-charcoal"
+                  }`}
+                  style={hovered && statusFilter !== tab.value ? { opacity: 0.7 } : undefined}
+                >
+                  {tab.label}
+                </Text>
+              )}
             </Pressable>
           ))}
         </View>
 
-        <View className="mb-4">
+        <View className="mb-8">
           <SearchBar
             value={search}
             onChangeText={setSearch}

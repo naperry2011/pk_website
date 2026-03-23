@@ -1,4 +1,4 @@
-import { View, ScrollView, Text, Pressable } from "react-native";
+import { View, ScrollView, Text, Pressable, Platform } from "react-native";
 import { useState } from "react";
 import { router } from "expo-router";
 import { H2 } from "@/components/ui/Typography";
@@ -8,6 +8,7 @@ import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { ProtectedRoute } from "@/components/admin/ProtectedRoute";
 import { useProfiles, useUpdateProfile, useDeleteUser } from "@/hooks/useProfiles";
 import { useAuth } from "@/context/AuthContext";
+import { useResponsive } from "@/hooks/useResponsive";
 import type { UserRole, Profile } from "@/lib/database.types";
 
 function RoleToggle({
@@ -45,6 +46,7 @@ function UsersContent() {
   const { session } = useAuth();
   const deleteMutation = useDeleteUser();
   const [deleteTarget, setDeleteTarget] = useState<Profile | null>(null);
+  const { isMobile } = useResponsive();
 
   const handleDelete = async () => {
     if (!deleteTarget) return;
@@ -58,8 +60,11 @@ function UsersContent() {
 
   return (
     <ScrollView className="flex-1 bg-gray-warm">
-      <View className="p-4 max-w-5xl">
-        <View className="flex-row items-center justify-between mb-4">
+      <View className="p-6 md:p-8 max-w-[1200px] mx-auto w-full">
+        <Text style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: 3, color: "#d4a843", fontWeight: "700", fontFamily: "Inter_600SemiBold, sans-serif", marginBottom: 8 }}>
+          USER MANAGEMENT
+        </Text>
+        <View className="flex-row items-center justify-between mb-8">
           <H2>Users</H2>
           <Button
             title="Invite User"

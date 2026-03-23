@@ -42,12 +42,31 @@ export default function LoginScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <View className="flex-1 items-center justify-center px-6 py-12">
-          <View className="bg-white rounded-2xl p-8 w-full max-w-[400px] shadow-lg">
+          <View
+            className="bg-white rounded-2xl p-8 md:p-10 w-full max-w-[400px]"
+            style={
+              Platform.OS === "web"
+                ? {
+                    boxShadow: "0px 8px 30px rgba(0, 0, 0, 0.12)",
+                    borderWidth: 1,
+                    borderColor: "rgba(212, 168, 67, 0.15)",
+                  }
+                : undefined
+            }
+          >
             <View className="items-center mb-6">
               <View className="w-20 h-20 bg-gold rounded-full items-center justify-center mb-4">
                 <Text className="text-white font-bold text-2xl">AK</Text>
               </View>
-              <H2 className="text-center">Admin Login</H2>
+              <View
+                style={{
+                  width: 60,
+                  height: 2,
+                  backgroundColor: "#d4a843",
+                  marginBottom: 16,
+                }}
+              />
+              <H2 className="text-center font-heading-bold">Admin Login</H2>
               <Body className="text-center mt-1 opacity-60">
                 Akuapem Paramount King Council
               </Body>

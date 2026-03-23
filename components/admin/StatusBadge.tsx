@@ -24,7 +24,7 @@ export function StatusBadge({ status }: StatusBadgeProps) {
       accessibilityRole="text"
       accessibilityLabel={`Status: ${statusLabels[status]}`}
     >
-      <Text className="font-body-medium text-xs text-white">
+      <Text className="font-body-medium text-xs text-white uppercase tracking-wide">
         {statusLabels[status]}
       </Text>
     </View>

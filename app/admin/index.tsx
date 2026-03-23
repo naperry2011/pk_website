@@ -1,4 +1,4 @@
-import { View, ScrollView, useWindowDimensions } from "react-native";
+import { View, ScrollView, Text, Platform } from "react-native";
 import { router } from "expo-router";
 import { H2, H3, Body } from "@/components/ui/Typography";
 import { Button } from "@/components/ui/Button";
@@ -8,34 +8,47 @@ import { DataTable } from "@/components/admin/DataTable";
 import { useDashboardStats } from "@/hooks/useDashboardStats";
 import { useObituaries } from "@/hooks/useObituaries";
 import { useWeddings } from "@/hooks/useWeddings";
+import { useResponsive } from "@/hooks/useResponsive";
 
 export default function AdminDashboard() {
-  const { width } = useWindowDimensions();
-  const isMobile = width < 768;
+  const { isMobile } = useResponsive();
   const { data: stats, isLoading: statsLoading } = useDashboardStats();
   const { data: pendingObits } = useObituaries({ status: "pending" });
   const { data: pendingWeddings } = useWeddings({ status: "pending" });
 
   return (
     <ScrollView className="flex-1 bg-gray-warm">
-      <View className="p-4 max-w-5xl">
-        <H2 className="mb-6">Dashboard</H2>
+      <View className="p-6 md:p-8 max-w-[1200px] mx-auto w-full">
+        <Text
+          style={{
+            fontSize: 13,
+            textTransform: "uppercase",
+            letterSpacing: 3,
+            color: "#d4a843",
+            fontWeight: "700",
+            fontFamily: "Inter_600SemiBold, sans-serif",
+            marginBottom: 8,
+          }}
+        >
+          OVERVIEW
+        </Text>
+        <H2 className="mb-8">Dashboard</H2>
 
         {/* Stats Grid */}
         <View
-          className={`gap-3 mb-6 ${
+          className={`gap-4 mb-8 ${
             isMobile ? "flex-col" : "flex-row flex-wrap"
           }`}
         >
           <StatsCard
             title="Towns"
-            value={stats?.towns ?? "-"}
+            value={stats?.totalTowns ?? "-"}
             icon="home"
-            color="#1B4D3E"
+            color="#1a5632"
           />
           <StatsCard
             title="Announcements"
-            value={stats?.announcements ?? "-"}
+            value={stats?.totalAnnouncements ?? "-"}
             icon="bullhorn"
             color="#1E4D8B"
           />
@@ -43,7 +56,7 @@ export default function AdminDashboard() {
             title="Pending Obituaries"
             value={stats?.pendingObituaries ?? "-"}
             icon="heart"
-            color="#D4AF37"
+            color="#d4a843"
           />
           <StatsCard
             title="Pending Weddings"
@@ -54,7 +67,7 @@ export default function AdminDashboard() {
         </View>
 
         {/* Pending Approvals */}
-        <View className="mb-6">
+        <View className="mb-8">
           <H3 className="mb-3">Pending Obituaries</H3>
           <DataTable
             data={pendingObits ?? []}
@@ -73,7 +86,7 @@ export default function AdminDashboard() {
           />
         </View>
 
-        <View className="mb-6">
+        <View className="mb-8">
           <H3 className="mb-3">Pending Weddings</H3>
           <DataTable
             data={pendingWeddings ?? []}
@@ -98,7 +111,7 @@ export default function AdminDashboard() {
         </View>
 
         {/* Quick Actions */}
-        <View className="mb-6">
+        <View className="mb-8">
           <H3 className="mb-3">Quick Actions</H3>
           <View className={`gap-3 ${isMobile ? "flex-col" : "flex-row"}`}>
             <Button

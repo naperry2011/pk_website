@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, Platform } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 
 interface StatsCardProps {
@@ -10,7 +10,10 @@ interface StatsCardProps {
 
 export function StatsCard({ title, value, icon, color }: StatsCardProps) {
   return (
-    <View className="bg-white rounded-xl p-4 border border-gray-warm flex-1 min-w-[140px]">
+    <View
+      className="bg-white rounded-xl p-5 flex-1 min-w-[140px]"
+      style={Platform.OS === "web" ? { boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.06)", borderColor: "rgba(212, 168, 67, 0.15)", borderWidth: 1, borderRadius: 12 } : undefined}
+    >
       <View className="flex-row items-center justify-between mb-2">
         <View
           className="w-10 h-10 rounded-lg items-center justify-center"

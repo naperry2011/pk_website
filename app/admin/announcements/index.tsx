@@ -1,4 +1,4 @@
-import { View, ScrollView } from "react-native";
+import { View, ScrollView, Platform, Text } from "react-native";
 import { useState, useMemo } from "react";
 import { router } from "expo-router";
 import { H2 } from "@/components/ui/Typography";
@@ -6,10 +6,12 @@ import { Button } from "@/components/ui/Button";
 import { DataTable } from "@/components/admin/DataTable";
 import { SearchBar } from "@/components/admin/SearchBar";
 import { useAnnouncements } from "@/hooks/useAnnouncements";
+import { useResponsive } from "@/hooks/useResponsive";
 
 export default function AnnouncementsList() {
   const [search, setSearch] = useState("");
   const { data: announcements, isLoading } = useAnnouncements();
+  const { isMobile } = useResponsive();
 
   const filtered = useMemo(() => {
     if (!announcements) return [];
@@ -24,8 +26,11 @@ export default function AnnouncementsList() {
 
   return (
     <ScrollView className="flex-1 bg-gray-warm">
-      <View className="p-4 max-w-5xl">
-        <View className="flex-row items-center justify-between mb-4">
+      <View className="p-6 md:p-8 max-w-[1200px] mx-auto w-full">
+        <Text style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: 3, color: "#d4a843", fontWeight: "700", fontFamily: "Inter_600SemiBold, sans-serif", marginBottom: 8 }}>
+          CONTENT MANAGEMENT
+        </Text>
+        <View className="flex-row items-center justify-between mb-8">
           <H2>Announcements</H2>
           <Button
             title="New"
@@ -33,7 +38,7 @@ export default function AnnouncementsList() {
           />
         </View>
 
-        <View className="mb-4">
+        <View className="mb-8">
           <SearchBar
             value={search}
             onChangeText={setSearch}

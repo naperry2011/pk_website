@@ -18,7 +18,7 @@ export function ProtectedRoute({
   if (loading) {
     return (
       <View className="flex-1 bg-green-deep items-center justify-center">
-        <ActivityIndicator size="large" color="#D4AF37" />
+        <ActivityIndicator size="large" color="#d4a843" />
       </View>
     );
   }

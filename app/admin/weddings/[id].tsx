@@ -1,4 +1,4 @@
-import { View, ScrollView, ActivityIndicator } from "react-native";
+import { View, ScrollView, Text, ActivityIndicator, Platform } from "react-native";
 import { useState, useEffect } from "react";
 import { router, useLocalSearchParams } from "expo-router";
 import { H2 } from "@/components/ui/Typography";
@@ -13,6 +13,15 @@ import {
   useRejectWedding,
   useDeleteWedding,
 } from "@/hooks/useWeddings";
+import { useResponsive } from "@/hooks/useResponsive";
+
+const cardStyle = Platform.OS === "web" ? {
+  boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.06)",
+  borderWidth: 1,
+  borderColor: "rgba(212, 168, 67, 0.15)",
+  borderRadius: 12,
+  padding: 32,
+} : undefined;
 
 export default function EditWedding() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -21,6 +30,7 @@ export default function EditWedding() {
   const approveWedding = useApproveWedding();
   const rejectWedding = useRejectWedding();
   const deleteWedding = useDeleteWedding();
+  const { isMobile } = useResponsive();
 
   const [bride, setBride] = useState("");
   const [groom, setGroom] = useState("");
@@ -47,7 +57,7 @@ export default function EditWedding() {
   if (isLoading) {
     return (
       <View className="flex-1 items-center justify-center bg-gray-warm">
-        <ActivityIndicator size="large" color="#D4AF37" />
+        <ActivityIndicator size="large" color="#d4a843" />
       </View>
     );
   }
@@ -86,58 +96,82 @@ export default function EditWedding() {
 
   return (
     <ScrollView className="flex-1 bg-gray-warm">
-      <View className="p-4 max-w-2xl">
+      <View className="p-6 md:p-8 max-w-[700px] mx-auto w-full">
+        <Text style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: 3, color: "#d4a843", fontWeight: "700", fontFamily: "Inter_600SemiBold, sans-serif", marginBottom: 8 }}>
+          REVIEW WEDDING
+        </Text>
         <View className="flex-row items-center gap-3 mb-6">
           <H2>Edit Wedding</H2>
           {wedding && <StatusBadge status={wedding.status} />}
         </View>
 
-        <Input
-          label="Bride"
-          value={bride}
-          onChangeText={setBride}
-          placeholder="Bride's name"
-        />
+        <View className="bg-white rounded-xl p-6 md:p-8" style={cardStyle}>
+          <Input
+            label="Bride"
+            value={bride}
+            onChangeText={setBride}
+            placeholder="Bride's name"
+          />
 
-        <Input
-          label="Groom"
-          value={groom}
-          onChangeText={setGroom}
-          placeholder="Groom's name"
-        />
+          <Input
+            label="Groom"
+            value={groom}
+            onChangeText={setGroom}
+            placeholder="Groom's name"
+          />
 
-        <Input
-          label="Date"
-          value={date}
-          onChangeText={setDate}
-          placeholder="YYYY-MM-DD"
-        />
+          <Input
+            label="Date"
+            value={date}
+            onChangeText={setDate}
+            placeholder="YYYY-MM-DD"
+          />
 
-        <Input
-          label="Venue"
-          value={venue}
-          onChangeText={setVenue}
-          placeholder="Wedding venue"
-        />
+          <Input
+            label="Venue"
+            value={venue}
+            onChangeText={setVenue}
+            placeholder="Wedding venue"
+          />
 
-        <TextArea
-          label="Message"
-          value={message}
-          onChangeText={setMessage}
-          placeholder="Wedding announcement message..."
-        />
+          <TextArea
+            label="Message"
+            value={message}
+            onChangeText={setMessage}
+            placeholder="Wedding announcement message..."
+          />
 
-        <Input
-          label="Contact Email"
-          value={contactEmail}
-          onChangeText={setContactEmail}
-          placeholder="contact@example.com"
-          keyboardType="email-address"
-        />
+          <Input
+            label="Contact Email"
+            value={contactEmail}
+            onChangeText={setContactEmail}
+            placeholder="contact@example.com"
+            keyboardType="email-address"
+          />
+
+          <View className="flex-row gap-3 mt-6">
+            <Button
+              title="Cancel"
+              onPress={() => router.back()}
+              variant="outline"
+            />
+            <Button
+              title="Save Changes"
+              onPress={handleSave}
+              loading={updateWedding.isPending}
+              disabled={!bride || !groom || !date || !venue}
+            />
+            <Button
+              title="Delete"
+              onPress={() => setShowDelete(true)}
+              variant="danger"
+            />
+          </View>
+        </View>
 
         {/* Approval Actions */}
         {wedding?.status === "pending" && (
-          <View className="bg-white rounded-xl p-4 border border-gray-warm mb-4">
+          <View className="bg-white rounded-xl p-6 md:p-8 mt-6" style={cardStyle}>
             <TextArea
               label="Review Notes"
               value={reviewNotes}
@@ -159,25 +193,6 @@ export default function EditWedding() {
             </View>
           </View>
         )}
-
-        <View className="flex-row gap-3 mt-4">
-          <Button
-            title="Cancel"
-            onPress={() => router.back()}
-            variant="outline"
-          />
-          <Button
-            title="Save Changes"
-            onPress={handleSave}
-            loading={updateWedding.isPending}
-            disabled={!bride || !groom || !date || !venue}
-          />
-          <Button
-            title="Delete"
-            onPress={() => setShowDelete(true)}
-            variant="danger"
-          />
-        </View>
       </View>
 
       <ConfirmDialog
