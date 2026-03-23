@@ -1,3 +1,41 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: #f5f2eb;
+  }
+
+  /* Ensure smooth transitions on all interactive elements */
+  a,
+  button,
+  [role="button"],
+  [role="link"] {
+    transition: color 0.25s ease, background-color 0.25s ease,
+      opacity 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease,
+      transform 0.15s ease;
+  }
+
+  /* Selection color matching brand */
+  ::selection {
+    background-color: rgba(212, 168, 67, 0.25);
+    color: #2d2d2d;
+  }
+}
+
+@layer utilities {
+  .hover-lift {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  }
+}

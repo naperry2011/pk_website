@@ -34,10 +34,10 @@ const AkuapemTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    primary: "#D4AF37", // Royal Gold
+    primary: "#d4a843", // Royal Gold
     background: "#FFFFFF",
     card: "#FFFFFF",
-    text: "#2C3E50", // Charcoal
+    text: "#2d2d2d", // Charcoal
     border: "#8B4513", // Earth Brown
     notification: "#8B0000", // Kente Red
   },
@@ -70,7 +70,7 @@ export default function RootLayout() {
         <View className="w-20 h-20 bg-gold rounded-full items-center justify-center mb-4">
           <Text className="text-white font-bold text-2xl">AK</Text>
         </View>
-        <ActivityIndicator size="small" color="#D4AF37" />
+        <ActivityIndicator size="small" color="#d4a843" />
       </View>
     );
   }

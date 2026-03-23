@@ -20,11 +20,17 @@ function isActive(pathname: string, href: string): boolean {
 
 function NavLink({ item, pathname }: { item: typeof navItems[0]; pathname: string }) {
   const active = isActive(pathname, item.href);
+  const isWeb = Platform.OS === "web";
 
   return (
     <Link href={item.href as any} asChild>
       <Pressable
         className="min-h-[44px] min-w-[44px] items-center justify-center py-1"
+        style={
+          isWeb
+            ? ({ cursor: "pointer" } as any)
+            : undefined
+        }
         accessibilityRole="link"
         accessibilityLabel={item.label}
         accessibilityState={{ selected: active }}
@@ -39,13 +45,23 @@ function NavLink({ item, pathname }: { item: typeof navItems[0]; pathname: strin
                   ? "text-gold"
                   : "text-gray-charcoal"
               }`}
+              style={
+                isWeb
+                  ? ({ transition: "color 0.25s ease" } as any)
+                  : undefined
+              }
             >
               {item.label}
             </Text>
             <View
-              className={`h-0.5 mt-1 rounded-full ${
-                active ? "w-full bg-gold" : "w-0"
+              className={`h-0.5 mt-1 rounded-full bg-gold ${
+                active ? "w-full" : hovered ? "w-full" : "w-0"
               }`}
+              style={
+                isWeb
+                  ? ({ transition: "width 0.25s ease" } as any)
+                  : undefined
+              }
             />
           </View>
         )}
@@ -66,7 +82,15 @@ export function Header() {
   return (
     <View
       className="bg-white border-b border-brown-earth/20 z-50"
-      style={isWeb ? { position: "sticky" as any, top: 0 } : undefined}
+      style={
+        isWeb
+          ? ({
+              position: "sticky" as any,
+              top: 0,
+              boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+            } as any)
+          : undefined
+      }
       accessibilityRole={"banner" as any}
     >
       <View className="px-4 py-3 flex-row items-center justify-between max-w-7xl mx-auto w-full">
@@ -101,21 +125,57 @@ export function Header() {
             ))}
             <Link href="/subscribe" asChild>
               <Pressable
-                className="bg-gold px-4 py-2 rounded-lg min-h-[44px] items-center justify-center active:bg-gold/80 hover:bg-gold/90"
+                className="bg-gold px-4 py-2 rounded-lg min-h-[44px] items-center justify-center active:bg-gold/80"
+                style={
+                  isWeb
+                    ? ({
+                        cursor: "pointer",
+                        transition:
+                          "background-color 0.25s ease, transform 0.15s ease",
+                      } as any)
+                    : undefined
+                }
                 accessibilityRole="link"
                 accessibilityLabel="Subscribe to updates"
               >
-                <Text className="font-body-semibold text-white">Subscribe</Text>
+                {({ hovered }: { hovered?: boolean }) => (
+                  <Text
+                    className="font-body-semibold text-white"
+                    style={
+                      isWeb && hovered
+                        ? ({ opacity: 0.9 } as any)
+                        : undefined
+                    }
+                  >
+                    Subscribe
+                  </Text>
+                )}
               </Pressable>
             </Link>
             <Pressable
               onPress={() => {}}
-              className="border-2 border-gold bg-gold/10 px-4 py-2 rounded-lg min-h-[44px] flex-row items-center justify-center gap-2 hover:bg-gold/20 active:bg-gold/30"
+              className="border-2 border-gold bg-gold/10 px-4 py-2 rounded-lg min-h-[44px] flex-row items-center justify-center gap-2 active:bg-gold/30"
+              style={
+                isWeb
+                  ? ({
+                      cursor: "pointer",
+                      transition: "background-color 0.25s ease",
+                    } as any)
+                  : undefined
+              }
               accessibilityRole="link"
               accessibilityLabel="Donate to PK Foundation"
             >
-              <FontAwesome name="heart" size={14} color="#D4AF37" />
-              <Text className="font-body-semibold text-gold">Donate</Text>
+              {({ hovered }: { hovered?: boolean }) => (
+                <>
+                  <FontAwesome name="heart" size={14} color="#d4a843" />
+                  <Text
+                    className="font-body-semibold text-gold"
+                  >
+                    Donate
+                  </Text>
+                </>
+              )}
             </Pressable>
           </View>
         )}
@@ -144,7 +204,7 @@ export function Header() {
               <FontAwesome
                 name={menuOpen ? "times" : "bars"}
                 size={24}
-                color="#2C3E50"
+                color="#2d2d2d"
               />
             </Pressable>
           </View>
@@ -179,7 +239,7 @@ export function Header() {
                     {item.label}
                   </Text>
                   {active && (
-                    <FontAwesome name="chevron-right" size={12} color="#D4AF37" />
+                    <FontAwesome name="chevron-right" size={12} color="#d4a843" />
                   )}
                 </Pressable>
               </Link>
@@ -194,7 +254,7 @@ export function Header() {
             accessibilityRole="link"
             accessibilityLabel="Donate to PK Foundation"
           >
-            <FontAwesome name="heart" size={16} color="#D4AF37" />
+            <FontAwesome name="heart" size={16} color="#d4a843" />
             <Text className="font-body-medium text-lg text-gold">Donate</Text>
           </Pressable>
         </View>

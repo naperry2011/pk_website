@@ -1,13 +1,13 @@
-import { View, Pressable, Switch, ScrollView, useWindowDimensions } from "react-native";
+import { View, Text, Pressable, Switch, StyleSheet, Platform } from "react-native";
 import { useState } from "react";
 import { Link } from "expo-router";
 import Head from "expo-router/head";
-import { PageLayout, Section } from "@/components/layout";
-import { H1, H2, H3, Body } from "@/components/ui/Typography";
+import { PageLayout } from "@/components/layout";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { Card, CardContent } from "@/components/ui/Card";
 import { FontAwesome } from "@expo/vector-icons";
+import { AnimateOnScroll } from "@/components/ui/AnimateOnScroll";
+import { useResponsive } from "@/hooks/useResponsive";
 
 const ALL_TOWNS = [
   "Akropong", "Abiriw", "Amanokrom", "Awukugua", "Berekuso",
@@ -29,14 +29,14 @@ const subscriptionOptions = [
     icon: "bell",
     title: "Weddings",
     description: "Wedding announcements and celebrations",
-    color: "#D4AF37",
+    color: "#d4a843",
   },
   {
     id: "council",
     icon: "gavel",
     title: "Council Business",
     description: "Official announcements and resolutions",
-    color: "#1B4D3E",
+    color: "#1a5632",
   },
   {
     id: "events",
@@ -48,8 +48,7 @@ const subscriptionOptions = [
 ];
 
 export default function SubscribeScreen() {
-  const { width } = useWindowDimensions();
-  const isMobile = width < 768;
+  const { isMobile } = useResponsive();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -111,263 +110,540 @@ export default function SubscribeScreen() {
       </Head>
 
       {/* Hero */}
-      <View className="bg-gold py-16 md:py-20 px-4 md:px-8">
-        <View className="max-w-4xl mx-auto items-center">
-          <H1 className="text-white text-center mb-4">Stay Connected</H1>
-          <Body className="text-white/90 text-center text-lg">
+      <View style={styles.hero}>
+        <View style={styles.heroInner}>
+          <Text style={styles.heroLabel}>SUBSCRIBE</Text>
+          <Text style={[styles.heroTitle, { fontSize: isMobile ? 36 : 48 }]}>
+            Stay Connected
+          </Text>
+          <Text style={styles.heroSubtitle}>
             Subscribe to receive updates that matter to you from across the
-            Akuapem Traditional Area. Get notified about community events,
-            announcements, and celebrations.
-          </Body>
+            Akuapem Traditional Area
+          </Text>
         </View>
       </View>
 
       {/* Council Announcements Link */}
-      <Section background="warm">
-        <View className="max-w-2xl mx-auto">
-          <Link href="/community/announcements" asChild>
-            <Pressable className="flex-row items-center justify-center gap-3 bg-green-deep/10 border border-green-deep/20 rounded-xl p-4 min-h-[44px]">
-              <FontAwesome name="bullhorn" size={20} color="#1B4D3E" />
-              <Body className="text-green-deep font-body-semibold">
-                View Latest Council Announcements
-              </Body>
-              <FontAwesome name="arrow-right" size={14} color="#1B4D3E" />
-            </Pressable>
-          </Link>
-        </View>
-      </Section>
+      <View style={[styles.section, { paddingVertical: isMobile ? 40 : 60, backgroundColor: "#f5f2eb" }]}>
+        <AnimateOnScroll>
+          <View style={styles.sectionInner}>
+            <View style={{ maxWidth: 600, marginHorizontal: "auto", width: "100%" }}>
+              <Link href="/community/announcements" asChild>
+                <Pressable
+                  style={({ hovered }: any) => [
+                    styles.announcementLink,
+                    hovered && styles.announcementLinkHover,
+                  ]}
+                  accessibilityRole="link"
+                >
+                  <FontAwesome name="bullhorn" size={20} color="#1a5632" />
+                  <Text style={styles.announcementLinkText}>
+                    View Latest Council Announcements
+                  </Text>
+                  <FontAwesome name="arrow-right" size={14} color="#1a5632" />
+                </Pressable>
+              </Link>
+            </View>
+          </View>
+        </AnimateOnScroll>
+      </View>
 
       {/* Benefits */}
-      <Section background="warm">
-        <H2 className="text-center mb-8">Why Subscribe?</H2>
-        <View className="flex-row flex-wrap justify-center gap-6">
-          {[
-            {
-              icon: "envelope",
-              title: "Direct Updates",
-              text: "Get announcements delivered to your inbox",
-            },
-            {
-              icon: "filter",
-              title: "Personalized",
-              text: "Only receive what matters to you",
-            },
-            {
-              icon: "clock-o",
-              title: "Timely",
-              text: "Never miss important community news",
-            },
-          ].map((benefit, index) => (
-            <View key={index} className="items-center w-64">
-              <View className="w-16 h-16 bg-gold/10 rounded-full items-center justify-center mb-4">
-                <FontAwesome
-                  name={benefit.icon as any}
-                  size={24}
-                  color="#D4AF37"
-                />
-              </View>
-              <Body className="font-body-semibold text-center mb-1">
-                {benefit.title}
-              </Body>
-              <Body className="text-sm text-gray-charcoal/70 text-center">
-                {benefit.text}
-              </Body>
+      <View style={[styles.section, { paddingVertical: isMobile ? 60 : 100, backgroundColor: "#f5f2eb" }]}>
+        <AnimateOnScroll>
+          <View style={styles.sectionInner}>
+            <View style={styles.centeredHeading}>
+              <Text style={styles.sectionLabel}>WHY SUBSCRIBE</Text>
+              <Text style={[styles.sectionTitle, { textAlign: "center", fontSize: isMobile ? 28 : 36 }]}>
+                Benefits of Subscribing
+              </Text>
             </View>
-          ))}
-        </View>
-      </Section>
 
-      {/* Subscription Form */}
-      <Section background="white">
-        <View className="max-w-2xl mx-auto">
-          <Card>
-            <CardContent>
-              {/* Personal Information */}
-              <H2 className="mb-6 text-center">Your Information</H2>
-
-              <View className="flex-row gap-4 flex-wrap">
-                <View className="flex-1 min-w-[200px]">
-                  <Input
-                    label="First Name *"
-                    placeholder="First name"
-                    value={firstName}
-                    onChangeText={(text) => {
-                      setFirstName(text);
-                      if (errors.firstName) setErrors((prev) => ({ ...prev, firstName: "" }));
-                    }}
-                    error={errors.firstName}
-                  />
-                </View>
-                <View className="flex-1 min-w-[200px]">
-                  <Input
-                    label="Last Name *"
-                    placeholder="Last name"
-                    value={lastName}
-                    onChangeText={(text) => {
-                      setLastName(text);
-                      if (errors.lastName) setErrors((prev) => ({ ...prev, lastName: "" }));
-                    }}
-                    error={errors.lastName}
-                  />
-                </View>
-              </View>
-
-              <Input
-                label="Email Address *"
-                placeholder="your.email@example.com"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                value={email}
-                onChangeText={(text) => {
-                  setEmail(text);
-                  if (errors.email) setErrors((prev) => ({ ...prev, email: "" }));
-                }}
-                error={errors.email}
-              />
-
-              <Input
-                label="Phone Number"
-                placeholder="+233 XX XXX XXXX"
-                keyboardType="phone-pad"
-                value={phone}
-                onChangeText={setPhone}
-              />
-
-              <Input
-                label="Current Location"
-                placeholder="City, Country"
-                value={currentLocation}
-                onChangeText={setCurrentLocation}
-              />
-
-              <Input
-                label="Birthday (MM/DD)"
-                placeholder="MM/DD"
-                value={birthday}
-                onChangeText={(text) => {
-                  setBirthday(text);
-                  if (errors.birthday) setErrors((prev) => ({ ...prev, birthday: "" }));
-                }}
-                error={errors.birthday}
-                accessibilityHint="Enter your birthday in MM/DD format, no year"
-              />
-
-              {/* Preferences */}
-              <H2 className="mb-6 mt-6 text-center">Choose Your Preferences</H2>
-
-              <Body className="font-body-medium text-gray-charcoal mb-4">
-                What would you like to receive?
-              </Body>
-
-              <View className="gap-4 mb-6">
-                {subscriptionOptions.map((option) => (
-                  <Pressable
-                    key={option.id}
-                    onPress={() => togglePreference(option.id)}
-                    className={`flex-row items-center p-4 rounded-xl border min-h-[44px] ${
-                      preferences[option.id]
-                        ? "border-gold bg-gold/5"
-                        : "border-brown-earth/20 bg-white"
-                    }`}
-                    accessibilityRole="switch"
-                    accessibilityLabel={`${option.title}: ${option.description}`}
-                    accessibilityState={{ checked: preferences[option.id] }}
-                  >
-                    <View
-                      className="w-12 h-12 rounded-full items-center justify-center mr-4"
-                      style={{ backgroundColor: option.color + "15" }}
-                    >
+            <View style={[styles.benefitsRow, isMobile && styles.benefitsRowMobile]}>
+              {[
+                {
+                  icon: "envelope",
+                  title: "Direct Updates",
+                  text: "Get announcements delivered to your inbox",
+                },
+                {
+                  icon: "filter",
+                  title: "Personalized",
+                  text: "Only receive what matters to you",
+                },
+                {
+                  icon: "clock-o",
+                  title: "Timely",
+                  text: "Never miss important community news",
+                },
+              ].map((benefit, index) => (
+                <AnimateOnScroll key={index} delay={index * 100}>
+                  <View style={styles.benefitItem}>
+                    <View style={styles.benefitIcon}>
                       <FontAwesome
-                        name={option.icon as any}
-                        size={20}
-                        color={option.color}
+                        name={benefit.icon as any}
+                        size={24}
+                        color="#d4a843"
                       />
                     </View>
-                    <View className="flex-1">
-                      <Body className="font-body-semibold">{option.title}</Body>
-                      <Body className="text-sm text-gray-charcoal/70">
-                        {option.description}
-                      </Body>
-                    </View>
-                    <Switch
-                      value={preferences[option.id]}
-                      onValueChange={() => togglePreference(option.id)}
-                      trackColor={{ false: "#E0E0E0", true: "#D4AF3780" }}
-                      thumbColor={preferences[option.id] ? "#D4AF37" : "#f4f3f4"}
-                      accessibilityLabel={`Toggle ${option.title}`}
-                    />
-                  </Pressable>
-                ))}
-              </View>
-
-              {/* Town-based Filtering */}
-              {hasAnyContentPref && (
-                <View className="mb-6">
-                  <Body className="font-body-medium text-gray-charcoal mb-2">
-                    Filter updates by town (optional)
-                  </Body>
-                  <Body className="text-sm text-gray-charcoal/60 mb-3">
-                    Select specific towns to receive updates from, or leave empty for all towns
-                  </Body>
-                  <View className="flex-row flex-wrap gap-2">
-                    {ALL_TOWNS.map((town) => (
-                      <Pressable
-                        key={town}
-                        onPress={() => toggleTown(town)}
-                        className={`px-3 py-2 rounded-lg border min-h-[36px] justify-center ${
-                          selectedTowns.includes(town)
-                            ? "bg-gold border-gold"
-                            : "bg-white border-brown-earth/30"
-                        }`}
-                        accessibilityRole="checkbox"
-                        accessibilityLabel={town}
-                        accessibilityState={{ checked: selectedTowns.includes(town) }}
-                      >
-                        <Body
-                          className={`text-sm ${
-                            selectedTowns.includes(town) ? "text-white" : "text-gray-charcoal"
-                          }`}
-                        >
-                          {town}
-                        </Body>
-                      </Pressable>
-                    ))}
+                    <Text style={styles.benefitTitle}>{benefit.title}</Text>
+                    <Text style={styles.benefitText}>{benefit.text}</Text>
                   </View>
-                  {selectedTowns.length > 0 && (
-                    <Pressable onPress={() => setSelectedTowns([])} className="mt-2">
-                      <Body className="text-sm text-gold">Clear selection ({selectedTowns.length} selected)</Body>
-                    </Pressable>
-                  )}
-                </View>
-              )}
+                </AnimateOnScroll>
+              ))}
+            </View>
+          </View>
+        </AnimateOnScroll>
+      </View>
 
-              {subSuccess ? (
-                <View className="bg-green-deep/10 border border-green-deep/30 rounded-lg p-4 items-center">
-                  <FontAwesome name="check-circle" size={24} color="#1B4D3E" />
-                  <Body className="text-green-deep font-body-semibold mt-2">
-                    You have been subscribed.
-                  </Body>
-                  <Body className="text-green-deep/80 text-sm text-center mt-1">
-                    Thank you for subscribing. You will receive updates based on your selected preferences.
-                  </Body>
+      {/* Subscription Form */}
+      <View style={[styles.section, { paddingVertical: isMobile ? 60 : 100 }]}>
+        <AnimateOnScroll>
+          <View style={styles.sectionInner}>
+            <View style={{ maxWidth: 700, marginHorizontal: "auto", width: "100%" }}>
+              <View style={styles.formCard}>
+                {/* Personal Information */}
+                <View style={styles.centeredHeading}>
+                  <Text style={styles.sectionLabel}>YOUR DETAILS</Text>
+                  <Text style={[styles.sectionTitle, { textAlign: "center", fontSize: isMobile ? 24 : 30 }]}>
+                    Your Information
+                  </Text>
                 </View>
-              ) : (
-                <Button
-                  title="Subscribe"
-                  onPress={handleSubscribe}
-                  fullWidth
-                  accessibilityHint="Subscribes you to selected update categories"
+
+                <View style={[styles.formRow, isMobile && styles.formRowMobile]}>
+                  <View style={[styles.formField, !isMobile && { flex: 1 }]}>
+                    <Input
+                      label="First Name *"
+                      placeholder="First name"
+                      value={firstName}
+                      onChangeText={(text) => {
+                        setFirstName(text);
+                        if (errors.firstName) setErrors((prev) => ({ ...prev, firstName: "" }));
+                      }}
+                      error={errors.firstName}
+                    />
+                  </View>
+                  <View style={[styles.formField, !isMobile && { flex: 1 }]}>
+                    <Input
+                      label="Last Name *"
+                      placeholder="Last name"
+                      value={lastName}
+                      onChangeText={(text) => {
+                        setLastName(text);
+                        if (errors.lastName) setErrors((prev) => ({ ...prev, lastName: "" }));
+                      }}
+                      error={errors.lastName}
+                    />
+                  </View>
+                </View>
+
+                <Input
+                  label="Email Address *"
+                  placeholder="your.email@example.com"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  value={email}
+                  onChangeText={(text) => {
+                    setEmail(text);
+                    if (errors.email) setErrors((prev) => ({ ...prev, email: "" }));
+                  }}
+                  error={errors.email}
                 />
-              )}
 
-              <Body className="text-sm text-gray-charcoal/60 text-center mt-4">
-                You can update your preferences or unsubscribe at any time
-              </Body>
-            </CardContent>
-          </Card>
-        </View>
-      </Section>
+                <Input
+                  label="Phone Number"
+                  placeholder="+233 XX XXX XXXX"
+                  keyboardType="phone-pad"
+                  value={phone}
+                  onChangeText={setPhone}
+                />
 
+                <Input
+                  label="Current Location"
+                  placeholder="City, Country"
+                  value={currentLocation}
+                  onChangeText={setCurrentLocation}
+                />
+
+                <Input
+                  label="Birthday (MM/DD)"
+                  placeholder="MM/DD"
+                  value={birthday}
+                  onChangeText={(text) => {
+                    setBirthday(text);
+                    if (errors.birthday) setErrors((prev) => ({ ...prev, birthday: "" }));
+                  }}
+                  error={errors.birthday}
+                  accessibilityHint="Enter your birthday in MM/DD format, no year"
+                />
+
+                {/* Preferences */}
+                <View style={[styles.centeredHeading, { marginTop: 32 }]}>
+                  <Text style={styles.sectionLabel}>PREFERENCES</Text>
+                  <Text style={[styles.sectionTitle, { textAlign: "center", fontSize: isMobile ? 24 : 30 }]}>
+                    Choose Your Preferences
+                  </Text>
+                </View>
+
+                <Text style={styles.prefLabel}>What would you like to receive?</Text>
+
+                <View style={{ gap: 16, marginBottom: 24 }}>
+                  {subscriptionOptions.map((option) => (
+                    <Pressable
+                      key={option.id}
+                      onPress={() => togglePreference(option.id)}
+                      style={[
+                        styles.preferenceCard,
+                        preferences[option.id] && styles.preferenceCardActive,
+                      ]}
+                      accessibilityRole="switch"
+                      accessibilityLabel={`${option.title}: ${option.description}`}
+                      accessibilityState={{ checked: preferences[option.id] }}
+                    >
+                      <View
+                        style={[
+                          styles.prefIconWrap,
+                          { backgroundColor: option.color + "15" },
+                        ]}
+                      >
+                        <FontAwesome
+                          name={option.icon as any}
+                          size={20}
+                          color={option.color}
+                        />
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.prefTitle}>{option.title}</Text>
+                        <Text style={styles.prefDesc}>{option.description}</Text>
+                      </View>
+                      <Switch
+                        value={preferences[option.id]}
+                        onValueChange={() => togglePreference(option.id)}
+                        trackColor={{ false: "#E0E0E0", true: "#d4a84380" }}
+                        thumbColor={preferences[option.id] ? "#d4a843" : "#f4f3f4"}
+                        accessibilityLabel={`Toggle ${option.title}`}
+                      />
+                    </Pressable>
+                  ))}
+                </View>
+
+                {/* Town-based Filtering */}
+                {hasAnyContentPref && (
+                  <View style={{ marginBottom: 24 }}>
+                    <Text style={styles.prefLabel}>Filter updates by town (optional)</Text>
+                    <Text style={styles.prefHint}>
+                      Select specific towns to receive updates from, or leave empty for all towns
+                    </Text>
+                    <View style={styles.townGrid}>
+                      {ALL_TOWNS.map((town) => (
+                        <Pressable
+                          key={town}
+                          onPress={() => toggleTown(town)}
+                          style={[
+                            styles.townChip,
+                            selectedTowns.includes(town) && styles.townChipActive,
+                          ]}
+                          accessibilityRole="checkbox"
+                          accessibilityLabel={town}
+                          accessibilityState={{ checked: selectedTowns.includes(town) }}
+                        >
+                          <Text
+                            style={[
+                              styles.townChipText,
+                              selectedTowns.includes(town) && styles.townChipTextActive,
+                            ]}
+                          >
+                            {town}
+                          </Text>
+                        </Pressable>
+                      ))}
+                    </View>
+                    {selectedTowns.length > 0 && (
+                      <Pressable onPress={() => setSelectedTowns([])} style={{ marginTop: 8 }}>
+                        <Text style={styles.clearText}>
+                          Clear selection ({selectedTowns.length} selected)
+                        </Text>
+                      </Pressable>
+                    )}
+                  </View>
+                )}
+
+                {subSuccess ? (
+                  <View style={styles.successBox}>
+                    <FontAwesome name="check-circle" size={24} color="#1a5632" />
+                    <Text style={styles.successTitle}>You have been subscribed.</Text>
+                    <Text style={styles.successText}>
+                      Thank you for subscribing. You will receive updates based on your selected preferences.
+                    </Text>
+                  </View>
+                ) : (
+                  <Button
+                    title="Subscribe"
+                    onPress={handleSubscribe}
+                    fullWidth
+                    accessibilityHint="Subscribes you to selected update categories"
+                  />
+                )}
+
+                <Text style={styles.disclaimerText}>
+                  You can update your preferences or unsubscribe at any time
+                </Text>
+              </View>
+            </View>
+          </View>
+        </AnimateOnScroll>
+      </View>
     </PageLayout>
   );
 }
+
+const styles = StyleSheet.create({
+  hero: {
+    backgroundColor: "#1a5632",
+    paddingVertical: 80,
+    paddingHorizontal: "8%",
+  },
+  heroInner: {
+    maxWidth: 700,
+    marginHorizontal: "auto",
+    alignItems: "center",
+  },
+  heroLabel: {
+    fontSize: 13,
+    textTransform: "uppercase",
+    letterSpacing: 3,
+    color: "#d4a843",
+    fontWeight: "700",
+    fontFamily: "Inter_600SemiBold, sans-serif",
+    marginBottom: 16,
+  },
+  heroTitle: {
+    color: "#ffffff",
+    fontFamily: "PlayfairDisplay_700Bold, serif",
+    textAlign: "center",
+    marginBottom: 16,
+  },
+  heroSubtitle: {
+    color: "rgba(255, 255, 255, 0.85)",
+    fontSize: 18,
+    fontFamily: "Inter_400Regular, sans-serif",
+    textAlign: "center",
+    lineHeight: 28,
+  },
+  section: {
+    paddingHorizontal: "8%",
+    backgroundColor: "#ffffff",
+  },
+  sectionInner: {
+    maxWidth: 1200,
+    marginHorizontal: "auto",
+    width: "100%",
+  },
+  sectionLabel: {
+    fontSize: 13,
+    textTransform: "uppercase",
+    letterSpacing: 3,
+    color: "#d4a843",
+    fontWeight: "700",
+    fontFamily: "Inter_600SemiBold, sans-serif",
+    marginBottom: 12,
+  },
+  sectionTitle: {
+    fontFamily: "PlayfairDisplay_700Bold, serif",
+    color: "#2d2d2d",
+    marginBottom: 20,
+    lineHeight: 1.3,
+  },
+  centeredHeading: {
+    alignItems: "center",
+    marginBottom: 40,
+  },
+  announcementLink: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 12,
+    backgroundColor: "rgba(26, 86, 50, 0.08)",
+    borderWidth: 1,
+    borderColor: "rgba(26, 86, 50, 0.2)",
+    borderRadius: 12,
+    padding: 16,
+    minHeight: 44,
+    ...(Platform.OS === "web"
+      ? { cursor: "pointer", transition: "background-color 0.2s ease" }
+      : {}),
+  } as any,
+  announcementLinkHover: {
+    backgroundColor: "rgba(26, 86, 50, 0.14)",
+  },
+  announcementLinkText: {
+    color: "#1a5632",
+    fontFamily: "Inter_600SemiBold, sans-serif",
+    fontWeight: "600",
+    fontSize: 15,
+  },
+  benefitsRow: {
+    flexDirection: "row",
+    gap: 24,
+    justifyContent: "center",
+  },
+  benefitsRowMobile: {
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  benefitItem: {
+    alignItems: "center",
+    width: 240,
+  },
+  benefitIcon: {
+    width: 64,
+    height: 64,
+    backgroundColor: "rgba(212, 168, 67, 0.1)",
+    borderRadius: 32,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 16,
+  },
+  benefitTitle: {
+    fontFamily: "Inter_600SemiBold, sans-serif",
+    fontWeight: "600",
+    fontSize: 16,
+    color: "#2d2d2d",
+    textAlign: "center",
+    marginBottom: 4,
+  },
+  benefitText: {
+    fontSize: 14,
+    color: "#6b6b6b",
+    fontFamily: "Inter_400Regular, sans-serif",
+    textAlign: "center",
+    lineHeight: 22,
+  },
+  formCard: {
+    backgroundColor: "#ffffff",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "rgba(212, 168, 67, 0.15)",
+    padding: 32,
+    boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.06)",
+  },
+  formRow: {
+    flexDirection: "row",
+    gap: 16,
+  },
+  formRowMobile: {
+    flexDirection: "column",
+    gap: 0,
+  },
+  formField: {
+    minWidth: 200,
+  },
+  prefLabel: {
+    fontFamily: "Inter_600SemiBold, sans-serif",
+    fontWeight: "600",
+    color: "#2d2d2d",
+    fontSize: 15,
+    marginBottom: 12,
+  },
+  prefHint: {
+    fontSize: 14,
+    color: "#6b6b6b",
+    fontFamily: "Inter_400Regular, sans-serif",
+    marginBottom: 12,
+  },
+  preferenceCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "rgba(139, 69, 19, 0.15)",
+    backgroundColor: "#ffffff",
+    minHeight: 44,
+  },
+  preferenceCardActive: {
+    borderColor: "#d4a843",
+    backgroundColor: "rgba(212, 168, 67, 0.04)",
+  },
+  prefIconWrap: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 16,
+  },
+  prefTitle: {
+    fontFamily: "Inter_600SemiBold, sans-serif",
+    fontWeight: "600",
+    fontSize: 15,
+    color: "#2d2d2d",
+  },
+  prefDesc: {
+    fontSize: 13,
+    color: "#6b6b6b",
+    fontFamily: "Inter_400Regular, sans-serif",
+  },
+  townGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  townChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "rgba(139, 69, 19, 0.25)",
+    backgroundColor: "#ffffff",
+    minHeight: 36,
+    justifyContent: "center",
+  },
+  townChipActive: {
+    backgroundColor: "#d4a843",
+    borderColor: "#d4a843",
+  },
+  townChipText: {
+    fontSize: 14,
+    color: "#2d2d2d",
+    fontFamily: "Inter_400Regular, sans-serif",
+  },
+  townChipTextActive: {
+    color: "#ffffff",
+  },
+  clearText: {
+    fontSize: 14,
+    color: "#d4a843",
+    fontFamily: "Inter_400Regular, sans-serif",
+  },
+  successBox: {
+    backgroundColor: "rgba(26, 86, 50, 0.08)",
+    borderWidth: 1,
+    borderColor: "rgba(26, 86, 50, 0.25)",
+    borderRadius: 12,
+    padding: 20,
+    alignItems: "center",
+  },
+  successTitle: {
+    color: "#1a5632",
+    fontFamily: "Inter_600SemiBold, sans-serif",
+    fontWeight: "600",
+    fontSize: 16,
+    marginTop: 8,
+  },
+  successText: {
+    color: "rgba(26, 86, 50, 0.8)",
+    fontSize: 14,
+    fontFamily: "Inter_400Regular, sans-serif",
+    textAlign: "center",
+    marginTop: 4,
+    lineHeight: 22,
+  },
+  disclaimerText: {
+    fontSize: 13,
+    color: "#6b6b6b",
+    fontFamily: "Inter_400Regular, sans-serif",
+    textAlign: "center",
+    marginTop: 16,
+  },
+});

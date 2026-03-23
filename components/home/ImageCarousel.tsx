@@ -1,32 +1,39 @@
-import { View, Pressable, Image, useWindowDimensions } from "react-native";
+import { View, Pressable, Image, StyleSheet, Platform } from "react-native";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Body } from "../ui/Typography";
+import { Text } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
+import { useResponsive } from "@/hooks/useResponsive";
+import { LinearGradient } from "expo-linear-gradient";
 
 const slides = [
   {
-    image: "https://images.unsplash.com/photo-1580746738099-78d6833b3827?w=1200&h=600&fit=crop",
-    caption: "The Akuapem Ridge - Heart of our Traditional Area",
+    image: require("@/ghana_images/emmanuel-yeboah-okine-pq66fmckyGE-unsplash.jpg"),
+    caption: "Celebrating Our Heritage — Traditional Drumming",
   },
   {
-    image: "https://images.unsplash.com/photo-1590845947376-2638caa89309?w=1200&h=600&fit=crop",
-    caption: "Traditional Festivals - Celebrating our Heritage",
+    image: require("@/ghana_images/emmanuel-yeboah-okine-Ji7swF510oM-unsplash.jpg"),
+    caption: "Traditional Dance — Keeping Culture Alive",
   },
   {
-    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&h=600&fit=crop",
-    caption: "Our Communities - United in Progress",
+    image: require("@/ghana_images/emmanuel-yeboah-okine-xx5edq1V4Ns-unsplash.jpg"),
+    caption: "Our Cultural Identity — The Heart of Akuapem",
   },
   {
-    image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1200&h=600&fit=crop",
-    caption: "Development & Growth - Building for the Future",
+    image: require("@/ghana_images/jeffrey-ofori-tOshpNl-sW4-unsplash.jpg"),
+    caption: "The Akuapem Spirit — Rooted in Tradition",
+  },
+  {
+    image: require("@/ghana_images/photo4.jpeg"),
+    caption: "The Akuapem Ridge — Lush and Beautiful",
   },
 ];
 
 export function ImageCarousel() {
-  const { width } = useWindowDimensions();
-  const isMobile = width < 768;
+  const { isMobile, isDesktop } = useResponsive();
   const [activeIndex, setActiveIndex] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const height = isMobile ? 300 : 500;
 
   const startTimer = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
@@ -50,63 +57,69 @@ export function ImageCarousel() {
   const goNext = () => goTo((activeIndex + 1) % slides.length);
   const goPrev = () => goTo((activeIndex - 1 + slides.length) % slides.length);
 
-  const height = isMobile ? 250 : 420;
-
   return (
-    <View className="relative" style={{ height }}>
+    <View style={[styles.container, { height }]}>
       {/* Image */}
       <Image
-        source={{ uri: slides[activeIndex].image }}
-        style={{ width: "100%", height }}
+        source={slides[activeIndex].image}
+        style={[styles.image, { height }]}
         resizeMode="cover"
         accessibilityLabel={slides[activeIndex].caption}
       />
 
       {/* Gradient overlay at bottom */}
-      <View
-        className="absolute bottom-0 left-0 right-0 px-4 pb-12 pt-16"
-        style={{ backgroundColor: "rgba(0,0,0,0.4)" }}
+      <LinearGradient
+        colors={["transparent", "rgba(0,0,0,0.65)"]}
+        style={styles.gradient}
       >
-        <Body className="text-white text-center font-body-semibold text-base">
-          {slides[activeIndex].caption}
-        </Body>
-      </View>
+        <Text style={styles.caption}>{slides[activeIndex].caption}</Text>
+      </LinearGradient>
 
       {/* Arrow buttons (desktop only) */}
-      {!isMobile && (
+      {isDesktop && (
         <>
           <Pressable
             onPress={goPrev}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/30 hover:bg-black/50 rounded-full items-center justify-center"
+            style={({ pressed }) => [
+              styles.arrowButton,
+              styles.arrowLeft,
+              pressed && styles.arrowPressed,
+            ]}
             accessibilityRole="button"
             accessibilityLabel="Previous slide"
           >
-            <FontAwesome name="chevron-left" size={16} color="white" />
+            <FontAwesome name="chevron-left" size={18} color="#ffffff" />
           </Pressable>
           <Pressable
             onPress={goNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/30 hover:bg-black/50 rounded-full items-center justify-center"
+            style={({ pressed }) => [
+              styles.arrowButton,
+              styles.arrowRight,
+              pressed && styles.arrowPressed,
+            ]}
             accessibilityRole="button"
             accessibilityLabel="Next slide"
           >
-            <FontAwesome name="chevron-right" size={16} color="white" />
+            <FontAwesome name="chevron-right" size={18} color="#ffffff" />
           </Pressable>
         </>
       )}
 
-      {/* Dots */}
-      <View className="absolute bottom-3 left-0 right-0 flex-row justify-center gap-2">
+      {/* Dot indicators */}
+      <View style={styles.dotsContainer}>
         {slides.map((_, index) => (
           <Pressable
             key={index}
             onPress={() => goTo(index)}
             accessibilityRole="button"
             accessibilityLabel={`Go to slide ${index + 1}`}
+            style={styles.dotTouchArea}
           >
             <View
-              className={`h-2 rounded-full ${
-                index === activeIndex ? "bg-gold w-6" : "bg-white/60 w-2"
-              }`}
+              style={[
+                styles.dot,
+                index === activeIndex ? styles.dotActive : styles.dotInactive,
+              ]}
             />
           </Pressable>
         ))}
@@ -114,3 +127,79 @@ export function ImageCarousel() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    position: "relative",
+    width: "100%",
+    overflow: "hidden",
+    backgroundColor: "#2d2d2d",
+  },
+  image: {
+    width: "100%",
+  },
+  gradient: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 24,
+    paddingBottom: 48,
+    paddingTop: 80,
+  },
+  caption: {
+    color: "#ffffff",
+    fontSize: 16,
+    fontFamily: "Inter_600SemiBold, sans-serif",
+    textAlign: "center",
+    lineHeight: 24,
+  },
+  arrowButton: {
+    position: "absolute",
+    top: "50%",
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "rgba(0,0,0,0.35)",
+    alignItems: "center",
+    justifyContent: "center",
+    transform: [{ translateY: -22 }],
+    ...(Platform.OS === "web"
+      ? { cursor: "pointer", transition: "background-color 0.2s ease" }
+      : {}),
+  } as any,
+  arrowLeft: {
+    left: 16,
+  },
+  arrowRight: {
+    right: 16,
+  },
+  arrowPressed: {
+    backgroundColor: "rgba(0,0,0,0.55)",
+  },
+  dotsContainer: {
+    position: "absolute",
+    bottom: 14,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 8,
+  },
+  dotTouchArea: {
+    padding: 4,
+  },
+  dot: {
+    height: 8,
+    borderRadius: 4,
+  },
+  dotActive: {
+    width: 24,
+    backgroundColor: "#d4a843",
+  },
+  dotInactive: {
+    width: 8,
+    backgroundColor: "rgba(255,255,255,0.6)",
+  },
+});

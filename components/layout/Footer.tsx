@@ -1,112 +1,117 @@
-import { View, Text, Pressable, Linking } from "react-native";
+import { View, Text, Pressable, Linking, StyleSheet, Platform, ScrollView } from "react-native";
 import { Link } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
-import { Accent, Body } from "../ui/Typography";
 
 const quickLinks = [
   { href: "/about", label: "About Us" },
   { href: "/towns", label: "Our Towns" },
   { href: "/community", label: "Community Updates" },
   { href: "/contact", label: "Contact" },
-  { href: "/admin", label: "Admin Portal" },
-  { href: "#donate", label: "Donate" },
+  { href: "/subscribe", label: "Subscribe" },
 ];
 
 const socialLinks = [
   { icon: "facebook", url: "https://facebook.com" },
-  { icon: "twitter", url: "https://twitter.com" },
   { icon: "instagram", url: "https://instagram.com" },
-  { icon: "youtube", url: "https://youtube.com" },
 ];
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
 
+  const scrollToTop = () => {
+    if (Platform.OS === "web") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   return (
-    <View className="bg-green-deep pt-10 pb-6" accessibilityRole={"contentinfo" as any} accessibilityLabel="Site footer">
-      <View className="px-4 max-w-7xl mx-auto w-full">
+    <View style={styles.container} accessibilityRole={"contentinfo" as any} accessibilityLabel="Site footer">
+      <View style={styles.inner}>
         {/* Top Section */}
-        <View className="flex-row flex-wrap gap-8 mb-8">
+        <View style={styles.topRow}>
           {/* Logo & About */}
-          <View className="flex-1 min-w-[250px]">
-            <View className="flex-row items-center mb-4">
-              <View className="w-12 h-12 bg-gold rounded-full items-center justify-center mr-3">
-                <Text className="text-white font-bold text-xl">AK</Text>
+          <View style={styles.aboutColumn}>
+            <View style={styles.logoRow}>
+              <View style={styles.logoBadge}>
+                <Text style={styles.logoText}>AK</Text>
               </View>
-              <Accent className="text-white">Akuapem Traditional Council</Accent>
+              <Text style={styles.siteName}>Akuapem Traditional Council</Text>
             </View>
-            <Body className="text-white/80">
+            <Text style={styles.aboutText}>
               Serving the people of Akuapem since time immemorial. Bridging
               tradition and progress for our communities.
-            </Body>
+            </Text>
           </View>
 
           {/* Quick Links */}
-          <View className="min-w-[150px]" accessibilityRole={"navigation" as any} accessibilityLabel="Footer navigation">
-            <Text className="font-heading-bold text-lg text-gold mb-4" accessibilityRole="header">
-              Quick Links
-            </Text>
+          <View style={styles.linksColumn} accessibilityRole={"navigation" as any}>
+            <Text style={styles.columnTitle}>Quick Links</Text>
             {quickLinks.map((link) => (
               <Link key={link.href} href={link.href as any} asChild>
                 <Pressable
-                  className="py-2 min-h-[44px] justify-center"
+                  style={({ hovered }: any) => [
+                    styles.linkItem,
+                    hovered && styles.linkItemHover,
+                  ]}
                   accessibilityRole="link"
-                  accessibilityLabel={link.label}
                 >
-                  <Text className="font-body text-white/80 hover:text-white">{link.label}</Text>
+                  <Text style={styles.linkText}>{link.label}</Text>
                 </Pressable>
               </Link>
             ))}
           </View>
 
           {/* Contact Info */}
-          <View className="min-w-[200px]">
-            <Text className="font-heading-bold text-lg text-gold mb-4" accessibilityRole="header">
-              Contact Us
-            </Text>
-            <View className="gap-2">
-              <View className="flex-row items-center gap-2" accessibilityLabel="Address: Akropong-Akuapem, Ghana">
-                <FontAwesome name="map-marker" size={16} color="#D4AF37" />
-                <Text className="font-body text-white/80">
-                  Akropong-Akuapem, Ghana
-                </Text>
-              </View>
-              <View className="flex-row items-center gap-2" accessibilityLabel="Phone: +233 302 401 234">
-                <FontAwesome name="phone" size={16} color="#D4AF37" />
-                <Text className="font-body text-white/80">+233 302 401 234</Text>
-              </View>
-              <View className="flex-row items-center gap-2" accessibilityLabel="Email: info@akuapemcouncil.org">
-                <FontAwesome name="envelope" size={16} color="#D4AF37" />
-                <Text className="font-body text-white/80">
-                  info@akuapemcouncil.org
-                </Text>
-              </View>
+          <View style={styles.contactColumn}>
+            <Text style={styles.columnTitle}>Contact Us</Text>
+            <View style={styles.contactItem}>
+              <FontAwesome name="map-marker" size={16} color="#d4a843" />
+              <Text style={styles.contactText}>Akropong-Akuapem, Ghana</Text>
+            </View>
+            <View style={styles.contactItem}>
+              <FontAwesome name="phone" size={16} color="#d4a843" />
+              <Text style={styles.contactText}>+233 302 401 234</Text>
+            </View>
+            <View style={styles.contactItem}>
+              <FontAwesome name="envelope" size={16} color="#d4a843" />
+              <Text style={styles.contactText}>info@akuapemcouncil.org</Text>
             </View>
           </View>
         </View>
 
         {/* Social Links */}
-        <View className="flex-row justify-center gap-4 mb-6">
+        <View style={styles.socialRow}>
           {socialLinks.map((social) => (
             <Pressable
               key={social.icon}
               onPress={() => Linking.openURL(social.url)}
-              className="w-11 h-11 bg-gold/20 hover:bg-gold/40 active:bg-gold/60 rounded-full items-center justify-center"
+              style={({ hovered }: any) => [
+                styles.socialButton,
+                hovered && styles.socialButtonHover,
+              ]}
               accessibilityRole="link"
               accessibilityLabel={`Visit our ${social.icon} page`}
             >
-              <FontAwesome
-                name={social.icon as any}
-                size={20}
-                color="#D4AF37"
-              />
+              <FontAwesome name={social.icon as any} size={20} color="#d4a843" />
             </Pressable>
           ))}
         </View>
 
+        {/* Back to Top */}
+        <Pressable
+          onPress={scrollToTop}
+          style={({ hovered }: any) => [
+            styles.backToTop,
+            hovered && styles.backToTopHover,
+          ]}
+        >
+          <FontAwesome name="chevron-up" size={12} color="#d4a843" />
+          <Text style={styles.backToTopText}>Back to Top</Text>
+        </Pressable>
+
         {/* Bottom Bar */}
-        <View className="border-t border-white/20 pt-4">
-          <Text className="font-body text-sm text-white/60 text-center">
+        <View style={styles.bottomBar}>
+          <Text style={styles.copyright}>
             © {currentYear} Akuapem Traditional Council. All rights reserved.
           </Text>
         </View>
@@ -114,3 +119,143 @@ export function Footer() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "#1a5632",
+    paddingTop: 48,
+    paddingBottom: 24,
+  },
+  inner: {
+    paddingHorizontal: "8%",
+    maxWidth: 1200,
+    marginHorizontal: "auto",
+    width: "100%",
+  },
+  topRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 32,
+    marginBottom: 32,
+  },
+  aboutColumn: {
+    flex: 1,
+    minWidth: 250,
+  },
+  logoRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  logoBadge: {
+    width: 44,
+    height: 44,
+    backgroundColor: "#d4a843",
+    borderRadius: 22,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 12,
+  },
+  logoText: {
+    color: "#ffffff",
+    fontWeight: "700",
+    fontSize: 18,
+  },
+  siteName: {
+    color: "#ffffff",
+    fontFamily: "Cinzel_400Regular, serif",
+    fontSize: 16,
+  },
+  aboutText: {
+    color: "rgba(255, 255, 255, 0.75)",
+    fontFamily: "Inter_400Regular, sans-serif",
+    fontSize: 14,
+    lineHeight: 22,
+  },
+  linksColumn: {
+    minWidth: 150,
+  },
+  columnTitle: {
+    fontFamily: "PlayfairDisplay_700Bold, serif",
+    fontSize: 18,
+    color: "#d4a843",
+    marginBottom: 16,
+  },
+  linkItem: {
+    paddingVertical: 6,
+    ...(Platform.OS === "web"
+      ? { cursor: "pointer", transition: "opacity 0.2s ease" }
+      : {}),
+  } as any,
+  linkItemHover: {
+    opacity: 1,
+  },
+  linkText: {
+    fontFamily: "Inter_400Regular, sans-serif",
+    color: "rgba(255, 255, 255, 0.75)",
+    fontSize: 14,
+  },
+  contactColumn: {
+    minWidth: 200,
+  },
+  contactItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    marginBottom: 10,
+  },
+  contactText: {
+    fontFamily: "Inter_400Regular, sans-serif",
+    color: "rgba(255, 255, 255, 0.75)",
+    fontSize: 14,
+  },
+  socialRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 16,
+    marginBottom: 20,
+  },
+  socialButton: {
+    width: 44,
+    height: 44,
+    backgroundColor: "rgba(212, 168, 67, 0.15)",
+    borderRadius: 22,
+    alignItems: "center",
+    justifyContent: "center",
+    ...(Platform.OS === "web"
+      ? { cursor: "pointer", transition: "background-color 0.3s ease" }
+      : {}),
+  } as any,
+  socialButtonHover: {
+    backgroundColor: "rgba(212, 168, 67, 0.35)",
+  },
+  backToTop: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    marginBottom: 20,
+    ...(Platform.OS === "web"
+      ? { cursor: "pointer", transition: "opacity 0.2s ease" }
+      : {}),
+  } as any,
+  backToTopHover: {
+    opacity: 0.8,
+  },
+  backToTopText: {
+    color: "#d4a843",
+    fontSize: 13,
+    fontFamily: "Inter_500Medium, sans-serif",
+  },
+  bottomBar: {
+    borderTopWidth: 1,
+    borderTopColor: "rgba(255, 255, 255, 0.15)",
+    paddingTop: 16,
+  },
+  copyright: {
+    fontFamily: "Inter_400Regular, sans-serif",
+    fontSize: 13,
+    color: "rgba(255, 255, 255, 0.5)",
+    textAlign: "center",
+  },
+});

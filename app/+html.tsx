@@ -19,8 +19,8 @@ export default function Root({ children }: { children: React.ReactNode }) {
         <meta name="author" content="Akuapem Paramount King Council" />
 
         {/* Theme Color */}
-        <meta name="theme-color" content="#D4AF37" />
-        <meta name="msapplication-TileColor" content="#D4AF37" />
+        <meta name="theme-color" content="#1a5632" />
+        <meta name="msapplication-TileColor" content="#1a5632" />
 
         {/* Open Graph Tags */}
         <meta property="og:type" content="website" />
@@ -28,6 +28,10 @@ export default function Root({ children }: { children: React.ReactNode }) {
         <meta property="og:description" content="Official website of the Akuapem Paramount King Council. Explore the history, leadership, towns, and community updates of the Akuapem Traditional Area." />
         <meta property="og:site_name" content="Akuapem Paramount King Council" />
         <meta property="og:locale" content="en_GH" />
+        <meta property="og:image" content="/assets/images/og-image.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:url" content="https://www.akuapemtraditionalcouncil.com/" />
 
         {/* Twitter Card Tags */}
         <meta name="twitter:card" content="summary_large_image" />
@@ -53,6 +57,14 @@ export default function Root({ children }: { children: React.ReactNode }) {
 }
 
 const bodyStyles = `
+html {
+  scroll-behavior: smooth;
+}
 body {
-  background-color: #F5F5F0;
-}`;
+  background-color: #f5f2eb;
+}
+/* Smooth transitions for interactive elements */
+a, button {
+  transition: color 0.2s ease, background-color 0.2s ease, opacity 0.2s ease, border-color 0.2s ease;
+}
+`;

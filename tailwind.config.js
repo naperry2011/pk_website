@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: "class",
   content: ["./app/**/*.{js,jsx,ts,tsx}", "./components/**/*.{js,jsx,ts,tsx}", "./lib/**/*.{js,jsx,ts,tsx}", "./context/**/*.{js,jsx,ts,tsx}", "./hooks/**/*.{js,jsx,ts,tsx}"],
   presets: [require("nativewind/preset")],
   theme: {
@@ -7,19 +8,20 @@ module.exports = {
       colors: {
         // Primary Colors
         gold: {
-          DEFAULT: "#D4AF37",
-          light: "#FFF8DC",
+          DEFAULT: "#d4a843",
+          light: "#f0e6c8",
         },
         green: {
-          deep: "#1B4D3E",
+          deep: "#1a5632",
         },
         red: {
           kente: "#8B0000",
         },
         // Secondary Colors
         gray: {
-          warm: "#F5F5F0",
-          charcoal: "#2C3E50",
+          warm: "#f5f2eb",
+          charcoal: "#2d2d2d",
+          muted: "#6b6b6b",
         },
         // Accent Colors
         blue: {
@@ -40,7 +42,7 @@ module.exports = {
       fontSize: {
         // Mobile-first sizes
         h1: ["36px", { lineHeight: "1.2" }],
-        "h1-desktop": ["48px", { lineHeight: "1.2" }],
+        "h1-desktop": ["56px", { lineHeight: "1.2" }],
         h2: ["28px", { lineHeight: "1.3" }],
         "h2-desktop": ["36px", { lineHeight: "1.3" }],
         h3: ["24px", { lineHeight: "1.4" }],

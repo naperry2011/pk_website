@@ -1,4 +1,4 @@
-import { View, Pressable } from "react-native";
+import { View, Pressable, Platform } from "react-native";
 import { ReactNode } from "react";
 
 interface CardProps {
@@ -9,9 +9,24 @@ interface CardProps {
   accessibilityHint?: string;
 }
 
+const isWeb = Platform.OS === "web";
+
+const webTransitionStyle = isWeb
+  ? ({
+      transition: "box-shadow 0.25s ease, transform 0.25s ease",
+    } as any)
+  : undefined;
+
+const webHoverStyle = isWeb
+  ? ({
+      boxShadow: "0 6px 20px rgba(0,0,0,0.08)",
+      transform: "translateY(-2px)",
+    } as any)
+  : undefined;
+
 export function Card({ children, onPress, className = "", accessibilityLabel, accessibilityHint }: CardProps) {
-  const cardStyles = `
-    bg-white rounded-xl p-4 shadow-sm border border-gray-warm hover:shadow-md
+  const cardClasses = `
+    bg-white p-4 shadow-sm border border-gray-warm
     ${className}
   `;
 
@@ -22,14 +37,26 @@ export function Card({ children, onPress, className = "", accessibilityLabel, ac
         accessibilityRole="button"
         accessibilityLabel={accessibilityLabel}
         accessibilityHint={accessibilityHint}
-        className={`${cardStyles} active:bg-gray-warm`}
+        className={`${cardClasses} active:bg-gray-warm`}
+        style={({ hovered }: any) => [
+          { borderRadius: 12, overflow: "hidden" as const },
+          webTransitionStyle,
+          hovered && webHoverStyle,
+        ]}
       >
         {children}
       </Pressable>
     );
   }
 
-  return <View className={cardStyles}>{children}</View>;
+  return (
+    <View
+      className={cardClasses}
+      style={[{ borderRadius: 12, overflow: "hidden" as const }, webTransitionStyle]}
+    >
+      {children}
+    </View>
+  );
 }
 
 export function CardHeader({ children }: { children: ReactNode }) {

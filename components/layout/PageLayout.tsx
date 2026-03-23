@@ -1,8 +1,8 @@
-import { View, ScrollView } from "react-native";
+import { View, ScrollView, Platform } from "react-native";
 import { ReactNode } from "react";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
-import { FadeIn } from "../ui/FadeIn";
+import { AnimateOnScroll } from "../ui/AnimateOnScroll";
 
 interface PageLayoutProps {
   children: ReactNode;
@@ -49,16 +49,12 @@ export function Section({
   };
 
   const content = (
-    <View className={`py-12 md:py-16 px-4 md:px-8 ${bgColors[background]} ${className}`}>
+    <View className={`py-16 md:py-24 px-[8%] ${bgColors[background]} ${className}`}>
       <View className="max-w-7xl mx-auto w-full">{children}</View>
     </View>
   );
 
   if (!animate) return content;
 
-  return (
-    <FadeIn delay={100} duration={500}>
-      {content}
-    </FadeIn>
-  );
+  return <AnimateOnScroll>{content}</AnimateOnScroll>;
 }

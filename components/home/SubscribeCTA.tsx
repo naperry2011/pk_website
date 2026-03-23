@@ -1,38 +1,113 @@
-import { View } from "react-native";
+import { View, Text, Pressable, StyleSheet, Platform } from "react-native";
 import { Link } from "expo-router";
-import { H2, Body } from "../ui/Typography";
-import { Button } from "../ui/Button";
-import { FadeIn } from "../ui/FadeIn";
+import { useResponsive } from "@/hooks/useResponsive";
+import { AnimateOnScroll } from "@/components/ui/AnimateOnScroll";
+import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 
 export function SubscribeCTA() {
+  const { isMobile } = useResponsive();
+
   return (
-    <View className="py-16 md:py-20 px-4 md:px-8 bg-gold">
-      <FadeIn>
-        <View className="max-w-3xl mx-auto items-center">
-          {/* Decorative line */}
-          <View className="w-12 h-0.5 bg-white/40 mb-6" />
+    <View style={styles.container}>
+      {/* Background placeholder image */}
+      <View style={StyleSheet.absoluteFill}>
+        <PlaceholderImage
+          height={500}
+          label="Community gathering"
+          style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
+        />
+      </View>
 
-          <H2 className="text-white text-center mb-4">
+      {/* Gold overlay */}
+      <View style={[StyleSheet.absoluteFill, styles.overlay]} />
+
+      <AnimateOnScroll>
+        <View style={[styles.content, { paddingVertical: isMobile ? 60 : 100 }]}>
+          {/* Top divider */}
+          <View style={styles.divider} />
+
+          <Text style={[styles.heading, { fontSize: isMobile ? 28 : 36, lineHeight: isMobile ? 36 : 47 }]}>
             Stay Connected with Your Community
-          </H2>
+          </Text>
 
-          <Body className="text-white/90 text-center text-lg mb-8 max-w-xl">
-            Subscribe to receive announcements about obituaries, weddings, council
-            news, and cultural events. Choose what matters to you.
-          </Body>
+          <Text style={styles.description}>
+            Festival dates, council decisions, obituaries, wedding announcements
+            — delivered to your inbox.
+          </Text>
 
           <Link href="/subscribe" asChild>
-            <Button
-              title="Subscribe Now"
-              variant="secondary"
-              onPress={() => {}}
-            />
+            <Pressable
+              style={({ hovered }: any) => [
+                styles.button,
+                hovered && styles.buttonHover,
+              ]}
+            >
+              <Text style={styles.buttonText}>Subscribe Now</Text>
+            </Pressable>
           </Link>
 
-          {/* Decorative line */}
-          <View className="w-12 h-0.5 bg-white/40 mt-6" />
+          {/* Bottom divider */}
+          <View style={styles.divider} />
         </View>
-      </FadeIn>
+      </AnimateOnScroll>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    position: "relative",
+    overflow: "hidden",
+  },
+  overlay: {
+    backgroundColor: "rgba(212, 168, 67, 0.80)",
+  },
+  content: {
+    alignItems: "center",
+    paddingHorizontal: "8%",
+    zIndex: 1,
+    maxWidth: 800,
+    width: "100%",
+    marginHorizontal: "auto",
+  },
+  divider: {
+    width: 60,
+    height: 2,
+    backgroundColor: "#1a5632",
+    marginVertical: 24,
+  },
+  heading: {
+    color: "#ffffff",
+    fontFamily: "PlayfairDisplay_700Bold, serif",
+    textAlign: "center",
+    marginBottom: 16,
+  },
+  description: {
+    color: "rgba(255, 255, 255, 0.95)",
+    fontSize: 16,
+    fontFamily: "Inter_400Regular, sans-serif",
+    textAlign: "center",
+    maxWidth: 550,
+    lineHeight: 24,
+    marginBottom: 32,
+  },
+  button: {
+    backgroundColor: "#1a5632",
+    paddingVertical: 16,
+    paddingHorizontal: 40,
+    borderRadius: 8,
+    marginBottom: 8,
+    ...(Platform.OS === "web"
+      ? { transition: "background-color 0.3s ease", cursor: "pointer" }
+      : {}),
+  } as any,
+  buttonHover: {
+    backgroundColor: "#143f26",
+  },
+  buttonText: {
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "600",
+    fontFamily: "Inter_600SemiBold, sans-serif",
+  },
+});

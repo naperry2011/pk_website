@@ -25,7 +25,7 @@ export function Input({ label, error, className = "", accessibilityHint, ...prop
           focus:border-gold
           ${className}
         `}
-        placeholderTextColor="#2C3E50AA"
+        placeholderTextColor="#2d2d2dAA"
         {...props}
       />
       {error && (
@@ -65,7 +65,7 @@ export function TextArea({
           focus:border-gold
           ${className}
         `}
-        placeholderTextColor="#2C3E50AA"
+        placeholderTextColor="#2d2d2dAA"
         {...props}
       />
       {error && (

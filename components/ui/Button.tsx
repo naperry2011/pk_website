@@ -1,4 +1,4 @@
-import { Pressable, Text, ActivityIndicator } from "react-native";
+import { Pressable, Text, ActivityIndicator, Platform } from "react-native";
 
 type ButtonVariant = "primary" | "secondary" | "outline" | "danger";
 
@@ -14,10 +14,10 @@ interface ButtonProps {
 }
 
 const variantStyles = {
-  primary: "bg-gold hover:bg-gold/90 active:bg-gold/80",
-  secondary: "bg-green-deep hover:bg-green-deep/90 active:bg-green-deep/80",
-  outline: "bg-transparent border-2 border-gold hover:bg-gold-light/50 active:bg-gold-light",
-  danger: "bg-red-kente hover:bg-red-kente/90 active:bg-red-kente/80",
+  primary: "bg-gold active:bg-gold/80",
+  secondary: "bg-green-deep active:bg-green-deep/80",
+  outline: "bg-transparent border-2 border-gold active:bg-gold-light",
+  danger: "bg-red-kente active:bg-red-kente/80",
 };
 
 const textStyles = {
@@ -26,6 +26,8 @@ const textStyles = {
   outline: "text-gold",
   danger: "text-white",
 };
+
+const isWeb = Platform.OS === "web";
 
 export function Button({
   title,
@@ -51,18 +53,34 @@ export function Button({
         ${fullWidth ? "w-full" : ""}
         ${disabled ? "opacity-50" : ""}
       `}
+      style={
+        isWeb
+          ? ({
+              cursor: disabled ? "not-allowed" : "pointer",
+              transition:
+                "background-color 0.25s ease, opacity 0.25s ease, transform 0.15s ease",
+            } as any)
+          : undefined
+      }
     >
-      {loading ? (
-        <ActivityIndicator
-          color={variant === "outline" ? "#D4AF37" : "#FFFFFF"}
-        />
-      ) : (
-        <Text
-          className={`font-body-semibold text-base ${textStyles[variant]}`}
-        >
-          {title}
-        </Text>
-      )}
+      {({ hovered }: { hovered?: boolean }) =>
+        loading ? (
+          <ActivityIndicator
+            color={variant === "outline" ? "#d4a843" : "#FFFFFF"}
+          />
+        ) : (
+          <Text
+            className={`font-body-semibold text-base ${textStyles[variant]}`}
+            style={
+              isWeb && hovered && !disabled
+                ? ({ opacity: 0.9 } as any)
+                : undefined
+            }
+          >
+            {title}
+          </Text>
+        )
+      }
     </Pressable>
   );
 }

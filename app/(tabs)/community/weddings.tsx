@@ -1,20 +1,19 @@
-import { View, Pressable, useWindowDimensions } from "react-native";
+import { View, Text, Pressable, StyleSheet, Platform } from "react-native";
 import { useState } from "react";
-import { PageLayout, Section } from "@/components/layout";
-import { H1, H2, H3, Body } from "@/components/ui/Typography";
+import { PageLayout } from "@/components/layout";
 import { Button } from "@/components/ui/Button";
 import { Input, TextArea } from "@/components/ui/Input";
-import { Card, CardContent } from "@/components/ui/Card";
 import { FontAwesome } from "@expo/vector-icons";
 import { useWeddings, useCreateWedding } from "@/hooks/useWeddings";
 import { useTowns } from "@/hooks/useTowns";
 import { LoadingState } from "@/components/ui/LoadingState";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { TownFilterDropdown, HelpfulResources } from "@/components/community";
+import { AnimateOnScroll } from "@/components/ui/AnimateOnScroll";
+import { useResponsive } from "@/hooks/useResponsive";
 
 export default function WeddingsScreen() {
-  const { width } = useWindowDimensions();
-  const isMobile = width < 768;
+  const { isMobile } = useResponsive();
   const [showForm, setShowForm] = useState(false);
   const [selectedTown, setSelectedTown] = useState("");
   const [filterTown, setFilterTown] = useState("");
@@ -107,319 +106,583 @@ export default function WeddingsScreen() {
   return (
     <PageLayout>
       {/* Hero */}
-      <View className="bg-gold py-16 md:py-20 px-4 md:px-8">
-        <View className="max-w-4xl mx-auto items-center">
-          <H1 className="text-white text-center mb-4">Wedding Announcements</H1>
-          <Body className="text-white/90 text-center text-lg">
+      <View style={styles.hero}>
+        <View style={styles.heroInner}>
+          <Text style={styles.heroLabel}>CELEBRATIONS</Text>
+          <Text style={[styles.heroTitle, { fontSize: isMobile ? 36 : 48 }]}>
+            Wedding Announcements
+          </Text>
+          <Text style={styles.heroSubtitle}>
             Celebrating love and union in our community
-          </Body>
+          </Text>
         </View>
       </View>
 
-      {/* Actions */}
-      <Section background="white">
-        <View className="flex-row flex-wrap gap-4 justify-between items-center mb-8">
-          <H2>Recent Announcements</H2>
-          <Button
-            title={showForm ? "View Announcements" : "Submit Announcement"}
-            onPress={() => setShowForm(!showForm)}
-            variant={showForm ? "outline" : "primary"}
-          />
-        </View>
+      {/* Actions & Content */}
+      <View style={[styles.section, { paddingVertical: isMobile ? 60 : 100 }]}>
+        <AnimateOnScroll>
+          <View style={styles.sectionInner}>
+            <View style={styles.actionsRow}>
+              <Text style={[styles.actionsTitle, { fontSize: isMobile ? 24 : 30 }]}>
+                Recent Announcements
+              </Text>
+              <Button
+                title={showForm ? "View Announcements" : "Submit Announcement"}
+                onPress={() => setShowForm(!showForm)}
+                variant={showForm ? "outline" : "primary"}
+              />
+            </View>
 
-        {showForm ? (
-          /* Submission Form */
-          <View className="max-w-2xl mx-auto">
-            <Card>
-              <CardContent>
-                <H3 className="mb-6">Announce Your Wedding</H3>
+            {showForm ? (
+              /* Submission Form */
+              <View style={{ maxWidth: 700, marginHorizontal: "auto", width: "100%" }}>
+                <View style={styles.formCard}>
+                  <Text style={styles.formTitle}>Announce Your Wedding</Text>
 
-                <View className="flex-row gap-4 flex-wrap">
-                  <View className="flex-1 min-w-[200px]">
-                    <Input
-                      label="Bride's Name *"
-                      placeholder="Full name"
-                      value={weddingForm.brideName}
-                      onChangeText={(text) => {
-                        setWeddingForm({ ...weddingForm, brideName: text });
-                        if (weddingErrors.brideName) setWeddingErrors((prev) => ({ ...prev, brideName: "" }));
-                      }}
-                      error={weddingErrors.brideName}
-                    />
+                  <View style={[styles.formRow, isMobile && styles.formRowMobile]}>
+                    <View style={[styles.formField, !isMobile && { flex: 1 }]}>
+                      <Input
+                        label="Bride's Name *"
+                        placeholder="Full name"
+                        value={weddingForm.brideName}
+                        onChangeText={(text) => {
+                          setWeddingForm({ ...weddingForm, brideName: text });
+                          if (weddingErrors.brideName) setWeddingErrors((prev) => ({ ...prev, brideName: "" }));
+                        }}
+                        error={weddingErrors.brideName}
+                      />
+                    </View>
+                    <View style={[styles.formField, !isMobile && { flex: 1 }]}>
+                      <Input
+                        label="Groom's Name *"
+                        placeholder="Full name"
+                        value={weddingForm.groomName}
+                        onChangeText={(text) => {
+                          setWeddingForm({ ...weddingForm, groomName: text });
+                          if (weddingErrors.groomName) setWeddingErrors((prev) => ({ ...prev, groomName: "" }));
+                        }}
+                        error={weddingErrors.groomName}
+                      />
+                    </View>
                   </View>
-                  <View className="flex-1 min-w-[200px]">
-                    <Input
-                      label="Groom's Name *"
-                      placeholder="Full name"
-                      value={weddingForm.groomName}
-                      onChangeText={(text) => {
-                        setWeddingForm({ ...weddingForm, groomName: text });
-                        if (weddingErrors.groomName) setWeddingErrors((prev) => ({ ...prev, groomName: "" }));
-                      }}
-                      error={weddingErrors.groomName}
-                    />
+
+                  <View style={[styles.formRow, isMobile && styles.formRowMobile]}>
+                    <View style={[styles.formField, !isMobile && { flex: 1 }]}>
+                      <Input
+                        label="Wedding Start Date *"
+                        placeholder="YYYY-MM-DD"
+                        value={weddingForm.weddingDate}
+                        onChangeText={(text) => {
+                          setWeddingForm({ ...weddingForm, weddingDate: text });
+                          if (weddingErrors.weddingDate) setWeddingErrors((prev) => ({ ...prev, weddingDate: "" }));
+                        }}
+                        error={weddingErrors.weddingDate}
+                      />
+                    </View>
+                    <View style={[styles.formField, !isMobile && { flex: 1 }]}>
+                      <Input
+                        label="Wedding End Date"
+                        placeholder="YYYY-MM-DD"
+                        value={weddingForm.weddingEndDate}
+                        onChangeText={(text) => setWeddingForm({ ...weddingForm, weddingEndDate: text })}
+                      />
+                    </View>
                   </View>
-                </View>
 
-                <View className="flex-row gap-4 flex-wrap">
-                  <View className="flex-1 min-w-[200px]">
-                    <Input
-                      label="Wedding Start Date *"
-                      placeholder="YYYY-MM-DD"
-                      value={weddingForm.weddingDate}
-                      onChangeText={(text) => {
-                        setWeddingForm({ ...weddingForm, weddingDate: text });
-                        if (weddingErrors.weddingDate) setWeddingErrors((prev) => ({ ...prev, weddingDate: "" }));
-                      }}
-                      error={weddingErrors.weddingDate}
-                    />
-                  </View>
-                  <View className="flex-1 min-w-[200px]">
-                    <Input
-                      label="Wedding End Date"
-                      placeholder="YYYY-MM-DD"
-                      value={weddingForm.weddingEndDate}
-                      onChangeText={(text) => setWeddingForm({ ...weddingForm, weddingEndDate: text })}
-                    />
-                  </View>
-                </View>
-
-                <Input
-                  label="Venue *"
-                  placeholder="Church or location name"
-                  value={weddingForm.venue}
-                  onChangeText={(text) => {
-                    setWeddingForm({ ...weddingForm, venue: text });
-                    if (weddingErrors.venue) setWeddingErrors((prev) => ({ ...prev, venue: "" }));
-                  }}
-                  error={weddingErrors.venue}
-                />
-
-                <View className="mb-4">
-                  <Body className="font-body-medium text-gray-charcoal mb-2">
-                    Town
-                  </Body>
-                  <View className="flex-row flex-wrap gap-2">
-                    {(towns ?? []).map((town) => (
-                      <Pressable
-                        key={town.id}
-                        onPress={() => setSelectedTown(town.id)}
-                        className={`px-3 py-2 rounded-lg border min-h-[44px] justify-center ${
-                          selectedTown === town.id
-                            ? "bg-gold border-gold"
-                            : "bg-white border-brown-earth/30"
-                        }`}
-                        accessibilityRole="radio"
-                        accessibilityLabel={town.name}
-                        accessibilityState={{ selected: selectedTown === town.id }}
-                      >
-                        <Body
-                          className={
-                            selectedTown === town.id
-                              ? "text-white"
-                              : "text-gray-charcoal"
-                          }
-                        >
-                          {town.name}
-                        </Body>
-                      </Pressable>
-                    ))}
-                  </View>
-                </View>
-
-                <TextArea
-                  label="Message (Optional)"
-                  placeholder="Share a message with the community..."
-                  value={weddingForm.message}
-                  onChangeText={(text) => setWeddingForm({ ...weddingForm, message: text })}
-                />
-
-                <View className="mb-6">
-                  <Body className="font-body-medium text-gray-charcoal mb-2">
-                    Photos
-                  </Body>
-                  <Pressable
-                    className="border-2 border-dashed border-brown-earth/30 rounded-lg p-8 items-center min-h-[44px]"
-                    accessibilityRole="button"
-                    accessibilityLabel="Upload engagement photos"
-                    accessibilityHint="Tap to upload up to 3 engagement photos"
-                  >
-                    <FontAwesome name="camera" size={32} color="#8B451350" />
-                    <Body className="text-gray-charcoal/60 mt-2">
-                      Tap to upload engagement photos
-                    </Body>
-                    <Body className="text-sm text-gray-charcoal/40">
-                      Max 5MB each, up to 3 photos
-                    </Body>
-                  </Pressable>
-                </View>
-
-                <Input
-                  label="Contact Email"
-                  placeholder="email@example.com"
-                  keyboardType="email-address"
-                  value={weddingForm.contactEmail}
-                  onChangeText={(text) => {
-                    setWeddingForm({ ...weddingForm, contactEmail: text });
-                    if (weddingErrors.contactEmail) setWeddingErrors((prev) => ({ ...prev, contactEmail: "" }));
-                  }}
-                  error={weddingErrors.contactEmail}
-                  accessibilityHint="Enter contact email address"
-                />
-
-                {/* Submitted By Section */}
-                <View className="border-t border-brown-earth/20 pt-4 mt-4">
-                  <H3 className="mb-4 text-base">Your Information (Submitter)</H3>
                   <Input
-                    label="Your Name *"
-                    placeholder="Full name"
-                    value={weddingForm.submittedByName}
+                    label="Venue *"
+                    placeholder="Church or location name"
+                    value={weddingForm.venue}
                     onChangeText={(text) => {
-                      setWeddingForm({ ...weddingForm, submittedByName: text });
-                      if (weddingErrors.submittedByName) setWeddingErrors((prev) => ({ ...prev, submittedByName: "" }));
+                      setWeddingForm({ ...weddingForm, venue: text });
+                      if (weddingErrors.venue) setWeddingErrors((prev) => ({ ...prev, venue: "" }));
                     }}
-                    error={weddingErrors.submittedByName}
+                    error={weddingErrors.venue}
                   />
+
+                  <View style={{ marginBottom: 16 }}>
+                    <Text style={styles.fieldLabel}>Town</Text>
+                    <View style={styles.townGrid}>
+                      {(towns ?? []).map((town) => (
+                        <Pressable
+                          key={town.id}
+                          onPress={() => setSelectedTown(town.id)}
+                          style={[
+                            styles.townChip,
+                            selectedTown === town.id && styles.townChipActive,
+                          ]}
+                          accessibilityRole="radio"
+                          accessibilityLabel={town.name}
+                          accessibilityState={{ selected: selectedTown === town.id }}
+                        >
+                          <Text
+                            style={[
+                              styles.townChipText,
+                              selectedTown === town.id && styles.townChipTextActive,
+                            ]}
+                          >
+                            {town.name}
+                          </Text>
+                        </Pressable>
+                      ))}
+                    </View>
+                  </View>
+
+                  <TextArea
+                    label="Message (Optional)"
+                    placeholder="Share a message with the community..."
+                    value={weddingForm.message}
+                    onChangeText={(text) => setWeddingForm({ ...weddingForm, message: text })}
+                  />
+
+                  <View style={{ marginBottom: 24 }}>
+                    <Text style={styles.fieldLabel}>Photos</Text>
+                    <Pressable
+                      style={styles.uploadBox}
+                      accessibilityRole="button"
+                      accessibilityLabel="Upload engagement photos"
+                      accessibilityHint="Tap to upload up to 3 engagement photos"
+                    >
+                      <FontAwesome name="camera" size={32} color="rgba(139, 69, 19, 0.3)" />
+                      <Text style={styles.uploadText}>Tap to upload engagement photos</Text>
+                      <Text style={styles.uploadHint}>Max 5MB each, up to 3 photos</Text>
+                    </Pressable>
+                  </View>
+
                   <Input
-                    label="Your Email *"
+                    label="Contact Email"
                     placeholder="email@example.com"
                     keyboardType="email-address"
-                    value={weddingForm.submittedByEmail}
+                    value={weddingForm.contactEmail}
                     onChangeText={(text) => {
-                      setWeddingForm({ ...weddingForm, submittedByEmail: text });
-                      if (weddingErrors.submittedByEmail) setWeddingErrors((prev) => ({ ...prev, submittedByEmail: "" }));
+                      setWeddingForm({ ...weddingForm, contactEmail: text });
+                      if (weddingErrors.contactEmail) setWeddingErrors((prev) => ({ ...prev, contactEmail: "" }));
                     }}
-                    error={weddingErrors.submittedByEmail}
+                    error={weddingErrors.contactEmail}
+                    accessibilityHint="Enter contact email address"
                   />
-                  <Input
-                    label="Your Phone Number"
-                    placeholder="+233 XX XXX XXXX"
-                    keyboardType="phone-pad"
-                    value={weddingForm.submittedByPhone}
-                    onChangeText={(text) => setWeddingForm({ ...weddingForm, submittedByPhone: text })}
-                  />
+
+                  {/* Submitted By Section */}
+                  <View style={styles.divider}>
+                    <Text style={styles.submitterTitle}>Your Information (Submitter)</Text>
+                    <Input
+                      label="Your Name *"
+                      placeholder="Full name"
+                      value={weddingForm.submittedByName}
+                      onChangeText={(text) => {
+                        setWeddingForm({ ...weddingForm, submittedByName: text });
+                        if (weddingErrors.submittedByName) setWeddingErrors((prev) => ({ ...prev, submittedByName: "" }));
+                      }}
+                      error={weddingErrors.submittedByName}
+                    />
+                    <Input
+                      label="Your Email *"
+                      placeholder="email@example.com"
+                      keyboardType="email-address"
+                      value={weddingForm.submittedByEmail}
+                      onChangeText={(text) => {
+                        setWeddingForm({ ...weddingForm, submittedByEmail: text });
+                        if (weddingErrors.submittedByEmail) setWeddingErrors((prev) => ({ ...prev, submittedByEmail: "" }));
+                      }}
+                      error={weddingErrors.submittedByEmail}
+                    />
+                    <Input
+                      label="Your Phone Number"
+                      placeholder="+233 XX XXX XXXX"
+                      keyboardType="phone-pad"
+                      value={weddingForm.submittedByPhone}
+                      onChangeText={(text) => setWeddingForm({ ...weddingForm, submittedByPhone: text })}
+                    />
+                  </View>
+
+                  {submitError ? (
+                    <View style={styles.errorBox}>
+                      <Text style={styles.errorText}>{submitError}</Text>
+                    </View>
+                  ) : null}
+
+                  {formSubmitted ? (
+                    <View style={styles.successBox}>
+                      <FontAwesome name="check-circle" size={24} color="#1a5632" />
+                      <Text style={styles.successTitle}>Thank you for your submission.</Text>
+                      <Text style={styles.successText}>
+                        Your wedding announcement has been received and will be reviewed before publishing.
+                      </Text>
+                    </View>
+                  ) : (
+                    <Button
+                      title="Submit Announcement"
+                      onPress={handleWeddingSubmit}
+                      fullWidth
+                      loading={createWedding.isPending}
+                      accessibilityHint="Submits the wedding announcement for review"
+                    />
+                  )}
+
+                  <Text style={styles.disclaimerText}>
+                    All submissions are reviewed before publishing
+                  </Text>
+                </View>
+              </View>
+            ) : isLoading ? (
+              <LoadingState message="Loading weddings..." />
+            ) : error ? (
+              <ErrorState message="Failed to load weddings." onRetry={refetch} />
+            ) : (
+              <View style={[styles.contentRow, isMobile && styles.contentRowMobile]}>
+                {/* Main Content */}
+                <View style={!isMobile ? { flex: 1 } : undefined}>
+                  {/* Town Filter */}
+                  <TownFilterDropdown selectedTown={filterTown} onSelectTown={setFilterTown} />
+
+                  {/* Wedding Listings */}
+                  <View style={{ maxWidth: 800 }}>
+                    {filteredWeddings.map((wedding) => (
+                      <View key={wedding.id} style={styles.listingCard}>
+                        <View style={{ alignItems: "center", paddingVertical: 16 }}>
+                          {/* Couple icons */}
+                          <View
+                            style={styles.coupleRow}
+                            accessibilityLabel={`Wedding of ${wedding.bride} and ${wedding.groom}`}
+                          >
+                            <View style={styles.coupleIcon}>
+                              <FontAwesome name="user" size={24} color="#d4a843" />
+                            </View>
+                            <FontAwesome name="heart" size={24} color="#8B0000" />
+                            <View style={styles.coupleIcon}>
+                              <FontAwesome name="user" size={24} color="#d4a843" />
+                            </View>
+                          </View>
+
+                          <Text style={styles.coupleName}>
+                            {wedding.bride} & {wedding.groom}
+                          </Text>
+
+                          <View style={styles.weddingDetail}>
+                            <FontAwesome name="calendar" size={14} color="#d4a843" />
+                            <Text style={styles.weddingDetailText}>
+                              {formatDateRange(wedding.date, wedding.end_date)}
+                            </Text>
+                          </View>
+
+                          <View style={styles.weddingDetail}>
+                            <FontAwesome name="map-marker" size={14} color="#1a5632" />
+                            <Text style={[styles.weddingDetailText, { color: "#6b6b6b" }]}>
+                              {wedding.venue}
+                            </Text>
+                          </View>
+
+                          <Text style={styles.weddingTown}>{getTownName(wedding.town_id)}</Text>
+
+                          {/* Submitted By Info */}
+                          {wedding.submitted_by_name && (
+                            <View style={styles.submittedByBox}>
+                              <Text style={styles.submittedByText}>
+                                Submitted by: {wedding.submitted_by_name}
+                              </Text>
+                              {wedding.submitted_by_email && (
+                                <Text style={styles.submittedByText}>
+                                  {wedding.submitted_by_email}
+                                </Text>
+                              )}
+                              {wedding.submitted_by_phone && (
+                                <Text style={styles.submittedByText}>
+                                  {wedding.submitted_by_phone}
+                                </Text>
+                              )}
+                            </View>
+                          )}
+                        </View>
+                      </View>
+                    ))}
+
+                    {filteredWeddings.length === 0 && (
+                      <View style={styles.emptyState}>
+                        <FontAwesome name="inbox" size={48} color="rgba(45, 45, 45, 0.15)" />
+                        <Text style={styles.emptyText}>
+                          No wedding announcements at this time
+                        </Text>
+                      </View>
+                    )}
+                  </View>
                 </View>
 
-                {submitError ? (
-                  <View className="bg-red-kente/10 border border-red-kente/30 rounded-lg p-3 mb-4">
-                    <Body className="text-red-kente text-center text-sm">{submitError}</Body>
-                  </View>
-                ) : null}
-
-                {formSubmitted ? (
-                  <View className="bg-green-deep/10 border border-green-deep/30 rounded-lg p-4 items-center">
-                    <FontAwesome name="check-circle" size={24} color="#1B4D3E" />
-                    <Body className="text-green-deep font-body-semibold mt-2">
-                      Thank you for your submission.
-                    </Body>
-                    <Body className="text-green-deep/80 text-sm text-center mt-1">
-                      Your wedding announcement has been received and will be reviewed before publishing.
-                    </Body>
-                  </View>
-                ) : (
-                  <Button
-                    title="Submit Announcement"
-                    onPress={handleWeddingSubmit}
-                    fullWidth
-                    loading={createWedding.isPending}
-                    accessibilityHint="Submits the wedding announcement for review"
-                  />
-                )}
-
-                <Body className="text-sm text-gray-charcoal/60 text-center mt-4">
-                  All submissions are reviewed before publishing
-                </Body>
-              </CardContent>
-            </Card>
-          </View>
-        ) : isLoading ? (
-          <LoadingState message="Loading weddings..." />
-        ) : error ? (
-          <ErrorState message="Failed to load weddings." onRetry={refetch} />
-        ) : (
-          <View className={isMobile ? "" : "flex-row gap-8"}>
-            {/* Main Content */}
-            <View className={isMobile ? "" : "flex-1"}>
-              {/* Town Filter */}
-              <TownFilterDropdown selectedTown={filterTown} onSelectTown={setFilterTown} />
-
-              {/* Wedding Listings */}
-              <View className="max-w-3xl">
-                {filteredWeddings.map((wedding) => (
-                  <Card key={wedding.id} className="mb-4">
-                    <CardContent>
-                      <View className="items-center py-4">
-                        {/* Couple icons */}
-                        <View
-                          className="flex-row items-center gap-4 mb-4"
-                          accessibilityLabel={`Wedding of ${wedding.bride} and ${wedding.groom}`}
-                        >
-                          <View className="w-16 h-16 bg-gold/10 rounded-full items-center justify-center" accessibilityLabel="Bride">
-                            <FontAwesome name="user" size={24} color="#D4AF37" />
-                          </View>
-                          <FontAwesome name="heart" size={24} color="#8B0000" />
-                          <View className="w-16 h-16 bg-gold/10 rounded-full items-center justify-center" accessibilityLabel="Groom">
-                            <FontAwesome name="user" size={24} color="#D4AF37" />
-                          </View>
-                        </View>
-
-                        <H3 className="text-center mb-2">
-                          {wedding.bride} & {wedding.groom}
-                        </H3>
-
-                        <View className="flex-row items-center gap-2 mb-1">
-                          <FontAwesome name="calendar" size={14} color="#D4AF37" />
-                          <Body>{formatDateRange(wedding.date, wedding.end_date)}</Body>
-                        </View>
-
-                        <View className="flex-row items-center gap-2 mb-1">
-                          <FontAwesome name="map-marker" size={14} color="#1B4D3E" />
-                          <Body className="text-gray-charcoal/70">{wedding.venue}</Body>
-                        </View>
-
-                        <Body className="text-sm text-gold mt-2">{getTownName(wedding.town_id)}</Body>
-
-                        {/* Submitted By Info */}
-                        {wedding.submitted_by_name && (
-                          <View className="mt-3 pt-3 border-t border-brown-earth/10 w-full items-center">
-                            <Body className="text-xs text-gray-charcoal/50">
-                              Submitted by: {wedding.submitted_by_name}
-                            </Body>
-                            {wedding.submitted_by_email && (
-                              <Body className="text-xs text-gray-charcoal/50">
-                                {wedding.submitted_by_email}
-                              </Body>
-                            )}
-                            {wedding.submitted_by_phone && (
-                              <Body className="text-xs text-gray-charcoal/50">
-                                {wedding.submitted_by_phone}
-                              </Body>
-                            )}
-                          </View>
-                        )}
-                      </View>
-                    </CardContent>
-                  </Card>
-                ))}
-
-                {filteredWeddings.length === 0 && (
-                  <View className="py-12 items-center">
-                    <FontAwesome name="inbox" size={48} color="#2C3E5030" />
-                    <Body className="text-gray-charcoal/50 mt-4">
-                      No wedding announcements at this time
-                    </Body>
-                  </View>
-                )}
+                {/* Sidebar - Helpful Resources */}
+                <View style={isMobile ? { marginTop: 32 } : { width: 300 }}>
+                  <HelpfulResources />
+                </View>
               </View>
-            </View>
-
-            {/* Sidebar - Helpful Resources */}
-            <View className={isMobile ? "mt-8" : "w-[300px]"}>
-              <HelpfulResources />
-            </View>
+            )}
           </View>
-        )}
-      </Section>
+        </AnimateOnScroll>
+      </View>
     </PageLayout>
   );
 }
+
+const styles = StyleSheet.create({
+  hero: {
+    backgroundColor: "#1a5632",
+    paddingVertical: 80,
+    paddingHorizontal: "8%",
+  },
+  heroInner: {
+    maxWidth: 700,
+    marginHorizontal: "auto",
+    alignItems: "center",
+  },
+  heroLabel: {
+    fontSize: 13,
+    textTransform: "uppercase",
+    letterSpacing: 3,
+    color: "#d4a843",
+    fontWeight: "700",
+    fontFamily: "Inter_600SemiBold, sans-serif",
+    marginBottom: 16,
+  },
+  heroTitle: {
+    color: "#ffffff",
+    fontFamily: "PlayfairDisplay_700Bold, serif",
+    textAlign: "center",
+    marginBottom: 16,
+  },
+  heroSubtitle: {
+    color: "rgba(255, 255, 255, 0.85)",
+    fontSize: 18,
+    fontFamily: "Inter_400Regular, sans-serif",
+    textAlign: "center",
+    lineHeight: 28,
+  },
+  section: {
+    paddingHorizontal: "8%",
+    backgroundColor: "#ffffff",
+  },
+  sectionInner: {
+    maxWidth: 1200,
+    marginHorizontal: "auto",
+    width: "100%",
+  },
+  actionsRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 16,
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 32,
+  },
+  actionsTitle: {
+    fontFamily: "PlayfairDisplay_700Bold, serif",
+    color: "#2d2d2d",
+  },
+  formCard: {
+    backgroundColor: "#ffffff",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "rgba(212, 168, 67, 0.15)",
+    padding: 32,
+    boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.06)",
+  },
+  formTitle: {
+    fontFamily: "PlayfairDisplay_700Bold, serif",
+    fontSize: 22,
+    color: "#2d2d2d",
+    marginBottom: 24,
+  },
+  formRow: {
+    flexDirection: "row",
+    gap: 16,
+  },
+  formRowMobile: {
+    flexDirection: "column",
+    gap: 0,
+  },
+  formField: {
+    minWidth: 200,
+  },
+  fieldLabel: {
+    fontFamily: "Inter_600SemiBold, sans-serif",
+    fontWeight: "600",
+    color: "#2d2d2d",
+    fontSize: 15,
+    marginBottom: 8,
+  },
+  townGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  townChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "rgba(139, 69, 19, 0.25)",
+    backgroundColor: "#ffffff",
+    minHeight: 44,
+    justifyContent: "center",
+  },
+  townChipActive: {
+    backgroundColor: "#d4a843",
+    borderColor: "#d4a843",
+  },
+  townChipText: {
+    fontSize: 14,
+    color: "#2d2d2d",
+    fontFamily: "Inter_400Regular, sans-serif",
+  },
+  townChipTextActive: {
+    color: "#ffffff",
+  },
+  uploadBox: {
+    borderWidth: 2,
+    borderStyle: "dashed",
+    borderColor: "rgba(139, 69, 19, 0.2)",
+    borderRadius: 12,
+    padding: 32,
+    alignItems: "center",
+    minHeight: 44,
+  },
+  uploadText: {
+    color: "#6b6b6b",
+    fontFamily: "Inter_400Regular, sans-serif",
+    marginTop: 8,
+  },
+  uploadHint: {
+    fontSize: 13,
+    color: "rgba(107, 107, 107, 0.7)",
+    fontFamily: "Inter_400Regular, sans-serif",
+  },
+  divider: {
+    borderTopWidth: 1,
+    borderTopColor: "rgba(139, 69, 19, 0.15)",
+    paddingTop: 16,
+    marginTop: 16,
+  },
+  submitterTitle: {
+    fontFamily: "PlayfairDisplay_700Bold, serif",
+    fontSize: 16,
+    color: "#2d2d2d",
+    marginBottom: 16,
+  },
+  errorBox: {
+    backgroundColor: "rgba(139, 0, 0, 0.08)",
+    borderWidth: 1,
+    borderColor: "rgba(139, 0, 0, 0.25)",
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 16,
+  },
+  errorText: {
+    color: "#8B0000",
+    textAlign: "center",
+    fontSize: 14,
+    fontFamily: "Inter_400Regular, sans-serif",
+  },
+  successBox: {
+    backgroundColor: "rgba(26, 86, 50, 0.08)",
+    borderWidth: 1,
+    borderColor: "rgba(26, 86, 50, 0.25)",
+    borderRadius: 12,
+    padding: 20,
+    alignItems: "center",
+  },
+  successTitle: {
+    color: "#1a5632",
+    fontFamily: "Inter_600SemiBold, sans-serif",
+    fontWeight: "600",
+    fontSize: 16,
+    marginTop: 8,
+  },
+  successText: {
+    color: "rgba(26, 86, 50, 0.8)",
+    fontSize: 14,
+    fontFamily: "Inter_400Regular, sans-serif",
+    textAlign: "center",
+    marginTop: 4,
+    lineHeight: 22,
+  },
+  disclaimerText: {
+    fontSize: 13,
+    color: "#6b6b6b",
+    fontFamily: "Inter_400Regular, sans-serif",
+    textAlign: "center",
+    marginTop: 16,
+  },
+  contentRow: {
+    flexDirection: "row",
+    gap: 32,
+  },
+  contentRowMobile: {
+    flexDirection: "column",
+  },
+  listingCard: {
+    backgroundColor: "#ffffff",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "rgba(212, 168, 67, 0.12)",
+    padding: 20,
+    marginBottom: 16,
+    boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.04)",
+  },
+  coupleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
+    marginBottom: 16,
+  },
+  coupleIcon: {
+    width: 64,
+    height: 64,
+    backgroundColor: "rgba(212, 168, 67, 0.1)",
+    borderRadius: 32,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  coupleName: {
+    fontFamily: "PlayfairDisplay_700Bold, serif",
+    fontSize: 20,
+    color: "#2d2d2d",
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  weddingDetail: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 4,
+  },
+  weddingDetailText: {
+    fontSize: 14,
+    color: "#2d2d2d",
+    fontFamily: "Inter_400Regular, sans-serif",
+  },
+  weddingTown: {
+    fontSize: 14,
+    color: "#d4a843",
+    fontFamily: "Inter_600SemiBold, sans-serif",
+    fontWeight: "600",
+    marginTop: 8,
+  },
+  submittedByBox: {
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: "rgba(212, 168, 67, 0.1)",
+    width: "100%",
+    alignItems: "center",
+  },
+  submittedByText: {
+    fontSize: 12,
+    color: "#6b6b6b",
+    fontFamily: "Inter_400Regular, sans-serif",
+  },
+  emptyState: {
+    paddingVertical: 48,
+    alignItems: "center",
+  },
+  emptyText: {
+    color: "#6b6b6b",
+    fontFamily: "Inter_400Regular, sans-serif",
+    marginTop: 16,
+  },
+});

@@ -1,18 +1,18 @@
-import { View, Pressable, useWindowDimensions } from "react-native";
+import { View, Text, Pressable, StyleSheet, Platform } from "react-native";
 import { Link } from "expo-router";
 import Head from "expo-router/head";
-import { PageLayout, Section } from "@/components/layout";
-import { H1, H2, H3, Body } from "@/components/ui/Typography";
+import { PageLayout } from "@/components/layout";
 import { FontAwesome } from "@expo/vector-icons";
 import { useAnnouncements } from "@/hooks/useAnnouncements";
 import { useObituaries } from "@/hooks/useObituaries";
 import { useWeddings } from "@/hooks/useWeddings";
 import { useTowns } from "@/hooks/useTowns";
 import { HelpfulResources } from "@/components/community";
+import { AnimateOnScroll } from "@/components/ui/AnimateOnScroll";
+import { useResponsive } from "@/hooks/useResponsive";
 
 export default function CommunityScreen() {
-  const { width } = useWindowDimensions();
-  const isMobile = width < 768;
+  const { isMobile } = useResponsive();
 
   const { data: obituaries } = useObituaries({ status: "approved" });
   const { data: weddings } = useWeddings({ status: "approved" });
@@ -39,7 +39,7 @@ export default function CommunityScreen() {
       title: "Weddings",
       description: "Wedding announcements and celebrations",
       count: (weddings ?? []).length,
-      color: "#D4AF37",
+      color: "#d4a843",
     },
     {
       href: "/community/announcements",
@@ -47,7 +47,7 @@ export default function CommunityScreen() {
       title: "Council Announcements",
       description: "Official news and updates",
       count: (announcements ?? []).length,
-      color: "#1B4D3E",
+      color: "#1a5632",
     },
   ];
 
@@ -65,220 +65,533 @@ export default function CommunityScreen() {
       </Head>
 
       {/* Hero */}
-      <View className="bg-green-deep py-16 md:py-20 px-4 md:px-8">
-        <View className="max-w-4xl mx-auto items-center">
-          <H1 className="text-white text-center mb-4">Community Updates</H1>
-          <Body className="text-white/90 text-center text-lg">
+      <View style={styles.hero}>
+        <View style={styles.heroInner}>
+          <Text style={styles.heroLabel}>COMMUNITY</Text>
+          <Text style={[styles.heroTitle, { fontSize: isMobile ? 36 : 48 }]}>
+            Community Updates
+          </Text>
+          <Text style={styles.heroSubtitle}>
             Stay connected with announcements, celebrations, and tributes from
             across Akuapem
-          </Body>
+          </Text>
         </View>
       </View>
 
       {/* Community Intro */}
-      <Section background="warm">
-        <View className="max-w-3xl mx-auto">
-          <Body className="text-gray-charcoal text-center text-base leading-relaxed">
-            Welcome to the Akuapem Community Hub — your central place for staying informed
-            about life events across all 17 towns in the Akuapem Traditional Area. Here you
-            can find funeral announcements, wedding celebrations, and official council news.
-            Community members can also submit their own announcements for review and publication.
-          </Body>
-        </View>
-      </Section>
+      <View style={[styles.section, { paddingVertical: isMobile ? 40 : 60, backgroundColor: "#f5f2eb" }]}>
+        <AnimateOnScroll>
+          <View style={styles.sectionInner}>
+            <View style={{ maxWidth: 700, marginHorizontal: "auto" }}>
+              <Text style={styles.introText}>
+                Welcome to the Akuapem Community Hub — your central place for staying informed
+                about life events across all 17 towns in the Akuapem Traditional Area. Here you
+                can find funeral announcements, wedding celebrations, and official council news.
+                Community members can also submit their own announcements for review and publication.
+              </Text>
+            </View>
+          </View>
+        </AnimateOnScroll>
+      </View>
 
       {/* Section Cards */}
-      <Section background="white">
-        <View
-          className={`${
-            isMobile ? "flex-col" : "flex-row"
-          } gap-6 justify-center`}
-        >
-          {sections.map((section) => (
-            <Link key={section.href} href={section.href as any} asChild>
-              <Pressable
-                className={`${
-                  isMobile ? "w-full" : "flex-1 max-w-[350px]"
-                } bg-white rounded-xl p-6 border border-brown-earth/10 hover:border-gold/30 hover:shadow-md active:bg-gray-warm`}
-              >
-                <View
-                  className="w-16 h-16 rounded-full items-center justify-center mb-4"
-                  style={{ backgroundColor: section.color + "20" }}
-                >
-                  <FontAwesome
-                    name={section.icon as any}
-                    size={28}
-                    color={section.color}
-                  />
-                </View>
-                <H3 className="mb-2">{section.title}</H3>
-                <Body className="text-gray-charcoal/70 mb-4">
-                  {section.description}
-                </Body>
-                <View className="flex-row items-center justify-between">
-                  <Body className="text-sm text-gray-charcoal/50">
-                    {section.count} recent
-                  </Body>
-                  <FontAwesome name="arrow-right" size={16} color="#D4AF37" />
-                </View>
-              </Pressable>
-            </Link>
-          ))}
-        </View>
-      </Section>
+      <View style={[styles.section, { paddingVertical: isMobile ? 60 : 100 }]}>
+        <AnimateOnScroll>
+          <View style={styles.sectionInner}>
+            <View style={[styles.cardsRow, isMobile && styles.cardsRowMobile]}>
+              {sections.map((section, index) => (
+                <AnimateOnScroll key={section.href} delay={index * 100}>
+                  <Link href={section.href as any} asChild>
+                    <Pressable
+                      style={({ hovered }: any) => [
+                        styles.sectionCard,
+                        isMobile && styles.sectionCardMobile,
+                        hovered && styles.sectionCardHover,
+                      ]}
+                    >
+                      <View
+                        style={[
+                          styles.cardIcon,
+                          { backgroundColor: section.color + "18" },
+                        ]}
+                      >
+                        <FontAwesome
+                          name={section.icon as any}
+                          size={28}
+                          color={section.color}
+                        />
+                      </View>
+                      <Text style={styles.cardTitle}>{section.title}</Text>
+                      <Text style={styles.cardDesc}>{section.description}</Text>
+                      <View style={styles.cardFooter}>
+                        <Text style={styles.cardCount}>
+                          {section.count} recent
+                        </Text>
+                        <FontAwesome name="arrow-right" size={16} color="#d4a843" />
+                      </View>
+                    </Pressable>
+                  </Link>
+                </AnimateOnScroll>
+              ))}
+            </View>
+          </View>
+        </AnimateOnScroll>
+      </View>
 
       {/* Recent Updates */}
-      <Section background="warm">
-        <View className="max-w-3xl mx-auto">
-          <View className="items-center mb-10">
-            <H2 className="text-center mb-2">Recent Updates</H2>
-            <View className="w-16 h-1 bg-gold rounded-full mt-1" />
-          </View>
-
-          {!latestObituary && !latestWedding && !latestAnnouncement ? (
-            <View className="bg-white rounded-2xl p-10 items-center border border-brown-earth/10">
-              <View className="w-20 h-20 bg-gold/10 rounded-full items-center justify-center mb-5">
-                <FontAwesome name="newspaper-o" size={36} color="#D4AF37" />
+      <View style={[styles.section, { paddingVertical: isMobile ? 60 : 100, backgroundColor: "#f5f2eb" }]}>
+        <AnimateOnScroll>
+          <View style={styles.sectionInner}>
+            <View style={{ maxWidth: 800, marginHorizontal: "auto", width: "100%" }}>
+              <View style={styles.centeredHeading}>
+                <Text style={styles.sectionLabel}>LATEST</Text>
+                <Text style={[styles.sectionTitleCentered, { fontSize: isMobile ? 28 : 36 }]}>
+                  Recent Updates
+                </Text>
+                <View style={styles.goldBar} />
               </View>
-              <H3 className="text-center mb-2">No Updates Yet</H3>
-              <Body className="text-gray-charcoal/60 text-center max-w-md">
-                Community updates will appear here as they are published. Check back soon for obituaries, wedding announcements, and council news.
-              </Body>
-            </View>
-          ) : (
-            <View className="gap-5">
-              {/* Recent Obituary */}
-              {latestObituary && (
-                <View className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg border border-brown-earth/5" style={{ borderLeftWidth: 4, borderLeftColor: "#8B0000" }}>
-                  <View className="p-5">
-                    <View className={`${isMobile ? "flex-col gap-3" : "flex-row items-start gap-4"}`}>
-                      <View className="w-12 h-12 bg-red-kente/10 rounded-full items-center justify-center shrink-0">
-                        <FontAwesome name="heart" size={20} color="#8B0000" />
-                      </View>
-                      <View className="flex-1">
-                        <View className="flex-row items-center gap-2 mb-2 flex-wrap">
-                          <View className="px-3 py-1 rounded-full" style={{ backgroundColor: "#8B000018" }}>
-                            <Body className="text-xs font-body-semibold" style={{ color: "#8B0000" }}>Funeral</Body>
-                          </View>
-                          <View className="px-3 py-1 bg-gray-warm rounded-full flex-row items-center gap-1">
-                            <FontAwesome name="calendar-o" size={10} color="#2C3E50" />
-                            <Body className="text-xs text-gray-charcoal/70">
-                              {new Date(latestObituary.funeral_date).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}
-                            </Body>
-                          </View>
-                        </View>
-                        <Body className="font-body-semibold text-base mb-1">{latestObituary.name}</Body>
-                        <Body className="text-sm text-gray-charcoal/60">
-                          <FontAwesome name="map-marker" size={12} color="#8B4513" /> {getTownName(latestObituary.town_id)}
-                        </Body>
-                      </View>
-                      <Link href="/community/obituaries" asChild>
-                        <Pressable className="flex-row items-center gap-1 px-3 py-2 rounded-lg hover:bg-red-kente/5 active:bg-red-kente/10">
-                          <Body className="text-sm font-body-semibold" style={{ color: "#8B0000" }}>View All</Body>
-                          <FontAwesome name="chevron-right" size={10} color="#8B0000" />
-                        </Pressable>
-                      </Link>
-                    </View>
+
+              {!latestObituary && !latestWedding && !latestAnnouncement ? (
+                <View style={styles.emptyState}>
+                  <View style={styles.emptyIcon}>
+                    <FontAwesome name="newspaper-o" size={36} color="#d4a843" />
                   </View>
+                  <Text style={styles.emptyTitle}>No Updates Yet</Text>
+                  <Text style={styles.emptyText}>
+                    Community updates will appear here as they are published. Check back soon for obituaries, wedding announcements, and council news.
+                  </Text>
+                </View>
+              ) : (
+                <View style={{ gap: 20 }}>
+                  {/* Recent Obituary */}
+                  {latestObituary && (
+                    <View style={[styles.updateCard, { borderLeftColor: "#8B0000" }]}>
+                      <View style={styles.updateCardInner}>
+                        <View style={[styles.updateRow, isMobile && styles.updateRowMobile]}>
+                          <View style={[styles.updateIcon, { backgroundColor: "rgba(139, 0, 0, 0.08)" }]}>
+                            <FontAwesome name="heart" size={20} color="#8B0000" />
+                          </View>
+                          <View style={{ flex: 1 }}>
+                            <View style={styles.badgeRow}>
+                              <View style={[styles.badge, { backgroundColor: "rgba(139, 0, 0, 0.08)" }]}>
+                                <Text style={[styles.badgeText, { color: "#8B0000" }]}>Funeral</Text>
+                              </View>
+                              <View style={styles.dateBadge}>
+                                <FontAwesome name="calendar-o" size={10} color="#2d2d2d" />
+                                <Text style={styles.dateText}>
+                                  {new Date(latestObituary.funeral_date).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}
+                                </Text>
+                              </View>
+                            </View>
+                            <Text style={styles.updateName}>{latestObituary.name}</Text>
+                            <View style={styles.locationRow}>
+                              <FontAwesome name="map-marker" size={12} color="#8B4513" />
+                              <Text style={styles.locationText}>{getTownName(latestObituary.town_id)}</Text>
+                            </View>
+                          </View>
+                          <Link href="/community/obituaries" asChild>
+                            <Pressable style={({ hovered }: any) => [styles.viewAllBtn, hovered && { backgroundColor: "rgba(139, 0, 0, 0.06)" }]}>
+                              <Text style={[styles.viewAllText, { color: "#8B0000" }]}>View All</Text>
+                              <FontAwesome name="chevron-right" size={10} color="#8B0000" />
+                            </Pressable>
+                          </Link>
+                        </View>
+                      </View>
+                    </View>
+                  )}
+
+                  {/* Recent Wedding */}
+                  {latestWedding && (
+                    <View style={[styles.updateCard, { borderLeftColor: "#d4a843" }]}>
+                      <View style={styles.updateCardInner}>
+                        <View style={[styles.updateRow, isMobile && styles.updateRowMobile]}>
+                          <View style={[styles.updateIcon, { backgroundColor: "rgba(212, 168, 67, 0.1)" }]}>
+                            <FontAwesome name="bell" size={20} color="#d4a843" />
+                          </View>
+                          <View style={{ flex: 1 }}>
+                            <View style={styles.badgeRow}>
+                              <View style={[styles.badge, { backgroundColor: "rgba(212, 168, 67, 0.1)" }]}>
+                                <Text style={[styles.badgeText, { color: "#b8922e" }]}>Wedding</Text>
+                              </View>
+                              <View style={styles.dateBadge}>
+                                <FontAwesome name="calendar-o" size={10} color="#2d2d2d" />
+                                <Text style={styles.dateText}>
+                                  {new Date(latestWedding.date).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}
+                                </Text>
+                              </View>
+                            </View>
+                            <Text style={styles.updateName}>
+                              {latestWedding.bride} & {latestWedding.groom}
+                            </Text>
+                            <View style={styles.locationRow}>
+                              <FontAwesome name="map-marker" size={12} color="#8B4513" />
+                              <Text style={styles.locationText}>{latestWedding.venue}</Text>
+                            </View>
+                          </View>
+                          <Link href="/community/weddings" asChild>
+                            <Pressable style={({ hovered }: any) => [styles.viewAllBtn, hovered && { backgroundColor: "rgba(212, 168, 67, 0.06)" }]}>
+                              <Text style={[styles.viewAllText, { color: "#b8922e" }]}>View All</Text>
+                              <FontAwesome name="chevron-right" size={10} color="#b8922e" />
+                            </Pressable>
+                          </Link>
+                        </View>
+                      </View>
+                    </View>
+                  )}
+
+                  {/* Recent Announcement */}
+                  {latestAnnouncement && (
+                    <View style={[styles.updateCard, { borderLeftColor: "#1a5632" }]}>
+                      <View style={styles.updateCardInner}>
+                        <View style={[styles.updateRow, isMobile && styles.updateRowMobile]}>
+                          <View style={[styles.updateIcon, { backgroundColor: "rgba(26, 86, 50, 0.08)" }]}>
+                            <FontAwesome name="bullhorn" size={20} color="#1a5632" />
+                          </View>
+                          <View style={{ flex: 1 }}>
+                            <View style={styles.badgeRow}>
+                              <View style={[styles.badge, { backgroundColor: "rgba(26, 86, 50, 0.08)" }]}>
+                                <Text style={[styles.badgeText, { color: "#1a5632" }]}>Announcement</Text>
+                              </View>
+                              <View style={styles.dateBadge}>
+                                <FontAwesome name="calendar-o" size={10} color="#2d2d2d" />
+                                <Text style={styles.dateText}>
+                                  {new Date(latestAnnouncement.date).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}
+                                </Text>
+                              </View>
+                            </View>
+                            <Text style={styles.updateName}>
+                              {latestAnnouncement.title}
+                            </Text>
+                          </View>
+                          <Link href="/community/announcements" asChild>
+                            <Pressable style={({ hovered }: any) => [styles.viewAllBtn, hovered && { backgroundColor: "rgba(26, 86, 50, 0.06)" }]}>
+                              <Text style={[styles.viewAllText, { color: "#1a5632" }]}>View All</Text>
+                              <FontAwesome name="chevron-right" size={10} color="#1a5632" />
+                            </Pressable>
+                          </Link>
+                        </View>
+                      </View>
+                    </View>
+                  )}
                 </View>
               )}
 
-              {/* Recent Wedding */}
-              {latestWedding && (
-                <View className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg border border-brown-earth/5" style={{ borderLeftWidth: 4, borderLeftColor: "#D4AF37" }}>
-                  <View className="p-5">
-                    <View className={`${isMobile ? "flex-col gap-3" : "flex-row items-start gap-4"}`}>
-                      <View className="w-12 h-12 bg-gold/10 rounded-full items-center justify-center shrink-0">
-                        <FontAwesome name="bell" size={20} color="#D4AF37" />
-                      </View>
-                      <View className="flex-1">
-                        <View className="flex-row items-center gap-2 mb-2 flex-wrap">
-                          <View className="px-3 py-1 rounded-full" style={{ backgroundColor: "#D4AF3718" }}>
-                            <Body className="text-xs font-body-semibold" style={{ color: "#B8960F" }}>Wedding</Body>
-                          </View>
-                          <View className="px-3 py-1 bg-gray-warm rounded-full flex-row items-center gap-1">
-                            <FontAwesome name="calendar-o" size={10} color="#2C3E50" />
-                            <Body className="text-xs text-gray-charcoal/70">
-                              {new Date(latestWedding.date).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}
-                            </Body>
-                          </View>
-                        </View>
-                        <Body className="font-body-semibold text-base mb-1">
-                          {latestWedding.bride} & {latestWedding.groom}
-                        </Body>
-                        <Body className="text-sm text-gray-charcoal/60">
-                          <FontAwesome name="map-marker" size={12} color="#8B4513" /> {latestWedding.venue}
-                        </Body>
-                      </View>
-                      <Link href="/community/weddings" asChild>
-                        <Pressable className="flex-row items-center gap-1 px-3 py-2 rounded-lg hover:bg-gold/5 active:bg-gold/10">
-                          <Body className="text-sm font-body-semibold" style={{ color: "#B8960F" }}>View All</Body>
-                          <FontAwesome name="chevron-right" size={10} color="#B8960F" />
-                        </Pressable>
-                      </Link>
-                    </View>
-                  </View>
-                </View>
-              )}
-
-              {/* Recent Announcement */}
-              {latestAnnouncement && (
-                <View className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg border border-brown-earth/5" style={{ borderLeftWidth: 4, borderLeftColor: "#1B4D3E" }}>
-                  <View className="p-5">
-                    <View className={`${isMobile ? "flex-col gap-3" : "flex-row items-start gap-4"}`}>
-                      <View className="w-12 h-12 bg-green-deep/10 rounded-full items-center justify-center shrink-0">
-                        <FontAwesome name="bullhorn" size={20} color="#1B4D3E" />
-                      </View>
-                      <View className="flex-1">
-                        <View className="flex-row items-center gap-2 mb-2 flex-wrap">
-                          <View className="px-3 py-1 rounded-full" style={{ backgroundColor: "#1B4D3E18" }}>
-                            <Body className="text-xs font-body-semibold" style={{ color: "#1B4D3E" }}>Announcement</Body>
-                          </View>
-                          <View className="px-3 py-1 bg-gray-warm rounded-full flex-row items-center gap-1">
-                            <FontAwesome name="calendar-o" size={10} color="#2C3E50" />
-                            <Body className="text-xs text-gray-charcoal/70">
-                              {new Date(latestAnnouncement.date).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}
-                            </Body>
-                          </View>
-                        </View>
-                        <Body className="font-body-semibold text-base mb-1">
-                          {latestAnnouncement.title}
-                        </Body>
-                      </View>
-                      <Link href="/community/announcements" asChild>
-                        <Pressable className="flex-row items-center gap-1 px-3 py-2 rounded-lg hover:bg-green-deep/5 active:bg-green-deep/10">
-                          <Body className="text-sm font-body-semibold" style={{ color: "#1B4D3E" }}>View All</Body>
-                          <FontAwesome name="chevron-right" size={10} color="#1B4D3E" />
-                        </Pressable>
-                      </Link>
-                    </View>
-                  </View>
+              {/* See All Community Updates Button */}
+              {(latestObituary || latestWedding || latestAnnouncement) && (
+                <View style={{ alignItems: "center", marginTop: 40 }}>
+                  <Link href="/community/announcements" asChild>
+                    <Pressable
+                      style={({ hovered }: any) => [
+                        styles.seeAllBtn,
+                        hovered && styles.seeAllBtnHover,
+                      ]}
+                    >
+                      <FontAwesome name="th-large" size={16} color="#ffffff" />
+                      <Text style={styles.seeAllBtnText}>See All Community Updates</Text>
+                      <FontAwesome name="arrow-right" size={14} color="#d4a843" />
+                    </Pressable>
+                  </Link>
                 </View>
               )}
             </View>
-          )}
-
-          {/* See All Community Updates Button */}
-          {(latestObituary || latestWedding || latestAnnouncement) && (
-            <View className="items-center mt-10">
-              <Link href="/community/announcements" asChild>
-                <Pressable className="bg-green-deep hover:bg-green-deep/90 active:bg-green-deep/80 px-8 py-4 rounded-xl flex-row items-center gap-3 shadow-sm hover:shadow-md">
-                  <FontAwesome name="th-large" size={16} color="#FFFFFF" />
-                  <Body className="text-white font-body-semibold text-base">See All Community Updates</Body>
-                  <FontAwesome name="arrow-right" size={14} color="#D4AF37" />
-                </Pressable>
-              </Link>
-            </View>
-          )}
-        </View>
-      </Section>
+          </View>
+        </AnimateOnScroll>
+      </View>
 
       {/* Helpful Resources */}
-      <Section background="white">
-        <View className={`max-w-4xl mx-auto ${isMobile ? "" : "max-w-sm"}`}>
-          <HelpfulResources />
-        </View>
-      </Section>
+      <View style={[styles.section, { paddingVertical: isMobile ? 60 : 100 }]}>
+        <AnimateOnScroll>
+          <View style={styles.sectionInner}>
+            <View style={{ maxWidth: 400, marginHorizontal: "auto", width: "100%" }}>
+              <HelpfulResources />
+            </View>
+          </View>
+        </AnimateOnScroll>
+      </View>
     </PageLayout>
   );
 }
+
+const styles = StyleSheet.create({
+  hero: {
+    backgroundColor: "#1a5632",
+    paddingVertical: 80,
+    paddingHorizontal: "8%",
+  },
+  heroInner: {
+    maxWidth: 700,
+    marginHorizontal: "auto",
+    alignItems: "center",
+  },
+  heroLabel: {
+    fontSize: 13,
+    textTransform: "uppercase",
+    letterSpacing: 3,
+    color: "#d4a843",
+    fontWeight: "700",
+    fontFamily: "Inter_600SemiBold, sans-serif",
+    marginBottom: 16,
+  },
+  heroTitle: {
+    color: "#ffffff",
+    fontFamily: "PlayfairDisplay_700Bold, serif",
+    textAlign: "center",
+    marginBottom: 16,
+  },
+  heroSubtitle: {
+    color: "rgba(255, 255, 255, 0.85)",
+    fontSize: 18,
+    fontFamily: "Inter_400Regular, sans-serif",
+    textAlign: "center",
+    lineHeight: 28,
+  },
+  section: {
+    paddingHorizontal: "8%",
+    backgroundColor: "#ffffff",
+  },
+  sectionInner: {
+    maxWidth: 1200,
+    marginHorizontal: "auto",
+    width: "100%",
+  },
+  sectionLabel: {
+    fontSize: 13,
+    textTransform: "uppercase",
+    letterSpacing: 3,
+    color: "#d4a843",
+    fontWeight: "700",
+    fontFamily: "Inter_600SemiBold, sans-serif",
+    marginBottom: 12,
+  },
+  centeredHeading: {
+    alignItems: "center",
+    marginBottom: 40,
+  },
+  sectionTitleCentered: {
+    fontFamily: "PlayfairDisplay_700Bold, serif",
+    color: "#2d2d2d",
+    textAlign: "center",
+    marginBottom: 12,
+  },
+  goldBar: {
+    width: 64,
+    height: 3,
+    backgroundColor: "#d4a843",
+    borderRadius: 2,
+  },
+  introText: {
+    fontSize: 16,
+    color: "#6b6b6b",
+    fontFamily: "Inter_400Regular, sans-serif",
+    textAlign: "center",
+    lineHeight: 26,
+  },
+  cardsRow: {
+    flexDirection: "row",
+    gap: 24,
+    justifyContent: "center",
+  },
+  cardsRowMobile: {
+    flexDirection: "column",
+  },
+  sectionCard: {
+    flex: 1,
+    maxWidth: 350,
+    backgroundColor: "#ffffff",
+    borderRadius: 12,
+    padding: 24,
+    borderWidth: 1,
+    borderColor: "rgba(212, 168, 67, 0.12)",
+    boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.04)",
+    ...(Platform.OS === "web"
+      ? { cursor: "pointer", transition: "all 0.25s ease" }
+      : {}),
+  } as any,
+  sectionCardMobile: {
+    maxWidth: "100%",
+    marginBottom: 16,
+  },
+  sectionCardHover: {
+    borderColor: "rgba(212, 168, 67, 0.3)",
+    boxShadow: "0px 2px 16px rgba(0, 0, 0, 0.1)",
+  },
+  cardIcon: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 16,
+  },
+  cardTitle: {
+    fontFamily: "PlayfairDisplay_700Bold, serif",
+    fontSize: 20,
+    color: "#2d2d2d",
+    marginBottom: 8,
+  },
+  cardDesc: {
+    fontSize: 14,
+    color: "#6b6b6b",
+    fontFamily: "Inter_400Regular, sans-serif",
+    lineHeight: 22,
+    marginBottom: 16,
+  },
+  cardFooter: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  cardCount: {
+    fontSize: 13,
+    color: "#6b6b6b",
+    fontFamily: "Inter_400Regular, sans-serif",
+  },
+  updateCard: {
+    backgroundColor: "#ffffff",
+    borderRadius: 12,
+    overflow: "hidden",
+    boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.04)",
+    borderWidth: 1,
+    borderColor: "rgba(212, 168, 67, 0.08)",
+    borderLeftWidth: 4,
+  },
+  updateCardInner: {
+    padding: 20,
+  },
+  updateRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 16,
+  },
+  updateRowMobile: {
+    flexDirection: "column",
+    gap: 12,
+  },
+  updateIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+  },
+  badgeRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 8,
+    flexWrap: "wrap",
+  },
+  badge: {
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 100,
+  },
+  badgeText: {
+    fontSize: 12,
+    fontFamily: "Inter_600SemiBold, sans-serif",
+    fontWeight: "600",
+  },
+  dateBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    backgroundColor: "#f5f2eb",
+    borderRadius: 100,
+  },
+  dateText: {
+    fontSize: 12,
+    color: "#6b6b6b",
+    fontFamily: "Inter_400Regular, sans-serif",
+  },
+  updateName: {
+    fontFamily: "Inter_600SemiBold, sans-serif",
+    fontWeight: "600",
+    fontSize: 16,
+    color: "#2d2d2d",
+    marginBottom: 4,
+  },
+  locationRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  locationText: {
+    fontSize: 14,
+    color: "#6b6b6b",
+    fontFamily: "Inter_400Regular, sans-serif",
+  },
+  viewAllBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    ...(Platform.OS === "web"
+      ? { cursor: "pointer", transition: "background-color 0.2s ease" }
+      : {}),
+  } as any,
+  viewAllText: {
+    fontSize: 14,
+    fontFamily: "Inter_600SemiBold, sans-serif",
+    fontWeight: "600",
+  },
+  seeAllBtn: {
+    backgroundColor: "#1a5632",
+    paddingHorizontal: 32,
+    paddingVertical: 16,
+    borderRadius: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.08)",
+    ...(Platform.OS === "web"
+      ? { cursor: "pointer", transition: "all 0.2s ease" }
+      : {}),
+  } as any,
+  seeAllBtnHover: {
+    backgroundColor: "#22703f",
+    boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.15)",
+  },
+  seeAllBtnText: {
+    color: "#ffffff",
+    fontFamily: "Inter_600SemiBold, sans-serif",
+    fontWeight: "600",
+    fontSize: 16,
+  },
+  emptyState: {
+    backgroundColor: "#ffffff",
+    borderRadius: 16,
+    padding: 40,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "rgba(212, 168, 67, 0.12)",
+  },
+  emptyIcon: {
+    width: 80,
+    height: 80,
+    backgroundColor: "rgba(212, 168, 67, 0.1)",
+    borderRadius: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 20,
+  },
+  emptyTitle: {
+    fontFamily: "PlayfairDisplay_700Bold, serif",
+    fontSize: 22,
+    color: "#2d2d2d",
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  emptyText: {
+    fontSize: 15,
+    color: "#6b6b6b",
+    fontFamily: "Inter_400Regular, sans-serif",
+    textAlign: "center",
+    maxWidth: 400,
+    lineHeight: 24,
+  },
+});

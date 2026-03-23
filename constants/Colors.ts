@@ -3,11 +3,11 @@
 export const Colors = {
   // Primary Colors
   gold: {
-    DEFAULT: "#D4AF37",
-    light: "#FFF8DC",
+    DEFAULT: "#d4a843",
+    light: "#f0e6c8",
   },
   green: {
-    deep: "#1B4D3E",
+    deep: "#1a5632",
   },
   red: {
     kente: "#8B0000",
@@ -16,8 +16,9 @@ export const Colors = {
   // Secondary Colors
   white: "#FFFFFF",
   gray: {
-    warm: "#F5F5F0",
-    charcoal: "#2C3E50",
+    warm: "#f5f2eb",
+    charcoal: "#2d2d2d",
+    muted: "#6b6b6b",
   },
 
   // Accent Colors
