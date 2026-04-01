@@ -254,7 +254,7 @@ export default function SubscribeScreen() {
                 {/* Preferences */}
                 <View style={[styles.centeredHeading, { marginTop: 32 }]}>
                   <Text style={styles.sectionLabel}>PREFERENCES</Text>
-                  <Text style={[styles.sectionTitle, { textAlign: "center", fontSize: isMobile ? 24 : 30 }]}>
+                  <Text style={[styles.sectionTitle, { textAlign: "center", fontSize: isMobile ? 22 : 30, lineHeight: isMobile ? 32 : 40 }]}>
                     Choose Your Preferences
                   </Text>
                 </View>
@@ -433,7 +433,7 @@ const styles = StyleSheet.create({
     fontFamily: "PlayfairDisplay_700Bold, serif",
     color: "#2d2d2d",
     marginBottom: 20,
-    lineHeight: 1.3,
+    lineHeight: 40,
   },
   centeredHeading: {
     alignItems: "center",
