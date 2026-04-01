@@ -1,15 +1,13 @@
 import { View, Text, StyleSheet, Platform, Pressable } from "react-native";
 import { Link } from "expo-router";
 import { useResponsive } from "@/hooks/useResponsive";
-import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { FontAwesome } from "@expo/vector-icons";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withRepeat,
   withTiming,
-  withDelay,
   Easing,
 } from "react-native-reanimated";
 
@@ -30,20 +28,9 @@ export function Hero() {
     transform: [{ translateY: chevronY.value }],
   }));
 
-  const heroHeight = isMobile ? 500 : "100vh" as any;
-
   return (
     <View style={[styles.heroContainer, { minHeight: isMobile ? 500 : 700 }]}>
-      {/* Background placeholder image */}
-      <View style={StyleSheet.absoluteFill}>
-        <PlaceholderImage
-          height={900}
-          label="Akuapem Ridge Panorama"
-          style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
-        />
-      </View>
-
-      {/* Dark green overlay */}
+      {/* Dark green background */}
       <View style={[StyleSheet.absoluteFill, styles.overlay]} />
 
       {/* Content */}

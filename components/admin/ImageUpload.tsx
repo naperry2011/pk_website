@@ -1,6 +1,8 @@
-import { View, Text, Pressable, Image } from "react-native";
+import { View, Text, Pressable, Image, ActivityIndicator } from "react-native";
+import { useState } from "react";
 import { FontAwesome } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import { useUpload } from "@/hooks/useUpload";
 
 interface ImageUploadProps {
   value?: string;
@@ -13,6 +15,9 @@ export function ImageUpload({
   onUpload,
   label = "Upload Image",
 }: ImageUploadProps) {
+  const upload = useUpload();
+  const [uploading, setUploading] = useState(false);
+
   const handlePress = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
@@ -20,7 +25,20 @@ export function ImageUpload({
       quality: 0.8,
     });
     if (!result.canceled && result.assets[0]) {
-      onUpload(result.assets[0].uri);
+      const asset = result.assets[0];
+      setUploading(true);
+      try {
+        const publicUrl = await upload.mutateAsync({
+          uri: asset.uri,
+          type: asset.mimeType ?? "image/jpeg",
+          name: asset.fileName ?? `image-${Date.now()}.jpg`,
+        });
+        onUpload(publicUrl);
+      } catch (error) {
+        console.error("Image upload failed:", error);
+      } finally {
+        setUploading(false);
+      }
     }
   };
 
@@ -51,15 +69,27 @@ export function ImageUpload({
       ) : (
         <Pressable
           onPress={handlePress}
+          disabled={uploading}
           className="border-2 border-dashed rounded-lg py-8 items-center justify-center bg-gray-warm/30 min-h-[120px]"
           style={{ borderColor: "rgba(212, 168, 67, 0.3)" }}
           accessibilityRole="button"
           accessibilityLabel={label}
         >
-          <FontAwesome name="camera" size={28} color="#6b6b6b44" />
-          <Text className="font-body text-sm text-gray-charcoal/40 mt-2">
-            Tap to upload
-          </Text>
+          {uploading ? (
+            <>
+              <ActivityIndicator size="small" color="#d4a843" />
+              <Text className="font-body text-sm text-gray-charcoal/40 mt-2">
+                Uploading...
+              </Text>
+            </>
+          ) : (
+            <>
+              <FontAwesome name="camera" size={28} color="#6b6b6b44" />
+              <Text className="font-body text-sm text-gray-charcoal/40 mt-2">
+                Tap to upload
+              </Text>
+            </>
+          )}
         </Pressable>
       )}
     </View>

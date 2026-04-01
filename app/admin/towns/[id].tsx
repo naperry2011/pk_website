@@ -53,13 +53,11 @@ export default function EditTown() {
   const handleSave = async () => {
     await updateTown.mutateAsync({
       id: id!,
-      data: {
-        name,
-        chief,
-        description: description || null,
-        landmarks,
-        image_url: imageUrl || null,
-      },
+      name,
+      chief,
+      description: description || null,
+      landmarks,
+      image_url: imageUrl || null,
     });
     router.back();
   };
@@ -92,8 +90,10 @@ export default function EditTown() {
       });
       await addTownPhoto.mutateAsync({
         town_id: id!,
-        url: publicUrl,
+        image_url: publicUrl,
         caption: "",
+        display_order: photos.length,
+        uploaded_by: null,
       });
     } finally {
       setUploadingPhoto(false);
@@ -222,7 +222,7 @@ export default function EditTown() {
                 >
                   <View>
                     <Image
-                      source={{ uri: photo.url }}
+                      source={{ uri: photo.image_url }}
                       style={{ width: "100%", height: 120, borderTopLeftRadius: 8, borderTopRightRadius: 8 }}
                       resizeMode="cover"
                       accessibilityLabel={photo.caption || "Town photo"}
@@ -242,11 +242,13 @@ export default function EditTown() {
                       value={photo.caption ?? ""}
                       onChangeText={(text) => {
                         // Caption editing is handled inline; save on blur via addTownPhoto update
+                        // Use the update mutation for caption changes
                         addTownPhoto.mutate({
                           town_id: id!,
-                          url: photo.url,
+                          image_url: photo.image_url,
                           caption: text,
-                          id: photo.id,
+                          display_order: photo.display_order,
+                          uploaded_by: photo.uploaded_by,
                         });
                       }}
                       placeholder="Add caption..."

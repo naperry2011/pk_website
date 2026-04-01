@@ -267,7 +267,7 @@ export const paramountKing = {
   lineage: "31st Paramount King of Akuapem",
   enstoolmentDate: "2020-05-15",
   biography:
-    "Oseadeeyo Nana Kwasi Akufo III ascended to the Akuapem Stool as the 31st Paramount King, continuing a distinguished lineage of leadership that has guided the Akuapem state through centuries of transformation. His reign is marked by a commitment to preserving the cultural heritage of the Akuapem people while championing modern development initiatives in education, infrastructure, and community welfare across the 17 principal towns of the traditional area.",
+    "Oseadeeyo Nana Kwasi Akufo III is the current and twenty sixth (26th) occupant of the Ofori Kuma stool of Akuapem and king of the Akuapems (OKUAPEHENE). He was installed on 3rd of May, 2020 after he was chosen as the eligible heir to his late uncle Oseadeeyo Addo Dankwa III who passed on August, 2015 after having ruled for over forty years as the king of Akuapem.",
 };
 
 export const councilHistory = {

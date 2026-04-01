@@ -1,6 +1,5 @@
-import { View, Text, Pressable, Switch, StyleSheet, Platform } from "react-native";
+import { View, Text, Pressable, Switch, StyleSheet } from "react-native";
 import { useState } from "react";
-import { Link } from "expo-router";
 import Head from "expo-router/head";
 import { PageLayout } from "@/components/layout";
 import { Button } from "@/components/ui/Button";
@@ -121,31 +120,6 @@ export default function SubscribeScreen() {
             Akuapem Traditional Area
           </Text>
         </View>
-      </View>
-
-      {/* Council Announcements Link */}
-      <View style={[styles.section, { paddingVertical: isMobile ? 40 : 60, backgroundColor: "#f5f2eb" }]}>
-        <AnimateOnScroll>
-          <View style={styles.sectionInner}>
-            <View style={{ maxWidth: 600, marginHorizontal: "auto", width: "100%" }}>
-              <Link href="/community/announcements" asChild>
-                <Pressable
-                  style={({ hovered }: any) => [
-                    styles.announcementLink,
-                    hovered && styles.announcementLinkHover,
-                  ]}
-                  accessibilityRole="link"
-                >
-                  <FontAwesome name="bullhorn" size={20} color="#1a5632" />
-                  <Text style={styles.announcementLinkText}>
-                    View Latest Council Announcements
-                  </Text>
-                  <FontAwesome name="arrow-right" size={14} color="#1a5632" />
-                </Pressable>
-              </Link>
-            </View>
-          </View>
-        </AnimateOnScroll>
       </View>
 
       {/* Benefits */}
@@ -287,7 +261,7 @@ export default function SubscribeScreen() {
 
                 <Text style={styles.prefLabel}>What would you like to receive?</Text>
 
-                <View style={{ gap: 16, marginBottom: 24 }}>
+                <View style={{ gap: 12, marginBottom: 24 }}>
                   {subscriptionOptions.map((option) => (
                     <Pressable
                       key={option.id}
@@ -295,34 +269,41 @@ export default function SubscribeScreen() {
                       style={[
                         styles.preferenceCard,
                         preferences[option.id] && styles.preferenceCardActive,
+                        isMobile && styles.preferenceCardMobile,
                       ]}
                       accessibilityRole="switch"
                       accessibilityLabel={`${option.title}: ${option.description}`}
                       accessibilityState={{ checked: preferences[option.id] }}
                     >
-                      <View
-                        style={[
-                          styles.prefIconWrap,
-                          { backgroundColor: option.color + "15" },
-                        ]}
-                      >
-                        <FontAwesome
-                          name={option.icon as any}
-                          size={20}
-                          color={option.color}
+                      <View style={[
+                        styles.prefTopRow,
+                        isMobile && styles.prefTopRowMobile,
+                      ]}>
+                        <View
+                          style={[
+                            styles.prefIconWrap,
+                            isMobile && styles.prefIconWrapMobile,
+                            { backgroundColor: option.color + "15" },
+                          ]}
+                        >
+                          <FontAwesome
+                            name={option.icon as any}
+                            size={isMobile ? 18 : 20}
+                            color={option.color}
+                          />
+                        </View>
+                        <View style={{ flex: 1 }}>
+                          <Text style={[styles.prefTitle, isMobile && { fontSize: 14 }]}>{option.title}</Text>
+                          <Text style={[styles.prefDesc, isMobile && { fontSize: 12 }]}>{option.description}</Text>
+                        </View>
+                        <Switch
+                          value={preferences[option.id]}
+                          onValueChange={() => togglePreference(option.id)}
+                          trackColor={{ false: "#E0E0E0", true: "#d4a84380" }}
+                          thumbColor={preferences[option.id] ? "#d4a843" : "#f4f3f4"}
+                          accessibilityLabel={`Toggle ${option.title}`}
                         />
                       </View>
-                      <View style={{ flex: 1 }}>
-                        <Text style={styles.prefTitle}>{option.title}</Text>
-                        <Text style={styles.prefDesc}>{option.description}</Text>
-                      </View>
-                      <Switch
-                        value={preferences[option.id]}
-                        onValueChange={() => togglePreference(option.id)}
-                        trackColor={{ false: "#E0E0E0", true: "#d4a84380" }}
-                        thumbColor={preferences[option.id] ? "#d4a843" : "#f4f3f4"}
-                        accessibilityLabel={`Toggle ${option.title}`}
-                      />
                     </Pressable>
                   ))}
                 </View>
@@ -458,30 +439,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 40,
   },
-  announcementLink: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 12,
-    backgroundColor: "rgba(26, 86, 50, 0.08)",
-    borderWidth: 1,
-    borderColor: "rgba(26, 86, 50, 0.2)",
-    borderRadius: 12,
-    padding: 16,
-    minHeight: 44,
-    ...(Platform.OS === "web"
-      ? { cursor: "pointer", transition: "background-color 0.2s ease" }
-      : {}),
-  } as any,
-  announcementLinkHover: {
-    backgroundColor: "rgba(26, 86, 50, 0.14)",
-  },
-  announcementLinkText: {
-    color: "#1a5632",
-    fontFamily: "Inter_600SemiBold, sans-serif",
-    fontWeight: "600",
-    fontSize: 15,
-  },
   benefitsRow: {
     flexDirection: "row",
     gap: 24,
@@ -565,6 +522,17 @@ const styles = StyleSheet.create({
     borderColor: "#d4a843",
     backgroundColor: "rgba(212, 168, 67, 0.04)",
   },
+  preferenceCardMobile: {
+    padding: 12,
+  },
+  prefTopRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+  },
+  prefTopRowMobile: {
+    gap: 8,
+  },
   prefIconWrap: {
     width: 48,
     height: 48,
@@ -572,6 +540,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginRight: 16,
+  },
+  prefIconWrapMobile: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    marginRight: 10,
   },
   prefTitle: {
     fontFamily: "Inter_600SemiBold, sans-serif",

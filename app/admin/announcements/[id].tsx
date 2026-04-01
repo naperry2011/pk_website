@@ -62,15 +62,13 @@ export default function EditAnnouncement() {
   const handleSave = async () => {
     await updateAnnouncement.mutateAsync({
       id: id!,
-      data: {
-        title,
-        date,
-        type,
-        town_id: townId,
-        excerpt,
-        content,
-        image_url: imageUrl || null,
-      },
+      title,
+      date,
+      type,
+      town_id: townId,
+      excerpt,
+      content,
+      image_url: imageUrl || null,
     });
     router.back();
   };

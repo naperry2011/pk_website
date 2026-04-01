@@ -68,15 +68,13 @@ export default function EditObituary() {
   const handleSave = async () => {
     await updateObituary.mutateAsync({
       id: id!,
-      data: {
-        name,
-        birth_date: birthDate || null,
-        passed_date: passedDate,
-        funeral_date: funeralDate,
-        biography: biography || null,
-        family_contact: familyContact || null,
-        photo_url: photoUrl || null,
-      },
+      name,
+      birth_date: birthDate || null,
+      passed_date: passedDate,
+      funeral_date: funeralDate,
+      biography: biography || null,
+      family_contact: familyContact || null,
+      photo_url: photoUrl || null,
     });
     router.back();
   };
@@ -87,7 +85,7 @@ export default function EditObituary() {
   };
 
   const handleReject = async () => {
-    await rejectObituary.mutateAsync({ id: id!, notes: reviewNotes });
+    await rejectObituary.mutateAsync({ id: id!, review_notes: reviewNotes });
     setShowReject(false);
     router.back();
   };

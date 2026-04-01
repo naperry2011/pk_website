@@ -65,14 +65,12 @@ export default function EditWedding() {
   const handleSave = async () => {
     await updateWedding.mutateAsync({
       id: id!,
-      data: {
-        bride,
-        groom,
-        date,
-        venue,
-        message: message || null,
-        contact_email: contactEmail || null,
-      },
+      bride,
+      groom,
+      date,
+      venue,
+      message: message || null,
+      contact_email: contactEmail || null,
     });
     router.back();
   };
@@ -83,7 +81,7 @@ export default function EditWedding() {
   };
 
   const handleReject = async () => {
-    await rejectWedding.mutateAsync({ id: id!, notes: reviewNotes });
+    await rejectWedding.mutateAsync({ id: id!, review_notes: reviewNotes });
     setShowReject(false);
     router.back();
   };
