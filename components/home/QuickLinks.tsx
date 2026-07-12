@@ -1,9 +1,10 @@
-import { View, Text, Pressable, StyleSheet, Platform } from "react-native";
+import { View, Text, Pressable, Platform } from "react-native";
 import { Link } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import { useResponsive } from "@/hooks/useResponsive";
 import { AnimateOnScroll } from "@/components/ui/AnimateOnScroll";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { theme } from "@/constants/theme";
 
 const links = [
   {
@@ -11,63 +12,86 @@ const links = [
     icon: "heart",
     title: "Obituaries",
     description: "View and submit funeral announcements for the community.",
-    color: "#d4a843",
   },
   {
     href: "/community/weddings",
     icon: "bell",
     title: "Weddings",
     description: "Share and celebrate wedding announcements.",
-    color: "#d4a843",
   },
   {
     href: "/towns",
     icon: "map-marker",
     title: "Our Towns",
     description: "Explore the 17 principal towns of Akuapem.",
-    color: "#d4a843",
   },
   {
     href: "/contact",
     icon: "envelope",
     title: "Contact Us",
     description: "Reach out to the Traditional Council directly.",
-    color: "#d4a843",
   },
 ];
+
+const isWeb = Platform.OS === "web";
 
 export function QuickLinks() {
   const { isMobile } = useResponsive();
 
   return (
-    <View style={[styles.container, { paddingVertical: isMobile ? 60 : 100 }]}>
-      <View style={styles.inner}>
-        <SectionHeading
-          label="QUICK ACCESS"
-          title="How Can We Help?"
-        />
+    <View className="bg-gray-warm px-[8%] py-16 md:py-24">
+      <View className="max-w-7xl mx-auto w-full">
+        <SectionHeading label="QUICK ACCESS" title="How Can We Help?" />
 
-        <View style={[styles.grid, isMobile && styles.gridMobile]}>
+        <View className={`gap-6 ${isMobile ? "flex-col" : "flex-row flex-wrap"}`}>
           {links.map((link, index) => (
             <AnimateOnScroll key={link.href} delay={index * 100}>
               <Link href={link.href as any} asChild>
                 <Pressable
+                  className={`bg-green-dark rounded-xl overflow-hidden border border-gold/20 ${
+                    isMobile ? "w-full" : "flex-1 min-w-[220px] max-w-[282px]"
+                  }`}
                   style={({ hovered }: any) => [
-                    styles.card,
-                    isMobile ? styles.cardMobile : styles.cardDesktop,
-                    hovered && styles.cardHover,
+                    isWeb
+                      ? ({
+                          transition: "all 0.3s ease",
+                          cursor: "pointer",
+                        } as any)
+                      : null,
+                    isWeb && hovered
+                      ? ({
+                          transform: [{ translateY: -6 }],
+                          boxShadow: "0px 12px 24px rgba(14, 51, 32, 0.35)",
+                          borderColor: "rgba(212, 168, 67, 0.5)",
+                        } as any)
+                      : null,
                   ]}
+                  accessibilityRole="link"
+                  accessibilityLabel={link.title}
                 >
-                  <View style={styles.iconContainer}>
-                    <FontAwesome
-                      name={link.icon as any}
-                      size={32}
-                      color="#d4a843"
-                    />
+                  {/* Card body */}
+                  <View className="p-8 pb-6 items-start">
+                    <View className="mb-5">
+                      <FontAwesome
+                        name={link.icon as any}
+                        size={28}
+                        color={theme.colors.goldAccent}
+                      />
+                    </View>
+                    <Text className="font-body text-sm text-white/70 leading-6">
+                      {link.description}
+                    </Text>
                   </View>
-                  <Text style={styles.cardTitle}>{link.title}</Text>
-                  <Text style={styles.cardDescription}>{link.description}</Text>
-                  <Text style={styles.arrow}>→</Text>
+
+                  {/* Overlay-style footer label */}
+                  <View className="flex-row items-center justify-between px-8 py-4 bg-black/20 border-t border-gold/20">
+                    <Text className="font-heading-bold text-lg text-white">
+                      {link.title}
+                    </Text>
+                    <Text className="font-body-semibold text-lg text-gold">
+                      →
+                    </Text>
+                  </View>
                 </Pressable>
               </Link>
             </AnimateOnScroll>
@@ -77,72 +101,3 @@ export function QuickLinks() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#f5f2eb",
-    paddingHorizontal: "8%",
-  },
-  inner: {
-    maxWidth: 1200,
-    marginHorizontal: "auto",
-    width: "100%",
-  },
-  grid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 24,
-  },
-  gridMobile: {
-    flexDirection: "column",
-  },
-  card: {
-    backgroundColor: "#ffffff",
-    borderRadius: 12,
-    padding: 32,
-    borderWidth: 1,
-    borderColor: "#e8e8e8",
-    alignItems: "flex-start",
-    ...(Platform.OS === "web"
-      ? {
-          transition: "all 0.3s ease",
-          cursor: "pointer",
-        }
-      : {}),
-  } as any,
-  cardDesktop: {
-    flex: 1,
-    minWidth: 220,
-    maxWidth: 282,
-  },
-  cardMobile: {
-    width: "100%",
-  },
-  cardHover: {
-    transform: [{ translateY: -6 }],
-    boxShadow: "0px 12px 24px rgba(0, 0, 0, 0.15)",
-    borderColor: "rgba(212, 168, 67, 0.3)",
-  },
-  iconContainer: {
-    marginBottom: 16,
-  },
-  cardTitle: {
-    fontSize: 20,
-    fontFamily: "PlayfairDisplay_700Bold, serif",
-    fontWeight: "700",
-    color: "#2d2d2d",
-    marginBottom: 8,
-  },
-  cardDescription: {
-    fontSize: 15,
-    color: "#6b6b6b",
-    fontFamily: "Inter_400Regular, sans-serif",
-    lineHeight: 22,
-    marginBottom: 16,
-  },
-  arrow: {
-    fontSize: 20,
-    color: "#d4a843",
-    fontWeight: "600",
-  },
-});

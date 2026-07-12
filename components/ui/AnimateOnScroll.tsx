@@ -1,13 +1,14 @@
 import { ReactNode } from "react";
-import { Platform, View } from "react-native";
+import { Platform, StyleProp, View, ViewStyle } from "react-native";
 
 interface AnimateOnScrollProps {
   children: ReactNode;
   delay?: number;
+  style?: StyleProp<ViewStyle>;
 }
 
 // Web-specific implementation using react-intersection-observer
-function AnimateOnScrollWeb({ children, delay = 0 }: AnimateOnScrollProps) {
+function AnimateOnScrollWeb({ children, delay = 0, style }: AnimateOnScrollProps) {
   // We use a dynamic import approach for web-only
   const { useInView } = require("react-intersection-observer");
   const { ref, inView } = useInView({
@@ -16,23 +17,30 @@ function AnimateOnScrollWeb({ children, delay = 0 }: AnimateOnScrollProps) {
   });
 
   return (
-    <div
-      ref={ref}
-      style={{
-        opacity: inView ? 1 : 0,
-        transform: inView ? "translateY(0)" : "translateY(30px)",
-        transition: `opacity 0.7s ease-out ${delay}ms, transform 0.7s ease-out ${delay}ms`,
-      }}
+    <View
+      ref={ref as any}
+      style={[
+        {
+          opacity: inView ? 1 : 0,
+          transform: inView ? "translateY(0)" : "translateY(30px)",
+          transition: `opacity 0.7s ease-out ${delay}ms, transform 0.7s ease-out ${delay}ms`,
+        } as any,
+        style,
+      ]}
     >
       {children}
-    </div>
+    </View>
   );
 }
 
-export function AnimateOnScroll({ children, delay = 0 }: AnimateOnScrollProps) {
+export function AnimateOnScroll({ children, delay = 0, style }: AnimateOnScrollProps) {
   if (Platform.OS !== "web") {
-    return <View>{children}</View>;
+    return <View style={style}>{children}</View>;
   }
 
-  return <AnimateOnScrollWeb delay={delay}>{children}</AnimateOnScrollWeb>;
+  return (
+    <AnimateOnScrollWeb delay={delay} style={style}>
+      {children}
+    </AnimateOnScrollWeb>
+  );
 }

@@ -1,6 +1,11 @@
 import { Pressable, Text, ActivityIndicator, Platform } from "react-native";
 
-type ButtonVariant = "primary" | "secondary" | "outline" | "danger";
+type ButtonVariant =
+  | "primary"
+  | "secondary"
+  | "outline"
+  | "ghost-light"
+  | "danger";
 
 interface ButtonProps {
   title: string;
@@ -17,6 +22,7 @@ const variantStyles = {
   primary: "bg-gold active:bg-gold/80",
   secondary: "bg-green-deep active:bg-green-deep/80",
   outline: "bg-transparent border-2 border-gold active:bg-gold-light",
+  "ghost-light": "bg-transparent border-2 border-white/80 active:bg-white/10",
   danger: "bg-red-kente active:bg-red-kente/80",
 };
 
@@ -24,6 +30,7 @@ const textStyles = {
   primary: "text-white",
   secondary: "text-white",
   outline: "text-gold",
+  "ghost-light": "text-white",
   danger: "text-white",
 };
 
@@ -63,7 +70,7 @@ export function Button({
           : undefined
       }
     >
-      {({ hovered }: { hovered?: boolean }) =>
+      {({ hovered }: any) =>
         loading ? (
           <ActivityIndicator
             color={variant === "outline" ? "#d4a843" : "#FFFFFF"}

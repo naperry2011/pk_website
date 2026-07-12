@@ -10,10 +10,14 @@ module.exports = {
         gold: {
           DEFAULT: "#d4a843",
           light: "#f0e6c8",
+          muted: "#b8922e",
         },
         green: {
           deep: "#1a5632",
+          mid: "#22703f",
+          dark: "#0e3320",
         },
+        cream: "#faf8f3",
         red: {
           kente: "#8B0000",
         },
@@ -41,8 +45,11 @@ module.exports = {
       },
       fontSize: {
         // Mobile-first sizes
+        display: ["44px", { lineHeight: "1.15" }],
+        "display-desktop": ["72px", { lineHeight: "1.1" }],
+        eyebrow: ["13px", { lineHeight: "1.4", letterSpacing: "3px" }],
         h1: ["36px", { lineHeight: "1.2" }],
-        "h1-desktop": ["56px", { lineHeight: "1.2" }],
+        "h1-desktop": ["56px", { lineHeight: "1.15" }],
         h2: ["28px", { lineHeight: "1.3" }],
         "h2-desktop": ["36px", { lineHeight: "1.3" }],
         h3: ["24px", { lineHeight: "1.4" }],

@@ -35,7 +35,7 @@ function NavLink({ item, pathname }: { item: typeof navItems[0]; pathname: strin
         accessibilityLabel={item.label}
         accessibilityState={{ selected: active }}
       >
-        {({ hovered }: { hovered?: boolean }) => (
+        {({ hovered }: any) => (
           <View className="items-center">
             <Text
               className={`font-body-medium text-base ${
@@ -81,7 +81,7 @@ export function Header() {
 
   return (
     <View
-      className="bg-white border-b border-brown-earth/20 z-50"
+      className="bg-white border-b border-gold/25 z-50"
       style={
         isWeb
           ? ({
@@ -93,7 +93,7 @@ export function Header() {
       }
       accessibilityRole={"banner" as any}
     >
-      <View className="px-4 py-3 flex-row items-center justify-between max-w-7xl mx-auto w-full">
+      <View className="px-4 py-4 md:py-5 flex-row items-center justify-between max-w-7xl mx-auto w-full">
         {/* Logo */}
         <Link href="/" asChild>
           <Pressable
@@ -101,12 +101,12 @@ export function Header() {
             accessibilityRole="link"
             accessibilityLabel="Akuapem Traditional Council home page"
           >
-            <View className="w-10 h-10 bg-gold rounded-full items-center justify-center mr-3">
-              <Text className="text-white font-bold text-lg">AK</Text>
+            <View className="w-11 h-11 bg-green-deep border border-gold rounded-full items-center justify-center mr-3">
+              <Text className="text-gold font-accent text-base">AK</Text>
             </View>
             <View>
-              <Accent className="text-base">Akuapem</Accent>
-              <Text className="font-body text-xs text-gray-charcoal -mt-1">
+              <Accent className="text-lg tracking-widest">AKUAPEM</Accent>
+              <Text className="font-body text-xs uppercase tracking-[2px] text-gray-muted -mt-0.5">
                 Traditional Council
               </Text>
             </View>
@@ -138,7 +138,7 @@ export function Header() {
                 accessibilityRole="link"
                 accessibilityLabel="Subscribe to updates"
               >
-                {({ hovered }: { hovered?: boolean }) => (
+                {({ hovered }: any) => (
                   <Text
                     className="font-body-semibold text-white"
                     style={
@@ -152,31 +152,6 @@ export function Header() {
                 )}
               </Pressable>
             </Link>
-            <Pressable
-              onPress={() => {}}
-              className="border-2 border-gold bg-gold/10 px-4 py-2 rounded-lg min-h-[44px] flex-row items-center justify-center gap-2 active:bg-gold/30"
-              style={
-                isWeb
-                  ? ({
-                      cursor: "pointer",
-                      transition: "background-color 0.25s ease",
-                    } as any)
-                  : undefined
-              }
-              accessibilityRole="link"
-              accessibilityLabel="Donate to PK Foundation"
-            >
-              {({ hovered }: { hovered?: boolean }) => (
-                <>
-                  <FontAwesome name="heart" size={14} color="#d4a843" />
-                  <Text
-                    className="font-body-semibold text-gold"
-                  >
-                    Donate
-                  </Text>
-                </>
-              )}
-            </Pressable>
           </View>
         )}
 
@@ -245,18 +220,6 @@ export function Header() {
               </Link>
             );
           })}
-          {/* Donate Button */}
-          <Pressable
-            onPress={() => {
-              closeMenu();
-            }}
-            className="py-3 pl-4 border-b border-gray-warm min-h-[44px] flex-row items-center gap-2"
-            accessibilityRole="link"
-            accessibilityLabel="Donate to PK Foundation"
-          >
-            <FontAwesome name="heart" size={16} color="#d4a843" />
-            <Text className="font-body-medium text-lg text-gold">Donate</Text>
-          </Pressable>
         </View>
       )}
     </View>

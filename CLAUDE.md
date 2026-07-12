@@ -60,16 +60,22 @@ types/                   # TypeScript interfaces
 
 ## Design System
 
-### Colors (defined in tailwind.config.js)
-- `gold` / `gold-light` - Primary accent (#D4AF37)
-- `green-deep` - Secondary (#1B4D3E)
+### Colors (single source of truth: `constants/tokens.ts`, mirrored in tailwind.config.js; `constants/Colors.ts` and `constants/theme.ts` derive from it)
+- `gold` / `gold-light` / `gold-muted` - Primary accent (#d4a843 / #f0e6c8 / #b8922e)
+- `green-deep` / `green-mid` / `green-dark` - Secondary (#1a5632 / #22703f / #0e3320)
 - `red-kente` - Urgent/important (#8B0000)
-- `gray-warm` - Backgrounds (#F5F5F0)
-- `gray-charcoal` - Body text (#2C3E50)
+- `cream` - Light backgrounds (#faf8f3)
+- `gray-warm` - Backgrounds (#f5f2eb)
+- `gray-charcoal` - Body text (#2d2d2d)
+- `gray-muted` - Muted text (#6b6b6b)
 - `blue-heritage` - Links (#1E4D8B)
 - `brown-earth` - Borders (#8B4513)
 
+Never hardcode hex values in components — use NativeWind token classes, or `tokens`/`theme` from `constants/` for JS-level colors.
+
 ### Typography Classes
+- Display: `text-display md:text-display-desktop` (hero headlines, use `Display` component)
+- Eyebrow: `text-eyebrow` Cinzel uppercase gold labels (use `Eyebrow` component)
 - Headings: `font-heading` / `font-heading-bold`
 - Body: `font-body` / `font-body-medium` / `font-body-semibold`
 - Accent: `font-accent` (for titles, PK name)

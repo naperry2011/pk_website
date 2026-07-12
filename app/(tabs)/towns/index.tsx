@@ -1,7 +1,8 @@
-import { View, Text, Pressable, StyleSheet, Platform } from "react-native";
+import { useState } from "react";
+import { View, Pressable, Platform, Image } from "react-native";
 import { Link } from "expo-router";
 import Head from "expo-router/head";
-import { PageLayout } from "@/components/layout";
+import { PageLayout, Section } from "@/components/layout";
 import { FontAwesome } from "@expo/vector-icons";
 import { useTowns } from "@/hooks/useTowns";
 import { LoadingState } from "@/components/ui/LoadingState";
@@ -9,16 +10,27 @@ import { ErrorState } from "@/components/ui/ErrorState";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { AnimateOnScroll } from "@/components/ui/AnimateOnScroll";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import {
+  Display,
+  Eyebrow,
+  H3,
+  Body,
+  BodyLarge,
+} from "@/components/ui/Typography";
+import { theme } from "@/constants/theme";
+import { tokens } from "@/constants/tokens";
 import { useResponsive } from "@/hooks/useResponsive";
 
 // Division colors for town badges
 const divisionColors: Record<string, { bg: string; text: string }> = {
-  Benkum: { bg: "#1a5632", text: "#ffffff" },
-  Nifa: { bg: "#d4a843", text: "#ffffff" },
-  Adonten: { bg: "#1E4D8B", text: "#ffffff" },
-  Kyidom: { bg: "#8B0000", text: "#ffffff" },
-  Gyase: { bg: "#6B3FA0", text: "#ffffff" },
+  Benkum: { bg: tokens.colors.greenDeep, text: tokens.colors.white },
+  Nifa: { bg: tokens.colors.gold, text: tokens.colors.white },
+  Adonten: { bg: tokens.colors.blueHeritage, text: tokens.colors.white },
+  Kyidom: { bg: tokens.colors.redKente, text: tokens.colors.white },
+  Gyase: { bg: "#6B3FA0", text: tokens.colors.white },
 };
+
+const DIVISIONS = ["Benkum", "Nifa", "Adonten", "Kyidom", "Gyase"] as const;
 
 // Map town names to divisions (to be verified by site owner)
 const townDivisions: Record<string, string> = {
@@ -41,15 +53,30 @@ const townDivisions: Record<string, string> = {
   Suhum: "Kyidom",
 };
 
+const isWeb = Platform.OS === "web";
+
 export default function TownsScreen() {
-  const { isMobile, isTablet, isDesktop } = useResponsive();
+  const { isMobile, isTablet } = useResponsive();
   const { data: towns, isLoading, error, refetch } = useTowns();
+  const [selectedDivision, setSelectedDivision] = useState<string>("All");
 
   const getColumnCount = () => {
     if (isMobile) return 1;
     if (isTablet) return 2;
-    return 4;
+    return 3;
   };
+
+  const cardWidth = isMobile
+    ? ("100%" as const)
+    : isTablet
+    ? ("calc(50% - 12px)" as any)
+    : ("calc(33.333% - 16px)" as any);
+
+  const filteredTowns = (towns ?? []).filter(
+    (town) =>
+      selectedDivision === "All" ||
+      (townDivisions[town.name] || "Gyase") === selectedDivision
+  );
 
   return (
     <PageLayout>
@@ -61,286 +88,188 @@ export default function TownsScreen() {
       </Head>
 
       {/* Hero */}
-      <View style={[styles.hero, { paddingVertical: isMobile ? 60 : 100 }]}>
-        <View style={styles.heroInner}>
-          <Text style={styles.heroLabel}>OUR COMMUNITIES</Text>
-          <Text style={[styles.heroTitle, { fontSize: isMobile ? 36 : 48, lineHeight: isMobile ? 44 : 58 }]}>
+      <View className="bg-green-dark py-20 md:py-28 px-[8%]">
+        <View className="max-w-7xl mx-auto w-full items-center">
+          <Eyebrow className="mb-4">Our Communities</Eyebrow>
+          <Display className="text-white text-center mb-4">
             Towns & Communities
-          </Text>
-          <Text style={styles.heroSubtitle}>
+          </Display>
+          <BodyLarge className="text-white/85 text-center max-w-2xl">
             Explore the 17 principal towns of the Akuapem Traditional Area
-          </Text>
+          </BodyLarge>
         </View>
       </View>
 
       {/* Location & Boundaries */}
-      <View style={[styles.section, { paddingVertical: isMobile ? 60 : 100, backgroundColor: "#f5f2eb" }]}>
-        <View style={styles.sectionInner}>
-          <View style={[styles.infoRow, isMobile && styles.infoRowMobile]}>
-            <View style={styles.infoCard}>
-              <View style={styles.infoIconWrapper}>
-                <FontAwesome name="globe" size={18} color="#1a5632" />
-              </View>
-              <Text style={styles.infoTitle}>Location & Boundaries</Text>
-              <Text style={styles.infoText}>
-                The Akuapem Traditional Area spans from the foothills to the ridge
-                of the Akuapem Range in the Eastern Region of Ghana.
-              </Text>
+      <Section background="warm" animate={false}>
+        <View className={`gap-8 mb-10 ${isMobile ? "" : "flex-row"}`}>
+          <View className="flex-1">
+            <View className="w-10 h-10 bg-green-deep/10 rounded-full items-center justify-center mb-3">
+              <FontAwesome name="globe" size={18} color={theme.colors.primaryGreen} />
             </View>
-            <View style={styles.infoCard}>
-              <View style={styles.infoIconWrapper}>
-                <FontAwesome name="institution" size={16} color="#1a5632" />
-              </View>
-              <Text style={styles.infoTitle}>Districts</Text>
-              <Text style={styles.infoText}>
-                The traditional area forms part of the Akuapem South and Akuapem
-                North districts.
-              </Text>
-            </View>
+            <H3 className="mb-2">Location & Boundaries</H3>
+            <Body className="text-gray-muted">
+              The Akuapem Traditional Area spans from the foothills to the ridge
+              of the Akuapem Range in the Eastern Region of Ghana.
+            </Body>
           </View>
-
-          {/* Map */}
-          {Platform.OS === "web" && (
-            <AnimateOnScroll>
-              <Text style={styles.mapHeading}>Map of Akuapem Traditional Area</Text>
-              <View style={styles.mapContainer}>
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d63614.94!2d-0.1!3d5.95!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xfdf834e45f6bbd7%3A0x3a10a41b21e4f06f!2sAkropong%2C%20Ghana!5e0!3m2!1sen!2sus!4v1710000000000"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0, borderRadius: 12 }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  title="Map of Akuapem Traditional Area"
-                />
-              </View>
-            </AnimateOnScroll>
-          )}
+          <View className="flex-1">
+            <View className="w-10 h-10 bg-green-deep/10 rounded-full items-center justify-center mb-3">
+              <FontAwesome name="institution" size={16} color={theme.colors.primaryGreen} />
+            </View>
+            <H3 className="mb-2">Districts</H3>
+            <Body className="text-gray-muted">
+              The traditional area forms part of the Akuapem South and Akuapem
+              North districts.
+            </Body>
+          </View>
         </View>
-      </View>
+
+        {/* Map */}
+        {isWeb && (
+          <AnimateOnScroll>
+            <H3 className="text-center mb-4">Map of Akuapem Traditional Area</H3>
+            <View className="h-96 rounded-xl overflow-hidden border border-green-deep/15">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d63614.94!2d-0.1!3d5.95!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xfdf834e45f6bbd7%3A0x3a10a41b21e4f06f!2sAkropong%2C%20Ghana!5e0!3m2!1sen!2sus!4v1710000000000"
+                width="100%"
+                height="100%"
+                style={{ border: 0, borderRadius: 12 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Map of Akuapem Traditional Area"
+              />
+            </View>
+          </AnimateOnScroll>
+        )}
+      </Section>
 
       {/* Towns Grid */}
-      <View style={[styles.section, { paddingVertical: isMobile ? 60 : 100, backgroundColor: "#ffffff" }]}>
-        <View style={styles.sectionInner}>
-          <SectionHeading
-            label="THE 17 TOWNS"
-            title="Our Principal Towns"
-            subtitle="Each town has its own chief, traditions, and unique identity within the Akuapem state."
-          />
+      <Section background="white" animate={false}>
+        <SectionHeading
+          label="THE 17 TOWNS"
+          title="Our Principal Towns"
+          subtitle="Each town has its own chief, traditions, and unique identity within the Akuapem state."
+        />
 
-          {isLoading ? (
-            <LoadingState message="Loading towns..." />
-          ) : error ? (
-            <ErrorState message="Failed to load towns." onRetry={refetch} />
-          ) : (
-            <View style={[
-              styles.townGrid,
-              {
-                flexDirection: isMobile ? "column" : "row",
-              },
-            ]}>
-              {(towns ?? []).map((town, index) => {
-                const division = townDivisions[town.name] || "Gyase";
-                const divColor = divisionColors[division] || divisionColors.Gyase;
+        {/* Division filter chips */}
+        <View
+          className="flex-row flex-wrap justify-center gap-3 mb-10"
+          accessibilityRole="tablist"
+        >
+          {["All", ...DIVISIONS].map((division) => {
+            const selected = selectedDivision === division;
+            return (
+              <Pressable
+                key={division}
+                onPress={() => setSelectedDivision(division)}
+                accessibilityRole="tab"
+                accessibilityState={{ selected }}
+                accessibilityLabel={`Filter towns by ${division}`}
+                className={`py-2 px-5 rounded-full border ${
+                  selected
+                    ? "bg-gold border-gold"
+                    : "bg-white border-gold/40"
+                }`}
+                style={isWeb ? ({ transition: "all 0.2s ease", cursor: "pointer" } as any) : undefined}
+              >
+                <Body
+                  className={`font-accent uppercase tracking-widest text-xs ${
+                    selected ? "text-white" : "text-gray-charcoal"
+                  }`}
+                >
+                  {division}
+                </Body>
+              </Pressable>
+            );
+          })}
+        </View>
 
-                return (
-                  <AnimateOnScroll key={town.id} delay={(index % getColumnCount()) * 100}>
-                    <Link href={`/towns/${town.id}`} asChild>
-                      <Pressable
-                        style={({ hovered }: any) => [
-                          styles.townCard,
-                          isMobile ? styles.townCardMobile : (isTablet ? styles.townCardTablet : styles.townCardDesktop),
-                          hovered && styles.townCardHover,
-                        ]}
-                      >
-                        {/* Town image */}
-                        <PlaceholderImage height={160} label={town.name} />
+        {isLoading ? (
+          <LoadingState message="Loading towns..." />
+        ) : error ? (
+          <ErrorState message="Failed to load towns." onRetry={refetch} />
+        ) : (
+          <View
+            className={`gap-6 justify-center ${
+              isMobile ? "" : "flex-row flex-wrap"
+            }`}
+          >
+            {filteredTowns.map((town, index) => {
+              const division = townDivisions[town.name] || "Gyase";
+              const divColor = divisionColors[division] || divisionColors.Gyase;
 
-                        {/* Division badge */}
-                        <View style={[styles.divisionBadge, { backgroundColor: divColor.bg }]}>
-                          <Text style={[styles.divisionText, { color: divColor.text }]}>
-                            {division}
-                          </Text>
-                        </View>
+              return (
+                <AnimateOnScroll
+                  key={town.id}
+                  delay={(index % getColumnCount()) * 100}
+                  style={{ width: cardWidth }}
+                >
+                  <Link href={`/towns/${town.id}`} asChild>
+                    <Pressable
+                      accessibilityRole="link"
+                      accessibilityLabel={`View ${town.name}, ${division} division`}
+                      className="rounded-xl overflow-hidden"
+                      style={({ hovered }: any) => [
+                        isWeb &&
+                          ({
+                            transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                            cursor: "pointer",
+                          } as any),
+                        hovered && {
+                          transform: [{ translateY: -6 }],
+                          boxShadow: "0px 12px 24px rgba(0, 0, 0, 0.15)",
+                        },
+                      ]}
+                    >
+                      <View className="relative h-64">
+                        {/* Photo or division-tinted placeholder */}
+                        {(town as any).image_url ? (
+                          <Image
+                            source={{ uri: (town as any).image_url }}
+                            className="absolute inset-0 w-full h-full"
+                            resizeMode="cover"
+                          />
+                        ) : (
+                          <PlaceholderImage
+                            height={256}
+                            label={town.name}
+                            style={{ backgroundColor: divColor.bg }}
+                          />
+                        )}
 
-                        {/* Content */}
-                        <View style={styles.townContent}>
-                          <Text style={styles.townName}>{town.name}</Text>
-                          <Text style={styles.townChief}>{town.chief}</Text>
-                          <View style={styles.learnMore}>
-                            <FontAwesome name="arrow-right" size={12} color="#d4a843" />
-                            <Text style={styles.learnMoreText}>Learn more</Text>
+                        {/* Dark overlay footer */}
+                        <View className="absolute bottom-0 left-0 right-0 bg-green-dark/80 px-4 py-3 flex-row items-center justify-between">
+                          <View className="flex-1 mr-2">
+                            <Body className="font-heading-bold text-white text-lg">
+                              {town.name}
+                            </Body>
+                            <Body className="text-white/70 text-xs" numberOfLines={1}>
+                              {town.chief}
+                            </Body>
+                          </View>
+                          <View
+                            className="py-1 px-2.5 rounded-full"
+                            style={{ backgroundColor: divColor.bg }}
+                          >
+                            <Body
+                              className="font-accent uppercase tracking-widest text-[10px]"
+                              style={{ color: divColor.text }}
+                            >
+                              {division}
+                            </Body>
                           </View>
                         </View>
-                      </Pressable>
-                    </Link>
-                  </AnimateOnScroll>
-                );
-              })}
-            </View>
-          )}
-        </View>
-      </View>
+                      </View>
+                    </Pressable>
+                  </Link>
+                </AnimateOnScroll>
+              );
+            })}
+          </View>
+        )}
+      </Section>
     </PageLayout>
   );
 }
-
-const styles = StyleSheet.create({
-  hero: {
-    backgroundColor: "#1a5632",
-    paddingHorizontal: "8%",
-  },
-  heroInner: {
-    maxWidth: 700,
-    marginHorizontal: "auto",
-    alignItems: "center",
-  },
-  heroLabel: {
-    fontSize: 13,
-    textTransform: "uppercase",
-    letterSpacing: 3,
-    color: "#d4a843",
-    fontWeight: "700",
-    fontFamily: "Inter_600SemiBold, sans-serif",
-    marginBottom: 16,
-  },
-  heroTitle: {
-    color: "#ffffff",
-    fontFamily: "PlayfairDisplay_700Bold, serif",
-    textAlign: "center",
-    marginBottom: 16,
-  },
-  heroSubtitle: {
-    color: "rgba(255, 255, 255, 0.85)",
-    fontSize: 18,
-    fontFamily: "Inter_400Regular, sans-serif",
-    textAlign: "center",
-    lineHeight: 28,
-  },
-  section: {
-    paddingHorizontal: "8%",
-  },
-  sectionInner: {
-    maxWidth: 1200,
-    marginHorizontal: "auto",
-    width: "100%",
-  },
-  infoRow: {
-    flexDirection: "row",
-    gap: 32,
-    marginBottom: 40,
-  },
-  infoRowMobile: {
-    flexDirection: "column",
-  },
-  infoCard: {
-    flex: 1,
-  },
-  infoIconWrapper: {
-    width: 40,
-    height: 40,
-    backgroundColor: "rgba(26, 86, 50, 0.1)",
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 12,
-  },
-  infoTitle: {
-    fontSize: 22,
-    fontFamily: "PlayfairDisplay_700Bold, serif",
-    color: "#2d2d2d",
-    marginBottom: 8,
-  },
-  infoText: {
-    fontSize: 16,
-    color: "#6b6b6b",
-    fontFamily: "Inter_400Regular, sans-serif",
-    lineHeight: 26,
-  },
-  mapHeading: {
-    fontSize: 22,
-    fontFamily: "PlayfairDisplay_700Bold, serif",
-    color: "#2d2d2d",
-    textAlign: "center",
-    marginBottom: 16,
-  },
-  mapContainer: {
-    height: 384,
-    borderRadius: 12,
-    overflow: "hidden",
-    borderWidth: 1,
-    borderColor: "rgba(26, 86, 50, 0.15)",
-  },
-  townGrid: {
-    flexWrap: "wrap",
-    gap: 24,
-    justifyContent: "center",
-  },
-  townCard: {
-    backgroundColor: "#ffffff",
-    borderRadius: 12,
-    overflow: "hidden",
-    borderWidth: 1,
-    borderColor: "#e8e8e8",
-    position: "relative",
-    ...(Platform.OS === "web"
-      ? { transition: "all 0.3s ease", cursor: "pointer" }
-      : {}),
-  } as any,
-  townCardDesktop: {
-    width: 270,
-  },
-  townCardTablet: {
-    width: "calc(50% - 12px)" as any,
-  },
-  townCardMobile: {
-    width: "100%",
-  },
-  townCardHover: {
-    transform: [{ translateY: -6 }],
-    boxShadow: "0px 12px 24px rgba(0, 0, 0, 0.15)",
-    borderColor: "rgba(212, 168, 67, 0.3)",
-  },
-  divisionBadge: {
-    position: "absolute",
-    top: 12,
-    right: 12,
-    paddingVertical: 4,
-    paddingHorizontal: 10,
-    borderRadius: 12,
-  },
-  divisionText: {
-    fontSize: 11,
-    fontWeight: "600",
-    fontFamily: "Inter_600SemiBold, sans-serif",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-  },
-  townContent: {
-    padding: 16,
-  },
-  townName: {
-    fontSize: 20,
-    fontFamily: "PlayfairDisplay_700Bold, serif",
-    color: "#2d2d2d",
-    marginBottom: 4,
-  },
-  townChief: {
-    fontSize: 14,
-    color: "#6b6b6b",
-    fontFamily: "Inter_400Regular, sans-serif",
-    marginBottom: 12,
-  },
-  learnMore: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
-  learnMoreText: {
-    color: "#d4a843",
-    fontSize: 14,
-    fontWeight: "600",
-    fontFamily: "Inter_600SemiBold, sans-serif",
-  },
-});

@@ -38,7 +38,7 @@ export function Section({
 }: {
   children: ReactNode;
   className?: string;
-  background?: "white" | "warm" | "green" | "gold";
+  background?: "white" | "warm" | "green" | "gold" | "cream" | "green-dark";
   animate?: boolean;
 }) {
   const bgColors = {
@@ -46,6 +46,8 @@ export function Section({
     warm: "bg-gray-warm",
     green: "bg-green-deep",
     gold: "bg-gold",
+    cream: "bg-cream",
+    "green-dark": "bg-green-dark",
   };
 
   const content = (

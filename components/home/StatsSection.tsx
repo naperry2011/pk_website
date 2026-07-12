@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Platform } from "react-native";
+import { View, Text, Platform } from "react-native";
 import { useResponsive } from "@/hooks/useResponsive";
 import { AnimateOnScroll } from "@/components/ui/AnimateOnScroll";
 
@@ -27,24 +27,36 @@ function AnimatedNumber({ end, suffix = "" }: { end: number; suffix?: string }) 
 }
 
 const stats = [
-  { value: 17, suffix: "", label: "PRINCIPAL TOWNS" },
-  { value: 300, suffix: "+", label: "YEARS OF HERITAGE" },
-  { value: 1, suffix: "", label: "UNITED KINGDOM" },
+  { value: 17, suffix: "", label: "Principal Towns" },
+  { value: 300, suffix: "+", label: "Years of Heritage" },
+  { value: 1, suffix: "", label: "United Kingdom" },
 ];
 
 export function StatsSection() {
   const { isMobile } = useResponsive();
 
   return (
-    <View style={[styles.container, { paddingVertical: isMobile ? 60 : 100 }]}>
-      <View style={[styles.inner, isMobile && styles.innerMobile]}>
+    <View className="bg-green-deep border-t-2 border-b-2 border-gold/40 px-[8%] py-16 md:py-24">
+      <View
+        className={`max-w-7xl mx-auto w-full ${
+          isMobile ? "flex-col" : "flex-row justify-around items-stretch"
+        }`}
+      >
         {stats.map((stat, index) => (
           <AnimateOnScroll key={stat.label} delay={index * 150}>
-            <View style={[styles.statItem, isMobile && styles.statItemMobile]}>
-              <Text style={styles.number}>
+            <View
+              className={`items-center py-6 ${
+                isMobile
+                  ? `w-full ${index < stats.length - 1 ? "border-b border-gold/30" : ""}`
+                  : `min-w-[180px] px-10 ${index > 0 ? "border-l border-gold/30" : ""}`
+              }`}
+            >
+              <Text className="font-accent text-gold text-5xl md:text-6xl mb-3">
                 <AnimatedNumber end={stat.value} suffix={stat.suffix} />
               </Text>
-              <Text style={styles.label}>{stat.label}</Text>
+              <Text className="font-body-semibold uppercase tracking-[3px] text-white/70 text-sm text-center">
+                {stat.label}
+              </Text>
             </View>
           </AnimateOnScroll>
         ))}
@@ -52,44 +64,3 @@ export function StatsSection() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#1a5632",
-    paddingHorizontal: "8%",
-  },
-  inner: {
-    maxWidth: 1200,
-    marginHorizontal: "auto",
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-  },
-  innerMobile: {
-    flexDirection: "column",
-    gap: 40,
-  },
-  statItem: {
-    alignItems: "center",
-    minWidth: 180,
-  },
-  statItemMobile: {
-    minWidth: 0,
-  },
-  number: {
-    fontSize: 56,
-    fontFamily: "PlayfairDisplay_700Bold, serif",
-    fontWeight: "700",
-    color: "#d4a843",
-    marginBottom: 8,
-  },
-  label: {
-    fontSize: 15,
-    textTransform: "uppercase",
-    letterSpacing: 3,
-    color: "rgba(255, 255, 255, 0.8)",
-    fontFamily: "Inter_600SemiBold, sans-serif",
-    fontWeight: "600",
-  },
-});

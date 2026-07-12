@@ -1,7 +1,10 @@
-import { View, Pressable, Linking } from "react-native";
-import { Body, H3 } from "@/components/ui/Typography";
+import { View, Pressable, Platform } from "react-native";
+import { Body, Eyebrow, H3 } from "@/components/ui/Typography";
 import { Card, CardContent } from "@/components/ui/Card";
 import { FontAwesome } from "@expo/vector-icons";
+import { theme } from "@/constants/theme";
+
+const isWeb = Platform.OS === "web";
 
 const resources = [
   {
@@ -33,25 +36,30 @@ const resources = [
 
 export function HelpfulResources() {
   return (
-    <Card>
+    <Card goldBorder className="p-6">
       <CardContent>
-        <H3 className="mb-4">Helpful Resources</H3>
-        <View className="gap-3">
-          {resources.map((resource) => (
+        <Eyebrow className="mb-1">Guidance</Eyebrow>
+        <H3 className="mb-2">Helpful Resources</H3>
+        <View className="w-10 h-[2px] bg-gold mb-5" />
+        <View className="gap-1">
+          {resources.map((resource, index) => (
             <Pressable
               key={resource.title}
-              className="flex-row items-start gap-3 p-3 rounded-lg bg-gray-warm/50 hover:bg-gray-warm min-h-[44px]"
+              className={`flex-row items-start gap-3 py-3 min-h-[44px] ${
+                index < resources.length - 1 ? "border-b border-gray-charcoal/10" : ""
+              }`}
+              style={isWeb ? ({ cursor: "pointer" } as any) : undefined}
               accessibilityRole="button"
               accessibilityLabel={resource.title}
             >
               <View className="w-8 h-8 rounded-full bg-green-deep/10 items-center justify-center mt-0.5">
-                <FontAwesome name={resource.icon} size={14} color="#1B4D3E" />
+                <FontAwesome name={resource.icon} size={14} color={theme.colors.primaryGreen} />
               </View>
               <View className="flex-1">
                 <Body className="font-body-semibold text-sm text-gray-charcoal">
                   {resource.title}
                 </Body>
-                <Body className="text-xs text-gray-charcoal/60">
+                <Body className="text-xs text-gray-muted">
                   {resource.description}
                 </Body>
               </View>

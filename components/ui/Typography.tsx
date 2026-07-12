@@ -78,6 +78,29 @@ export function BodyLarge({
   );
 }
 
+export function Display({ children, className = "", ...props }: TypographyProps) {
+  return (
+    <RNText
+      accessibilityRole="header"
+      className={`font-heading-bold text-display md:text-display-desktop text-gray-charcoal ${className}`}
+      {...props}
+    >
+      {children}
+    </RNText>
+  );
+}
+
+export function Eyebrow({ children, className = "", ...props }: TypographyProps) {
+  return (
+    <RNText
+      className={`font-accent text-eyebrow uppercase tracking-widest text-gold ${className}`}
+      {...props}
+    >
+      {children}
+    </RNText>
+  );
+}
+
 export function Accent({ children, className = "", ...props }: TypographyProps) {
   return (
     <RNText

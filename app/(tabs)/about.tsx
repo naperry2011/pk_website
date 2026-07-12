@@ -1,10 +1,53 @@
-import { View, Text, StyleSheet, Platform, Image } from "react-native";
+import { View, Image } from "react-native";
 import Head from "expo-router/head";
-import { PageLayout } from "@/components/layout";
+import { PageLayout, Section } from "@/components/layout";
 import { FontAwesome } from "@expo/vector-icons";
 import { paramountKing, councilHistory } from "@/constants/mockData";
 import { AnimateOnScroll } from "@/components/ui/AnimateOnScroll";
+import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
+import {
+  Display,
+  Eyebrow,
+  H2,
+  H3,
+  Body,
+  BodyLarge,
+  Accent,
+} from "@/components/ui/Typography";
+import { theme } from "@/constants/theme";
+import { tokens } from "@/constants/tokens";
 import { useResponsive } from "@/hooks/useResponsive";
+
+/** Photo with an offset gold hairline frame sitting behind it. */
+function FramedImage({
+  source,
+  placeholderLabel,
+  heightClass,
+}: {
+  source?: any;
+  placeholderLabel?: string;
+  heightClass: string;
+}) {
+  return (
+    <View className="relative mr-3 mb-3">
+      <View
+        className="absolute top-3 left-3 -right-3 -bottom-3 border-2 border-gold rounded-xl"
+        pointerEvents="none"
+      />
+      <View className="rounded-xl overflow-hidden">
+        {source ? (
+          <Image
+            source={source}
+            className={`w-full ${heightClass}`}
+            resizeMode="cover"
+          />
+        ) : (
+          <PlaceholderImage height={320} label={placeholderLabel} borderRadius={12} />
+        )}
+      </View>
+    </View>
+  );
+}
 
 export default function AboutScreen() {
   const { isMobile } = useResponsive();
@@ -17,6 +60,22 @@ export default function AboutScreen() {
     historyText.substring(midPoint),
   ];
 
+  const historyBlocks = [
+    {
+      eyebrow: "Our History",
+      title: "Centuries of Heritage",
+      body: historyParagraphs[0],
+      image: require("@/assets/images/about/historic-monument.jpg"),
+    },
+    {
+      eyebrow: "Continuity",
+      title: "Bridging Past and Future",
+      body: historyParagraphs[1],
+      image: null,
+      placeholderLabel: "Odwira Festival",
+    },
+  ];
+
   return (
     <PageLayout>
       <Head>
@@ -26,526 +85,253 @@ export default function AboutScreen() {
         <meta property="og:description" content="Learn about the history, leadership, and structure of the Akuapem Traditional Council." />
       </Head>
 
-      {/* Hero */}
-      <View style={[styles.hero, { paddingVertical: isMobile ? 60 : 100 }]}>
-        <View style={styles.heroInner}>
-          <Text style={styles.heroLabel}>ABOUT US</Text>
-          <Text style={[styles.heroTitle, { fontSize: isMobile ? 36 : 48, lineHeight: isMobile ? 44 : 58 }]}>
-            About the Council
-          </Text>
-          <Text style={styles.heroSubtitle}>
-            Discover the rich history and leadership of the Akuapem Traditional Council
-          </Text>
+      {/* Editorial page header — image band with green-dark scrim */}
+      <View className="relative overflow-hidden">
+        <Image
+          source={require("@/assets/images/about/historic-monument.jpg")}
+          className="absolute inset-0 w-full h-full"
+          resizeMode="cover"
+          accessibilityIgnoresInvertColors
+        />
+        <View className="absolute inset-0 bg-green-dark/80" />
+        <View className="py-20 md:py-32 px-[8%]">
+          <View className="max-w-7xl mx-auto w-full items-center">
+            <Eyebrow className="mb-4">About Us</Eyebrow>
+            <Display className="text-white text-center mb-4">
+              About the Council
+            </Display>
+            <BodyLarge className="text-white/85 text-center max-w-2xl">
+              Discover the rich history and leadership of the Akuapem
+              Traditional Council
+            </BodyLarge>
+          </View>
         </View>
       </View>
 
-      {/* History Section — Two column layout */}
-      <View style={[styles.section, { paddingVertical: isMobile ? 60 : 100 }]}>
-        <AnimateOnScroll>
-          <View style={styles.sectionInner}>
-            <View style={[styles.twoCol, isMobile && styles.twoColMobile]}>
-              {/* Image */}
-              <View style={[styles.historyImage, isMobile && styles.historyImageMobile]}>
-                <View style={{ borderRadius: 12, overflow: "hidden" }}>
-                  <Image
-                    source={require("@/assets/images/about/historic-monument.jpg")}
-                    style={{ height: isMobile ? 280 : 400, width: "100%", borderRadius: 12 }}
-                    resizeMode="cover"
+      {/* History — alternating editorial blocks */}
+      <Section background="white" animate={false}>
+        <View className="gap-16 md:gap-24">
+          {historyBlocks.map((block, i) => (
+            <AnimateOnScroll key={block.title}>
+              <View
+                className={`items-center gap-10 md:gap-16 ${
+                  i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
+                }`}
+              >
+                <View className="flex-1 w-full">
+                  <FramedImage
+                    source={block.image}
+                    placeholderLabel={block.placeholderLabel}
+                    heightClass={isMobile ? "h-[280px]" : "h-[400px]"}
                   />
                 </View>
+                <View className="flex-1 w-full">
+                  <Eyebrow className="mb-3">{block.eyebrow}</Eyebrow>
+                  <H2 className="mb-5">{block.title}</H2>
+                  <Body className="text-gray-muted">{block.body}</Body>
+                </View>
               </View>
+            </AnimateOnScroll>
+          ))}
+        </View>
 
-              {/* Text */}
-              <View style={[styles.historyText, isMobile && styles.historyTextMobile]}>
-                <Text style={styles.sectionLabel}>OUR HISTORY</Text>
-                <Text style={[styles.sectionTitle, { fontSize: isMobile ? 28 : 36, lineHeight: isMobile ? 36 : 47 }]}>
-                  Centuries of Heritage
-                </Text>
-                {historyParagraphs.map((para, i) => (
-                  <Text key={i} style={styles.bodyText}>{para}</Text>
-                ))}
-              </View>
+        {/* Founded / headquarters — Cinzel accent facts */}
+        <AnimateOnScroll>
+          <View className="md:flex-row justify-center gap-8 md:gap-24 mt-16 md:mt-24 border-t border-gold/30 pt-10">
+            <View className="items-center">
+              <Eyebrow className="mb-2">Founded</Eyebrow>
+              <Accent className="text-gray-charcoal text-xl">
+                {councilHistory.founded}
+              </Accent>
+            </View>
+            <View className="items-center">
+              <Eyebrow className="mb-2">Headquarters</Eyebrow>
+              <Accent className="text-gray-charcoal text-xl">
+                {councilHistory.headquarters}
+              </Accent>
             </View>
           </View>
         </AnimateOnScroll>
-      </View>
+      </Section>
 
       {/* Our Structure */}
-      <View style={[styles.section, { paddingVertical: isMobile ? 60 : 100, backgroundColor: "#f5f2eb" }]}>
-        <AnimateOnScroll>
-          <View style={styles.sectionInner}>
-            <View style={styles.centeredHeading}>
-              <Text style={styles.sectionLabel}>GOVERNANCE</Text>
-              <Text style={[styles.sectionTitle, { textAlign: "center", fontSize: isMobile ? 28 : 36, lineHeight: isMobile ? 36 : 47 }]}>
-                Our Structure
-              </Text>
-              <Text style={styles.structureDesc}>
-                The council is led by the Omanhene (Paramount Chief), supported by
-                17 divisional and sub-divisional chiefs, queen mothers, and elders.
-              </Text>
+      <Section background="warm">
+        <View className="items-center mb-10">
+          <Eyebrow className="mb-3">Governance</Eyebrow>
+          <H2 className="text-center mb-5">Our Structure</H2>
+          <Body className="text-gray-muted text-center max-w-xl">
+            The council is led by the Omanhene (Paramount Chief), supported by
+            17 divisional and sub-divisional chiefs, queen mothers, and elders.
+          </Body>
+        </View>
+
+        {/* Visual Hierarchy */}
+        <View className="items-center">
+          <View className="bg-gold py-4 px-8 rounded-xl shadow-md">
+            <Body className="text-white font-body-semibold text-lg text-center">
+              Omanhene
+            </Body>
+            <Body className="text-white/85 text-sm text-center">
+              Paramount Chief
+            </Body>
+          </View>
+
+          <View className="w-0.5 h-8 bg-gold" />
+
+          <View className={`gap-4 ${isMobile ? "items-center" : "flex-row"}`}>
+            <View className="bg-green-deep py-3.5 px-6 rounded-xl shadow-sm">
+              <Body className="text-white font-body-semibold text-center">
+                Divisional Chiefs
+              </Body>
             </View>
+            <View className="bg-green-deep py-3.5 px-6 rounded-xl shadow-sm">
+              <Body className="text-white font-body-semibold text-center">
+                Queen Mothers
+              </Body>
+            </View>
+          </View>
 
-            {/* Visual Hierarchy */}
-            <View style={styles.hierarchyContainer}>
-              {/* Omanhene */}
-              <View style={styles.hierarchyBoxPrimary}>
-                <Text style={styles.hierarchyTitlePrimary}>Omanhene</Text>
-                <Text style={styles.hierarchySubPrimary}>Paramount Chief</Text>
-              </View>
+          <View className="w-0.5 h-8 bg-gold" />
 
-              <View style={styles.connector} />
+          <View className="bg-blue-heritage py-3.5 px-6 rounded-xl shadow-sm">
+            <Body className="text-white font-body-semibold text-center">
+              Elders
+            </Body>
+          </View>
 
-              {/* Second Level */}
-              <View style={[styles.hierarchyRow, isMobile && styles.hierarchyRowMobile]}>
-                <View style={styles.hierarchyBoxSecondary}>
-                  <Text style={styles.hierarchyTitleSecondary}>Divisional Chiefs</Text>
+          <View className="w-0.5 h-8 bg-gold" />
+
+          <View
+            className={`gap-3 justify-center ${
+              isMobile ? "items-center" : "flex-row flex-wrap"
+            }`}
+          >
+            {["Chieftaincy", "Land", "Development", "Cultural Affairs"].map(
+              (committee) => (
+                <View
+                  key={committee}
+                  className="bg-white border-2 border-gold py-3.5 px-5 rounded-xl"
+                >
+                  <Body className="text-gold font-body-semibold text-center">
+                    {committee}
+                  </Body>
                 </View>
-                <View style={styles.hierarchyBoxSecondary}>
-                  <Text style={styles.hierarchyTitleSecondary}>Queen Mothers</Text>
-                </View>
+              )
+            )}
+          </View>
+        </View>
+      </Section>
+
+      {/* Leadership — royal portrait */}
+      <Section background="cream">
+        <View className={`items-center gap-10 md:gap-16 ${isMobile ? "" : "flex-row"}`}>
+          {/* Portrait with gold hairline frame */}
+          <View className="flex-1 w-full">
+            <View className="border border-gold rounded-xl p-2 bg-white">
+              <View className="rounded-lg overflow-hidden">
+                <Image
+                  source={require("@/assets/images/about/okuapehene-portrait.jpg")}
+                  className={`w-full ${isMobile ? "h-[350px]" : "h-[480px]"}`}
+                  resizeMode="cover"
+                  accessibilityLabel={`Portrait of ${paramountKing.name}`}
+                />
               </View>
+            </View>
+          </View>
 
-              <View style={styles.connector} />
+          {/* Bio */}
+          <View className="flex-1 w-full">
+            <Eyebrow className="mb-3">Okuapehene</Eyebrow>
+            <Accent className="text-gray-charcoal text-2xl md:text-3xl mb-2">
+              {paramountKing.name}
+            </Accent>
+            <Accent className="text-gold-muted text-base mb-4">
+              President, Akuapem Traditional Council
+            </Accent>
+            <View className="w-16 h-0.5 bg-gold mb-5" />
+            <Body className="text-gray-muted mb-4">
+              {paramountKing.biography}
+            </Body>
+            <View className="bg-gray-warm py-3 px-5 rounded-lg self-start mt-2 border border-gold/20">
+              <Eyebrow className="text-xs mb-1">Enstooled</Eyebrow>
+              <Body className="font-body-semibold">
+                {new Date(paramountKing.enstoolmentDate).toLocaleDateString(
+                  "en-GB",
+                  { day: "numeric", month: "long", year: "numeric" }
+                )}
+              </Body>
+            </View>
+          </View>
+        </View>
+      </Section>
 
-              {/* Elders */}
-              <View style={styles.hierarchyBoxTertiary}>
-                <Text style={styles.hierarchyTitleTertiary}>Elders</Text>
+      {/* Our Role, Vision & Mission */}
+      <Section background="warm">
+        <View className="items-center mb-10">
+          <Eyebrow className="mb-3">Our Purpose</Eyebrow>
+          <H2 className="text-center">Role, Vision & Mission</H2>
+        </View>
+
+        <View className={`gap-6 ${isMobile ? "" : "flex-row"}`}>
+          <AnimateOnScroll delay={0} style={{ flex: isMobile ? undefined : 1 }}>
+            <View className="flex-1 bg-white rounded-xl border border-gold/20 p-7 items-center">
+              <View className="w-14 h-14 rounded-full bg-green-deep/10 items-center justify-center mb-4">
+                <FontAwesome
+                  name="balance-scale"
+                  size={24}
+                  color={theme.colors.primaryGreen}
+                />
               </View>
+              <H3 className="text-center mb-3">Our Role</H3>
+              <Body className="text-gray-muted text-center text-sm leading-6">
+                The governing traditional institution responsible for
+                installation of chiefs, dispute resolution, land
+                administration, and unifying all towns under its jurisdiction.
+              </Body>
+            </View>
+          </AnimateOnScroll>
 
-              <View style={styles.connector} />
+          <AnimateOnScroll delay={100} style={{ flex: isMobile ? undefined : 1 }}>
+            <View className="flex-1 bg-white rounded-xl border border-gold/20 p-7 items-center">
+              <View className="w-14 h-14 rounded-full bg-gold/10 items-center justify-center mb-4">
+                <FontAwesome name="eye" size={24} color={theme.colors.goldAccent} />
+              </View>
+              <H3 className="text-center mb-3">Our Vision</H3>
+              <Body className="text-gray-muted text-center text-sm leading-6">
+                To preserve and promote our cultural identity, peace, and unity
+                while fostering development and progress for future generations.
+              </Body>
+            </View>
+          </AnimateOnScroll>
 
-              {/* Committees */}
-              <View style={[styles.committeeRow, isMobile && styles.committeeRowMobile]}>
-                {["Chieftaincy", "Land", "Development", "Cultural Affairs"].map((committee) => (
-                  <View key={committee} style={styles.committeeBox}>
-                    <Text style={styles.committeeText}>{committee}</Text>
+          <AnimateOnScroll delay={200} style={{ flex: isMobile ? undefined : 1 }}>
+            <View className="flex-1 bg-white rounded-xl border border-gold/20 p-7 items-center">
+              <View className="w-14 h-14 rounded-full bg-blue-heritage/10 items-center justify-center mb-4">
+                <FontAwesome
+                  name="flag"
+                  size={24}
+                  color={tokens.colors.blueHeritage}
+                />
+              </View>
+              <H3 className="text-center mb-3">Our Mission</H3>
+              <View className="gap-2">
+                {[
+                  "Uphold customs and traditions",
+                  "Promote peaceful coexistence and justice",
+                  "Collaborate with government and stakeholders for community development",
+                ].map((item) => (
+                  <View key={item} className="flex-row items-start gap-2">
+                    <View className="w-2 h-2 rounded-full bg-gold mt-1.5" />
+                    <Body className="flex-1 text-gray-muted text-sm leading-6">
+                      {item}
+                    </Body>
                   </View>
                 ))}
               </View>
             </View>
-          </View>
-        </AnimateOnScroll>
-      </View>
-
-      {/* Leadership / Royal Portrait Section */}
-      <View style={[styles.section, { paddingVertical: isMobile ? 60 : 100 }]}>
-        <AnimateOnScroll>
-          <View style={styles.sectionInner}>
-            <View style={[styles.twoCol, isMobile && styles.twoColMobile]}>
-              {/* Portrait */}
-              <View style={[styles.portraitImage, isMobile && styles.portraitImageMobile]}>
-                <View style={{ borderRadius: 12, overflow: "hidden" }}>
-                  <Image
-                    source={require("@/assets/images/about/okuapehene-portrait.jpg")}
-                    style={{ height: isMobile ? 350 : 480, width: "100%", borderRadius: 12 }}
-                    resizeMode="cover"
-                  />
-                </View>
-              </View>
-
-              {/* Bio */}
-              <View style={[styles.portraitText, isMobile && styles.portraitTextMobile]}>
-                <Text style={styles.sectionLabel}>OKUAPEHENE</Text>
-                <Text style={[styles.pkName, { fontSize: isMobile ? 28 : 36, lineHeight: isMobile ? 34 : 43 }]}>
-                  {paramountKing.name}
-                </Text>
-                <Text style={styles.pkTitle}>
-                  President, Akuapem Traditional Council
-                </Text>
-                <View style={styles.goldDivider} />
-                <Text style={styles.bodyText}>
-                  {paramountKing.biography}
-                </Text>
-                <View style={styles.enstoolmentBadge}>
-                  <Text style={styles.enstoolmentLabel}>Enstooled</Text>
-                  <Text style={styles.enstoolmentDate}>
-                    {new Date(paramountKing.enstoolmentDate).toLocaleDateString(
-                      "en-GB",
-                      { day: "numeric", month: "long", year: "numeric" }
-                    )}
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </View>
-        </AnimateOnScroll>
-      </View>
-
-      {/* Our Role, Vision & Mission */}
-      <View style={[styles.section, { paddingVertical: isMobile ? 60 : 100, backgroundColor: "#f5f2eb" }]}>
-        <AnimateOnScroll>
-          <View style={styles.sectionInner}>
-            <View style={styles.centeredHeading}>
-              <Text style={styles.sectionLabel}>OUR PURPOSE</Text>
-              <Text style={[styles.sectionTitle, { textAlign: "center", fontSize: isMobile ? 28 : 36, lineHeight: isMobile ? 36 : 47 }]}>
-                Role, Vision & Mission
-              </Text>
-            </View>
-
-            <View style={[styles.cardsRow, isMobile && styles.cardsRowMobile]}>
-              {/* Our Role */}
-              <AnimateOnScroll delay={0}>
-                <View style={[styles.purposeCard, isMobile && styles.purposeCardMobile]}>
-                  <View style={[styles.purposeIcon, { backgroundColor: "rgba(26, 86, 50, 0.1)" }]}>
-                    <FontAwesome name="balance-scale" size={24} color="#1a5632" />
-                  </View>
-                  <Text style={styles.purposeTitle}>Our Role</Text>
-                  <Text style={styles.purposeText}>
-                    The governing traditional institution responsible for
-                    installation of chiefs, dispute resolution, land
-                    administration, and unifying all towns under its jurisdiction.
-                  </Text>
-                </View>
-              </AnimateOnScroll>
-
-              {/* Our Vision */}
-              <AnimateOnScroll delay={100}>
-                <View style={[styles.purposeCard, isMobile && styles.purposeCardMobile]}>
-                  <View style={[styles.purposeIcon, { backgroundColor: "rgba(212, 168, 67, 0.1)" }]}>
-                    <FontAwesome name="eye" size={24} color="#d4a843" />
-                  </View>
-                  <Text style={styles.purposeTitle}>Our Vision</Text>
-                  <Text style={styles.purposeText}>
-                    To preserve and promote our cultural identity, peace, and unity
-                    while fostering development and progress for future generations.
-                  </Text>
-                </View>
-              </AnimateOnScroll>
-
-              {/* Our Mission */}
-              <AnimateOnScroll delay={200}>
-                <View style={[styles.purposeCard, isMobile && styles.purposeCardMobile]}>
-                  <View style={[styles.purposeIcon, { backgroundColor: "rgba(30, 77, 139, 0.1)" }]}>
-                    <FontAwesome name="flag" size={24} color="#1E4D8B" />
-                  </View>
-                  <Text style={styles.purposeTitle}>Our Mission</Text>
-                  <View style={{ gap: 8 }}>
-                    {[
-                      "Uphold customs and traditions",
-                      "Promote peaceful coexistence and justice",
-                      "Collaborate with government and stakeholders for community development",
-                    ].map((item) => (
-                      <View key={item} style={styles.missionItem}>
-                        <View style={styles.missionDot} />
-                        <Text style={styles.missionText}>{item}</Text>
-                      </View>
-                    ))}
-                  </View>
-                </View>
-              </AnimateOnScroll>
-            </View>
-          </View>
-        </AnimateOnScroll>
-      </View>
+          </AnimateOnScroll>
+        </View>
+      </Section>
     </PageLayout>
   );
 }
-
-const styles = StyleSheet.create({
-  hero: {
-    backgroundColor: "#1a5632",
-    paddingHorizontal: "8%",
-  },
-  heroInner: {
-    maxWidth: 700,
-    marginHorizontal: "auto",
-    alignItems: "center",
-  },
-  heroLabel: {
-    fontSize: 13,
-    textTransform: "uppercase",
-    letterSpacing: 3,
-    color: "#d4a843",
-    fontWeight: "700",
-    fontFamily: "Inter_600SemiBold, sans-serif",
-    marginBottom: 16,
-  },
-  heroTitle: {
-    color: "#ffffff",
-    fontFamily: "PlayfairDisplay_700Bold, serif",
-    textAlign: "center",
-    marginBottom: 16,
-  },
-  heroSubtitle: {
-    color: "rgba(255, 255, 255, 0.85)",
-    fontSize: 18,
-    fontFamily: "Inter_400Regular, sans-serif",
-    textAlign: "center",
-    lineHeight: 28,
-  },
-  section: {
-    paddingHorizontal: "8%",
-    backgroundColor: "#ffffff",
-  },
-  sectionInner: {
-    maxWidth: 1200,
-    marginHorizontal: "auto",
-    width: "100%",
-  },
-  sectionLabel: {
-    fontSize: 13,
-    textTransform: "uppercase",
-    letterSpacing: 3,
-    color: "#d4a843",
-    fontWeight: "700",
-    fontFamily: "Inter_600SemiBold, sans-serif",
-    marginBottom: 12,
-  },
-  sectionTitle: {
-    fontFamily: "PlayfairDisplay_700Bold, serif",
-    color: "#2d2d2d",
-    marginBottom: 20,
-  },
-  centeredHeading: {
-    alignItems: "center",
-    marginBottom: 40,
-  },
-  bodyText: {
-    fontSize: 16,
-    color: "#6b6b6b",
-    fontFamily: "Inter_400Regular, sans-serif",
-    lineHeight: 26,
-    marginBottom: 16,
-  },
-
-  // Two column layout
-  twoCol: {
-    flexDirection: "row",
-    gap: 48,
-    alignItems: "center",
-  },
-  twoColMobile: {
-    flexDirection: "column",
-    gap: 32,
-  },
-  historyImage: {
-    flex: 1,
-    borderRadius: 12,
-    overflow: "hidden",
-  },
-  historyImageMobile: {
-    width: "100%",
-  },
-  historyText: {
-    flex: 1,
-  },
-  historyTextMobile: {
-    width: "100%",
-  },
-
-  // Structure
-  structureDesc: {
-    fontSize: 16,
-    color: "#6b6b6b",
-    fontFamily: "Inter_400Regular, sans-serif",
-    textAlign: "center",
-    maxWidth: 600,
-    lineHeight: 26,
-  },
-  hierarchyContainer: {
-    alignItems: "center",
-    marginTop: 32,
-  },
-  hierarchyBoxPrimary: {
-    backgroundColor: "#d4a843",
-    paddingVertical: 16,
-    paddingHorizontal: 32,
-    borderRadius: 12,
-    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-  },
-  hierarchyTitlePrimary: {
-    color: "#ffffff",
-    fontFamily: "Inter_600SemiBold, sans-serif",
-    fontWeight: "600",
-    fontSize: 18,
-    textAlign: "center",
-  },
-  hierarchySubPrimary: {
-    color: "rgba(255, 255, 255, 0.85)",
-    fontSize: 14,
-    textAlign: "center",
-    fontFamily: "Inter_400Regular, sans-serif",
-  },
-  connector: {
-    width: 2,
-    height: 32,
-    backgroundColor: "#d4a843",
-  },
-  hierarchyRow: {
-    flexDirection: "row",
-    gap: 16,
-  },
-  hierarchyRowMobile: {
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  hierarchyBoxSecondary: {
-    backgroundColor: "#1a5632",
-    paddingVertical: 14,
-    paddingHorizontal: 24,
-    borderRadius: 12,
-    boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.08)",
-  },
-  hierarchyTitleSecondary: {
-    color: "#ffffff",
-    fontFamily: "Inter_600SemiBold, sans-serif",
-    fontWeight: "600",
-    fontSize: 16,
-    textAlign: "center",
-  },
-  hierarchyBoxTertiary: {
-    backgroundColor: "#1E4D8B",
-    paddingVertical: 14,
-    paddingHorizontal: 24,
-    borderRadius: 12,
-    boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.08)",
-  },
-  hierarchyTitleTertiary: {
-    color: "#ffffff",
-    fontFamily: "Inter_600SemiBold, sans-serif",
-    fontWeight: "600",
-    fontSize: 16,
-    textAlign: "center",
-  },
-  committeeRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    gap: 12,
-  },
-  committeeRowMobile: {
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  committeeBox: {
-    backgroundColor: "#ffffff",
-    borderWidth: 2,
-    borderColor: "#d4a843",
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    borderRadius: 12,
-    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.05)",
-  },
-  committeeText: {
-    color: "#d4a843",
-    fontFamily: "Inter_600SemiBold, sans-serif",
-    fontWeight: "600",
-    textAlign: "center",
-  },
-
-  // Portrait section
-  portraitImage: {
-    flex: 1,
-    borderRadius: 12,
-    overflow: "hidden",
-  },
-  portraitImageMobile: {
-    width: "100%",
-  },
-  portraitText: {
-    flex: 1,
-  },
-  portraitTextMobile: {
-    width: "100%",
-  },
-  pkName: {
-    fontFamily: "PlayfairDisplay_700Bold, serif",
-    color: "#2d2d2d",
-    marginBottom: 8,
-  },
-  pkTitle: {
-    fontSize: 16,
-    color: "#d4a843",
-    fontFamily: "Inter_600SemiBold, sans-serif",
-    fontWeight: "600",
-    marginBottom: 16,
-  },
-  goldDivider: {
-    width: 60,
-    height: 2,
-    backgroundColor: "#d4a843",
-    marginBottom: 20,
-  },
-  enstoolmentBadge: {
-    backgroundColor: "#f5f2eb",
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    alignSelf: "flex-start",
-    marginTop: 8,
-  },
-  enstoolmentLabel: {
-    fontSize: 12,
-    color: "#6b6b6b",
-    fontFamily: "Inter_400Regular, sans-serif",
-    marginBottom: 4,
-  },
-  enstoolmentDate: {
-    fontSize: 15,
-    color: "#2d2d2d",
-    fontFamily: "Inter_600SemiBold, sans-serif",
-    fontWeight: "600",
-  },
-
-  // Purpose cards
-  cardsRow: {
-    flexDirection: "row",
-    gap: 24,
-  },
-  cardsRowMobile: {
-    flexDirection: "column",
-  },
-  purposeCard: {
-    flex: 1,
-    backgroundColor: "#ffffff",
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "rgba(212, 168, 67, 0.2)",
-    padding: 28,
-    alignItems: "center",
-  },
-  purposeCardMobile: {
-    marginBottom: 16,
-  },
-  purposeIcon: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 16,
-  },
-  purposeTitle: {
-    fontSize: 22,
-    fontFamily: "PlayfairDisplay_700Bold, serif",
-    color: "#2d2d2d",
-    textAlign: "center",
-    marginBottom: 12,
-  },
-  purposeText: {
-    fontSize: 15,
-    color: "#6b6b6b",
-    fontFamily: "Inter_400Regular, sans-serif",
-    textAlign: "center",
-    lineHeight: 24,
-  },
-  missionItem: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: 8,
-  },
-  missionDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: "#d4a843",
-    marginTop: 6,
-  },
-  missionText: {
-    flex: 1,
-    fontSize: 15,
-    color: "#6b6b6b",
-    fontFamily: "Inter_400Regular, sans-serif",
-    lineHeight: 24,
-  },
-});

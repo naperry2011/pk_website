@@ -1,32 +1,39 @@
 // Akuapem Paramount King Council - Color Palette
+// Derived from constants/tokens.ts (single source of truth).
+
+import { tokens } from "./tokens";
 
 export const Colors = {
   // Primary Colors
   gold: {
-    DEFAULT: "#d4a843",
-    light: "#f0e6c8",
+    DEFAULT: tokens.colors.gold,
+    light: tokens.colors.goldLight,
+    muted: tokens.colors.goldMuted,
   },
   green: {
-    deep: "#1a5632",
+    deep: tokens.colors.greenDeep,
+    mid: tokens.colors.greenMid,
+    dark: tokens.colors.greenDark,
   },
   red: {
-    kente: "#8B0000",
+    kente: tokens.colors.redKente,
   },
 
   // Secondary Colors
-  white: "#FFFFFF",
+  white: tokens.colors.white,
+  cream: tokens.colors.cream,
   gray: {
-    warm: "#f5f2eb",
-    charcoal: "#2d2d2d",
-    muted: "#6b6b6b",
+    warm: tokens.colors.grayWarm,
+    charcoal: tokens.colors.grayCharcoal,
+    muted: tokens.colors.grayMuted,
   },
 
   // Accent Colors
   blue: {
-    heritage: "#1E4D8B",
+    heritage: tokens.colors.blueHeritage,
   },
   brown: {
-    earth: "#8B4513",
+    earth: tokens.colors.brownEarth,
   },
 };
 

@@ -1,18 +1,24 @@
 // Brand tokens from redesign spec
+// Derived from constants/tokens.ts (single source of truth).
+
+import { tokens } from "./tokens";
 
 export const theme = {
   colors: {
-    primaryGreen: "#1a5632",
-    midGreen: "#22703f",
-    goldAccent: "#d4a843",
-    lightGold: "#f0e6c8",
-    darkGold: "#b8922e",
-    offWhiteBg: "#f5f2eb",
-    white: "#ffffff",
-    darkText: "#2d2d2d",
-    mutedText: "#6b6b6b",
-    greenOverlay: "rgba(26, 86, 50, 0.6)",
-    goldOverlay: "rgba(212, 168, 67, 0.75)",
+    primaryGreen: tokens.colors.greenDeep,
+    midGreen: tokens.colors.greenMid,
+    darkGreen: tokens.colors.greenDark,
+    goldAccent: tokens.colors.gold,
+    lightGold: tokens.colors.goldLight,
+    darkGold: tokens.colors.goldMuted,
+    offWhiteBg: tokens.colors.grayWarm,
+    cream: tokens.colors.cream,
+    white: tokens.colors.white,
+    darkText: tokens.colors.grayCharcoal,
+    mutedText: tokens.colors.grayMuted,
+    greenOverlay: tokens.colors.greenOverlay,
+    greenDarkOverlay: tokens.colors.greenDarkOverlay,
+    goldOverlay: tokens.colors.goldOverlay,
   },
   spacing: {
     sectionVerticalDesktop: 100,

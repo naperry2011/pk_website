@@ -1,20 +1,22 @@
-import { View, Text, Pressable, StyleSheet, Platform } from "react-native";
+import { View, Text, Pressable, Platform } from "react-native";
 import { Link } from "expo-router";
-import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { Announcement } from "@/lib/database.types";
 
-const typeConfig: Record<string, { label: string; bgColor: string }> = {
-  event: { label: "Event", bgColor: "#d4a843" },
-  council: { label: "Council", bgColor: "#1E4D8B" },
-  development: { label: "Development", bgColor: "#1a5632" },
-  urgent: { label: "Urgent", bgColor: "#8B0000" },
+const typeConfig: Record<string, { label: string }> = {
+  event: { label: "Event" },
+  council: { label: "Council" },
+  development: { label: "Development" },
+  urgent: { label: "Urgent" },
 };
+
+const isWeb = Platform.OS === "web";
 
 interface AnnouncementCardProps {
   announcement: Announcement;
+  isLast?: boolean;
 }
 
-export function AnnouncementCard({ announcement }: AnnouncementCardProps) {
+export function AnnouncementCard({ announcement, isLast = false }: AnnouncementCardProps) {
   const config = typeConfig[announcement.type] || typeConfig.council;
   const formattedDate = new Date(announcement.date).toLocaleDateString(
     "en-GB",
@@ -24,89 +26,47 @@ export function AnnouncementCard({ announcement }: AnnouncementCardProps) {
   return (
     <Link href="/community/announcements" asChild>
       <Pressable
-        style={({ hovered }: any) => [
-          styles.card,
-          hovered && styles.cardHover,
-        ]}
+        className={`py-6 ${isLast ? "" : "border-b border-gray-charcoal/10"}`}
+        style={
+          isWeb ? ({ cursor: "pointer", transition: "all 0.2s ease" } as any) : undefined
+        }
         accessibilityLabel={`${announcement.type} announcement: ${announcement.title}`}
       >
-        {/* Image area */}
-        <PlaceholderImage height={180} label="Event Photo" borderRadius={0} />
+        {({ hovered }: any) => (
+          <>
+            {/* Meta row: date + category tag */}
+            <View className="flex-row items-center gap-4 mb-2">
+              <Text className="font-body text-sm text-gray-muted">
+                {formattedDate}
+              </Text>
+              <Text
+                className={`font-accent text-xs uppercase tracking-widest ${
+                  announcement.type === "urgent" ? "text-red-kente" : "text-gold"
+                }`}
+              >
+                {config.label}
+              </Text>
+            </View>
 
-        {/* Content */}
-        <View style={styles.content}>
-          {/* Category badge */}
-          <View style={[styles.badge, { backgroundColor: config.bgColor }]}>
-            <Text style={styles.badgeText}>{config.label}</Text>
-          </View>
+            {/* Serif headline */}
+            <Text
+              numberOfLines={2}
+              className={`font-heading-bold text-xl md:text-2xl mb-2 ${
+                isWeb && hovered ? "text-green-deep" : "text-gray-charcoal"
+              }`}
+            >
+              {announcement.title}
+            </Text>
 
-          <Text style={styles.title} numberOfLines={2}>
-            {announcement.title}
-          </Text>
-          <Text style={styles.excerpt} numberOfLines={3}>
-            {announcement.excerpt}
-          </Text>
-          <Text style={styles.date}>{formattedDate}</Text>
-        </View>
+            <Text
+              numberOfLines={2}
+              className="font-body text-base text-gray-muted leading-6"
+            >
+              {announcement.excerpt}
+            </Text>
+          </>
+        )}
       </Pressable>
     </Link>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: "#ffffff",
-    borderRadius: 12,
-    overflow: "hidden",
-    borderWidth: 1,
-    borderColor: "#e8e8e8",
-    ...(Platform.OS === "web"
-      ? {
-          transition: "all 0.3s ease",
-          cursor: "pointer",
-        }
-      : {}),
-  } as any,
-  cardHover: {
-    transform: [{ translateY: -6 }],
-    boxShadow: "0px 12px 24px rgba(0, 0, 0, 0.15)",
-    borderColor: "rgba(212, 168, 67, 0.3)",
-  },
-  content: {
-    padding: 20,
-  },
-  badge: {
-    alignSelf: "flex-start",
-    paddingVertical: 4,
-    paddingHorizontal: 12,
-    borderRadius: 20,
-    marginBottom: 12,
-  },
-  badgeText: {
-    color: "#ffffff",
-    fontSize: 12,
-    fontWeight: "600",
-    fontFamily: "Inter_600SemiBold, sans-serif",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-  },
-  title: {
-    fontSize: 20,
-    fontFamily: "PlayfairDisplay_700Bold, serif",
-    fontWeight: "700",
-    color: "#2d2d2d",
-    marginBottom: 8,
-  },
-  excerpt: {
-    fontSize: 15,
-    color: "#6b6b6b",
-    fontFamily: "Inter_400Regular, sans-serif",
-    lineHeight: 22,
-    marginBottom: 12,
-  },
-  date: {
-    fontSize: 13,
-    color: "#aaaaaa",
-    fontFamily: "Inter_400Regular, sans-serif",
-  },
-});

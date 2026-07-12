@@ -1,7 +1,15 @@
-import { View, ScrollView, Pressable, Image } from "react-native";
+import { View, Pressable, Image } from "react-native";
 import { useLocalSearchParams, Link } from "expo-router";
 import { PageLayout, Section } from "@/components/layout";
-import { H1, H2, H3, Body } from "@/components/ui/Typography";
+import {
+  H2,
+  H3,
+  Body,
+  BodyLarge,
+  Display,
+  Eyebrow,
+} from "@/components/ui/Typography";
+import { tokens } from "@/constants/tokens";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
 import { FontAwesome } from "@expo/vector-icons";
@@ -14,6 +22,35 @@ import { useResponsive } from "@/hooks/useResponsive";
 import { LoadingState } from "@/components/ui/LoadingState";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { AnimateOnScroll } from "@/components/ui/AnimateOnScroll";
+
+// Division colors + mapping (mirrors towns/index.tsx; to be verified by site owner)
+const divisionColors: Record<string, string> = {
+  Benkum: tokens.colors.greenDeep,
+  Nifa: tokens.colors.gold,
+  Adonten: tokens.colors.blueHeritage,
+  Kyidom: tokens.colors.redKente,
+  Gyase: "#6B3FA0",
+};
+
+const townDivisions: Record<string, string> = {
+  Akropong: "Gyase",
+  Abiriw: "Benkum",
+  Amanokrom: "Nifa",
+  Awukugua: "Benkum",
+  Berekuso: "Adonten",
+  Tutu: "Nifa",
+  Mamfe: "Adonten",
+  Larteh: "Benkum",
+  Adukrom: "Kyidom",
+  Mampong: "Nifa",
+  Obosomase: "Kyidom",
+  Apirede: "Benkum",
+  Aseseeso: "Adonten",
+  Dawu: "Nifa",
+  Koforidua: "Adonten",
+  Nsawam: "Kyidom",
+  Suhum: "Kyidom",
+};
 
 export default function TownDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -50,52 +87,58 @@ export default function TownDetailScreen() {
   const announcements = townAnnouncements ?? [];
   const photos = townPhotos ?? [];
 
-  const heroImageUrl = town.image_url || (photos.length > 0 ? photos[0].url : null);
+  const heroImageUrl = town.image_url || (photos.length > 0 ? photos[0].image_url : null);
   const numColumns = isMobile ? 2 : 3;
+
+  const division = townDivisions[town.name] || "Gyase";
+  const divisionColor = divisionColors[division] || divisionColors.Gyase;
 
   return (
     <PageLayout>
-      {/* Hero */}
-      <View className="bg-green-deep py-16 md:py-20 px-4 md:px-8">
-        <View className="max-w-4xl mx-auto items-center">
-          <Body className="text-gold mb-2">Town of Akuapem</Body>
-          <H1 className="text-white text-center mb-4">{town.name}</H1>
-          <Body className="text-white/90 text-center text-lg">
-            Led by {town.chief}
-          </Body>
-        </View>
-      </View>
-
-      {/* Town Hero Photo */}
-      <Section background="warm">
+      {/* Hero band — photo (or division-tinted field) with scrim */}
+      <View className="relative overflow-hidden">
         {heroImageUrl ? (
           <Image
             source={{ uri: heroImageUrl }}
-            style={{
-              width: "100%",
-              height: isMobile ? 300 : 400,
-              borderRadius: 12,
-            }}
+            className="absolute inset-0 w-full h-full"
             resizeMode="cover"
+            accessibilityIgnoresInvertColors
           />
         ) : (
-          <View className="h-72 md:h-96 bg-gray-warm rounded-xl items-center justify-center border-2 border-dashed border-green-deep/20">
-            <View className="w-20 h-20 bg-green-deep/10 rounded-full items-center justify-center mb-4">
-              <FontAwesome name="camera" size={36} color="#1a5632" />
-            </View>
-            <H3 className="mb-2 text-center">Town photos coming soon</H3>
-            <Body className="text-gray-charcoal/60 text-center px-4">
-              Photos of {town.name} and its landmarks will be added here
-            </Body>
-          </View>
+          <View
+            className="absolute inset-0"
+            style={{ backgroundColor: divisionColor }}
+          />
         )}
-      </Section>
+        <View className="absolute inset-0 bg-green-dark/75" />
+        <View className="py-20 md:py-32 px-[8%]">
+          <View className="max-w-4xl mx-auto items-center">
+            <Eyebrow className="mb-3">Town of Akuapem</Eyebrow>
+            <Display className="text-white text-center mb-4">
+              {town.name}
+            </Display>
+            <BodyLarge className="text-white/85 text-center mb-5">
+              Led by {town.chief}
+            </BodyLarge>
+            <View
+              className="py-1.5 px-4 rounded-full"
+              style={{ backgroundColor: divisionColor }}
+              accessibilityLabel={`${division} division`}
+            >
+              <Body className="font-accent uppercase tracking-widest text-white text-xs">
+                {division} Division
+              </Body>
+            </View>
+          </View>
+        </View>
+      </View>
 
       {/* Town Info */}
       <Section background="white">
         <View className="md:flex-row gap-8">
           {/* Main Content */}
           <View className="flex-1">
+            <Eyebrow className="mb-3">Profile</Eyebrow>
             <H2 className="mb-4">About {town.name}</H2>
             <Body className="text-lg mb-6">
               {town.description ||
@@ -163,6 +206,7 @@ export default function TownDetailScreen() {
           <View className="w-full md:w-80">
             <Card className="mb-4">
               <CardContent>
+                <Eyebrow className="mb-1 text-xs">Leadership</Eyebrow>
                 <H3 className="mb-4">Current Chief</H3>
                 <View className="w-20 h-20 bg-gray-warm rounded-full mx-auto mb-4 items-center justify-center">
                   <FontAwesome name="user" size={30} color="#2d2d2d50" />
@@ -178,6 +222,7 @@ export default function TownDetailScreen() {
 
             <Card className="mb-4">
               <CardContent>
+                <Eyebrow className="mb-1 text-xs">Heritage Sites</Eyebrow>
                 <H3 className="mb-4">Key Landmarks</H3>
                 <View className="gap-2">
                   {(town.landmarks && town.landmarks.length > 0
@@ -195,6 +240,7 @@ export default function TownDetailScreen() {
 
             <Card>
               <CardContent>
+                <Eyebrow className="mb-1 text-xs">Get in Touch</Eyebrow>
                 <H3 className="mb-4">Contact</H3>
                 <View className="gap-2">
                   <View className="flex-row items-center gap-2">
@@ -217,6 +263,7 @@ export default function TownDetailScreen() {
       {/* Town Events & Announcements */}
       {announcements.length > 0 && (
         <Section background="warm">
+          <Eyebrow className="mb-3">What's Happening</Eyebrow>
           <H2 className="mb-6">Events & Announcements in {town.name}</H2>
           <View className="max-w-3xl">
             {announcements.map((announcement) => (
@@ -267,6 +314,7 @@ export default function TownDetailScreen() {
       {/* Town Obituaries */}
       {obituaries.length > 0 && (
         <Section background="white">
+          <Eyebrow className="mb-3">In Memoriam</Eyebrow>
           <View className="flex-row items-center justify-between mb-6">
             <H2>Obituaries in {town.name}</H2>
             <Link href="/community/obituaries" asChild>
@@ -318,6 +366,7 @@ export default function TownDetailScreen() {
       {/* Town Weddings */}
       {weddings.length > 0 && (
         <Section background="warm">
+          <Eyebrow className="mb-3">Celebrations</Eyebrow>
           <View className="flex-row items-center justify-between mb-6">
             <H2>Weddings in {town.name}</H2>
             <Link href="/community/weddings" asChild>
