@@ -1,49 +1,44 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View } from "react-native";
+import { Label, Title, Body } from "./Typography";
 
 interface SectionHeadingProps {
   label: string;
   title: string;
   subtitle?: string;
+  /** "dark" (default) for ink sections, "light" for ivory/white sections. */
+  tone?: "dark" | "light";
+  align?: "left" | "center";
 }
 
-export function SectionHeading({ label, title, subtitle }: SectionHeadingProps) {
+export function SectionHeading({
+  label,
+  title,
+  subtitle,
+  tone = "dark",
+  align = "left",
+}: SectionHeadingProps) {
+  const centered = align === "center";
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
-      <Text style={styles.title}>{title}</Text>
-      {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
+    <View className={`mb-12 md:mb-16 ${centered ? "items-center" : ""}`}>
+      <Label className={`mb-4 ${tone === "light" ? "text-champagne-dim" : ""}`}>
+        {label}
+      </Label>
+      <Title
+        className={`${tone === "light" ? "text-ink" : "text-ivory"} ${
+          centered ? "text-center" : ""
+        } mb-4`}
+      >
+        {title}
+      </Title>
+      {subtitle && (
+        <Body
+          className={`${tone === "light" ? "text-ink/60" : "text-ivory/60"} ${
+            centered ? "text-center" : ""
+          } max-w-xl`}
+        >
+          {subtitle}
+        </Body>
+      )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-    marginBottom: 40,
-  },
-  label: {
-    fontSize: 13,
-    textTransform: "uppercase",
-    letterSpacing: 3,
-    color: "#d4a843",
-    fontWeight: "700",
-    fontFamily: "Inter_600SemiBold, sans-serif",
-    marginBottom: 12,
-  },
-  title: {
-    fontSize: 36,
-    fontFamily: "PlayfairDisplay_700Bold, serif",
-    color: "#2d2d2d",
-    textAlign: "center",
-    marginBottom: 8,
-    lineHeight: 47,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "#6b6b6b",
-    textAlign: "center",
-    fontFamily: "Inter_400Regular, sans-serif",
-    maxWidth: 500,
-    lineHeight: 24,
-  },
-});

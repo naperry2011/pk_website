@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Platform } from "react-native";
+import { View, Text, Platform } from "react-native";
 import { useResponsive } from "@/hooks/useResponsive";
 import { AnimateOnScroll } from "@/components/ui/AnimateOnScroll";
 
@@ -27,69 +27,43 @@ function AnimatedNumber({ end, suffix = "" }: { end: number; suffix?: string }) 
 }
 
 const stats = [
-  { value: 17, suffix: "", label: "PRINCIPAL TOWNS" },
-  { value: 300, suffix: "+", label: "YEARS OF HERITAGE" },
-  { value: 1, suffix: "", label: "UNITED KINGDOM" },
+  { value: 17, suffix: "", label: "Principal Towns" },
+  { value: 300, suffix: "+", label: "Years of Heritage" },
+  { value: 1, suffix: "", label: "United Kingdom" },
 ];
 
 export function StatsSection() {
   const { isMobile } = useResponsive();
 
   return (
-    <View style={[styles.container, { paddingVertical: isMobile ? 60 : 100 }]}>
-      <View style={[styles.inner, isMobile && styles.innerMobile]}>
+    <View className="bg-ink px-[6%]">
+      <View
+        className={`max-w-[1280px] mx-auto w-full border-t border-b border-white/10 ${
+          isMobile ? "flex-col" : "flex-row items-stretch"
+        }`}
+      >
         {stats.map((stat, index) => (
-          <AnimateOnScroll key={stat.label} delay={index * 150}>
-            <View style={[styles.statItem, isMobile && styles.statItemMobile]}>
-              <Text style={styles.number}>
-                <AnimatedNumber end={stat.value} suffix={stat.suffix} />
-              </Text>
-              <Text style={styles.label}>{stat.label}</Text>
-            </View>
-          </AnimateOnScroll>
+          <View
+            key={stat.label}
+            className={
+              isMobile
+                ? `w-full ${index > 0 ? "border-t border-white/10" : ""}`
+                : `flex-1 ${index > 0 ? "border-l border-white/10" : ""}`
+            }
+          >
+            <AnimateOnScroll delay={index * 150}>
+              <View className="items-start px-8 md:px-14 py-12 md:py-16">
+                <Text className="font-display text-5xl md:text-7xl text-champagne mb-4">
+                  <AnimatedNumber end={stat.value} suffix={stat.suffix} />
+                </Text>
+                <Text className="font-body-medium text-label uppercase tracking-[3px] text-ivory/40">
+                  {stat.label}
+                </Text>
+              </View>
+            </AnimateOnScroll>
+          </View>
         ))}
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#1a5632",
-    paddingHorizontal: "8%",
-  },
-  inner: {
-    maxWidth: 1200,
-    marginHorizontal: "auto",
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-  },
-  innerMobile: {
-    flexDirection: "column",
-    gap: 40,
-  },
-  statItem: {
-    alignItems: "center",
-    minWidth: 180,
-  },
-  statItemMobile: {
-    minWidth: 0,
-  },
-  number: {
-    fontSize: 56,
-    fontFamily: "PlayfairDisplay_700Bold, serif",
-    fontWeight: "700",
-    color: "#d4a843",
-    marginBottom: 8,
-  },
-  label: {
-    fontSize: 15,
-    textTransform: "uppercase",
-    letterSpacing: 3,
-    color: "rgba(255, 255, 255, 0.8)",
-    fontFamily: "Inter_600SemiBold, sans-serif",
-    fontWeight: "600",
-  },
-});

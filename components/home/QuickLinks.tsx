@@ -1,148 +1,116 @@
-import { View, Text, Pressable, StyleSheet, Platform } from "react-native";
+import { View, Text, Pressable, Image, Platform, ImageSourcePropType } from "react-native";
 import { Link } from "expo-router";
-import { FontAwesome } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import { useResponsive } from "@/hooks/useResponsive";
 import { AnimateOnScroll } from "@/components/ui/AnimateOnScroll";
-import { SectionHeading } from "@/components/ui/SectionHeading";
+import { tokens } from "@/constants/tokens";
 
-const links = [
-  {
-    href: "/community/obituaries",
-    icon: "heart",
-    title: "Obituaries",
-    description: "View and submit funeral announcements for the community.",
-    color: "#d4a843",
-  },
-  {
-    href: "/community/weddings",
-    icon: "bell",
-    title: "Weddings",
-    description: "Share and celebrate wedding announcements.",
-    color: "#d4a843",
-  },
+const isWeb = Platform.OS === "web";
+
+interface ExploreTile {
+  href: string;
+  label: string;
+  title: string;
+  image: ImageSourcePropType;
+  alt: string;
+}
+
+const tiles: ExploreTile[] = [
   {
     href: "/towns",
-    icon: "map-marker",
-    title: "Our Towns",
-    description: "Explore the 17 principal towns of Akuapem.",
-    color: "#d4a843",
+    label: "17 Principal Towns",
+    title: "The Towns of Akuapem",
+    image: require("@/assets/images/hero/akuapem-heritage.jpg"),
+    alt: "Akuapem chiefs and community gathered together",
   },
   {
-    href: "/contact",
-    icon: "envelope",
-    title: "Contact Us",
-    description: "Reach out to the Traditional Council directly.",
-    color: "#d4a843",
+    href: "/community",
+    label: "Life of the Kingdom",
+    title: "Community & Culture",
+    image: require("@/assets/images/community/traditional-dance.jpg"),
+    alt: "Traditional Akuapem dance performance",
   },
 ];
 
+function Tile({ tile, index }: { tile: ExploreTile; index: number }) {
+  const { isMobile } = useResponsive();
+  const height = isMobile ? 320 : 420;
+
+  return (
+    <AnimateOnScroll delay={index * 150} style={{ flex: isMobile ? undefined : 1 }}>
+      <Link href={tile.href as any} asChild>
+        <Pressable
+          className="relative overflow-hidden w-full"
+          style={
+            isWeb ? ({ cursor: "pointer" } as any) : undefined
+          }
+          accessibilityRole="link"
+          accessibilityLabel={tile.title}
+        >
+          {({ hovered }: any) => (
+            <View className="relative overflow-hidden" style={{ height }}>
+              <Image
+                source={tile.image}
+                resizeMode="cover"
+                accessibilityLabel={tile.alt}
+                style={[
+                  { width: "100%", height: "100%" },
+                  isWeb
+                    ? ({
+                        transition: "transform 1.2s cubic-bezier(0.22, 1, 0.36, 1)",
+                        transform: hovered ? "scale(1.03)" : "scale(1)",
+                      } as any)
+                    : null,
+                ]}
+              />
+              <LinearGradient
+                colors={["rgba(11, 15, 13, 0)", "rgba(11, 15, 13, 0.45)", tokens.colors.inkOverlayHeavy]}
+                locations={[0.35, 0.7, 1]}
+                style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
+              />
+              <View className="absolute bottom-0 left-0 right-0 p-8 md:p-10">
+                <Text className="font-body-medium text-label uppercase tracking-[3px] text-champagne mb-3">
+                  {tile.label}
+                </Text>
+                <View className="flex-row items-center justify-between gap-4">
+                  <Text
+                    accessibilityRole="header"
+                    className="font-display text-2xl md:text-3xl text-ivory flex-shrink"
+                  >
+                    {tile.title}
+                  </Text>
+                  <Text
+                    className="text-champagne text-xl"
+                    style={
+                      isWeb
+                        ? ({
+                            transition: "transform 0.3s ease",
+                            transform: hovered ? "translateX(6px)" : "translateX(0)",
+                          } as any)
+                        : undefined
+                    }
+                  >
+                    →
+                  </Text>
+                </View>
+              </View>
+            </View>
+          )}
+        </Pressable>
+      </Link>
+    </AnimateOnScroll>
+  );
+}
+
+/** Explore section body: two large full-bleed image tiles. */
 export function QuickLinks() {
   const { isMobile } = useResponsive();
 
   return (
-    <View style={[styles.container, { paddingVertical: isMobile ? 60 : 100 }]}>
-      <View style={styles.inner}>
-        <SectionHeading
-          label="QUICK ACCESS"
-          title="How Can We Help?"
-        />
-
-        <View style={[styles.grid, isMobile && styles.gridMobile]}>
-          {links.map((link, index) => (
-            <AnimateOnScroll key={link.href} delay={index * 100}>
-              <Link href={link.href as any} asChild>
-                <Pressable
-                  style={({ hovered }: any) => [
-                    styles.card,
-                    isMobile ? styles.cardMobile : styles.cardDesktop,
-                    hovered && styles.cardHover,
-                  ]}
-                >
-                  <View style={styles.iconContainer}>
-                    <FontAwesome
-                      name={link.icon as any}
-                      size={32}
-                      color="#d4a843"
-                    />
-                  </View>
-                  <Text style={styles.cardTitle}>{link.title}</Text>
-                  <Text style={styles.cardDescription}>{link.description}</Text>
-                  <Text style={styles.arrow}>→</Text>
-                </Pressable>
-              </Link>
-            </AnimateOnScroll>
-          ))}
-        </View>
-      </View>
+    <View className={`w-full ${isMobile ? "flex-col gap-6" : "flex-row gap-8"}`}>
+      {tiles.map((tile, index) => (
+        <Tile key={tile.href} tile={tile} index={index} />
+      ))}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#f5f2eb",
-    paddingHorizontal: "8%",
-  },
-  inner: {
-    maxWidth: 1200,
-    marginHorizontal: "auto",
-    width: "100%",
-  },
-  grid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 24,
-  },
-  gridMobile: {
-    flexDirection: "column",
-  },
-  card: {
-    backgroundColor: "#ffffff",
-    borderRadius: 12,
-    padding: 32,
-    borderWidth: 1,
-    borderColor: "#e8e8e8",
-    alignItems: "flex-start",
-    ...(Platform.OS === "web"
-      ? {
-          transition: "all 0.3s ease",
-          cursor: "pointer",
-        }
-      : {}),
-  } as any,
-  cardDesktop: {
-    flex: 1,
-    minWidth: 220,
-    maxWidth: 282,
-  },
-  cardMobile: {
-    width: "100%",
-  },
-  cardHover: {
-    transform: [{ translateY: -6 }],
-    boxShadow: "0px 12px 24px rgba(0, 0, 0, 0.15)",
-    borderColor: "rgba(212, 168, 67, 0.3)",
-  },
-  iconContainer: {
-    marginBottom: 16,
-  },
-  cardTitle: {
-    fontSize: 20,
-    fontFamily: "PlayfairDisplay_700Bold, serif",
-    fontWeight: "700",
-    color: "#2d2d2d",
-    marginBottom: 8,
-  },
-  cardDescription: {
-    fontSize: 15,
-    color: "#6b6b6b",
-    fontFamily: "Inter_400Regular, sans-serif",
-    lineHeight: 22,
-    marginBottom: 16,
-  },
-  arrow: {
-    fontSize: 20,
-    color: "#d4a843",
-    fontWeight: "600",
-  },
-});

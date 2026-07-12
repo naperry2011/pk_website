@@ -1,22 +1,35 @@
-import { View, Text, Pressable, Image, StyleSheet, Platform } from "react-native";
-import { Link } from "expo-router";
+import { View, Text, Image, Platform } from "react-native";
+import { useRouter } from "expo-router";
 import Head from "expo-router/head";
-import { PageLayout } from "@/components/layout";
-import { Hero, AnnouncementCard, QuickLinks, SubscribeCTA, StatsSection, ImageCarousel } from "@/components/home";
+import { PageLayout, Section } from "@/components/layout";
+import {
+  Hero,
+  Marquee,
+  AnnouncementCard,
+  QuickLinks,
+  SubscribeCTA,
+  StatsSection,
+} from "@/components/home";
 import { useAnnouncements } from "@/hooks/useAnnouncements";
 import { LoadingState } from "@/components/ui/LoadingState";
 import { AnimateOnScroll } from "@/components/ui/AnimateOnScroll";
-import { SectionHeading } from "@/components/ui/SectionHeading";
-import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
+import { Button, BodyLarge } from "@/components/ui";
 import { useResponsive } from "@/hooks/useResponsive";
 import { paramountKing } from "@/constants/mockData";
 
+const isWeb = Platform.OS === "web";
+
 export default function HomeScreen() {
   const { data: announcements, isLoading } = useAnnouncements();
-  const { isMobile, isDesktop } = useResponsive();
+  const { isMobile } = useResponsive();
+  const router = useRouter();
+
+  const latest = announcements ?? [];
+  const featured = latest[0];
+  const rest = latest.slice(1, 4);
 
   return (
-    <PageLayout>
+    <PageLayout heroUnderHeader>
       <Head>
         <title>Akuapem Traditional Council - Official Website</title>
         <meta name="description" content="Official website of the Akuapem Traditional Council. Discover the heritage, leadership, and community of the Akuapem Traditional Area in Ghana's Eastern Region." />
@@ -25,197 +38,130 @@ export default function HomeScreen() {
         <meta property="og:type" content="website" />
       </Head>
 
-      {/* Hero Section */}
+      {/* Cinematic full-viewport hero */}
       <Hero />
 
-      {/* Image Carousel */}
-      <ImageCarousel />
+      {/* Marquee of the 17 principal towns */}
+      <Marquee />
 
-      {/* Welcome / Introduction Section */}
-      <View style={[styles.section, { paddingVertical: isMobile ? 60 : 100 }]}>
-        <AnimateOnScroll>
-          <View style={styles.sectionInner}>
-            <View style={[styles.welcomeRow, isMobile && styles.welcomeRowMobile]}>
-              {/* Image column - 55% */}
-              <View style={[styles.welcomeImage, isMobile && styles.welcomeImageMobile, { borderRadius: 12, overflow: "hidden" }]}>
-                <Image
-                  source={require("@/assets/images/hero/akuapem-heritage.jpg")}
-                  style={{ width: "100%", height: isMobile ? 300 : 450 }}
-                  resizeMode="cover"
-                  accessibilityLabel="Akuapem chiefs and community gathered together"
-                />
-              </View>
-
-              {/* Text column - 45% */}
-              <View style={[styles.welcomeText, isMobile && styles.welcomeTextMobile]}>
-                <Text style={styles.sectionLabel}>WELCOME</Text>
-                <Text style={[styles.welcomeTitle, { fontSize: isMobile ? 28 : 36, lineHeight: isMobile ? 36 : 47 }]}>
-                  The Custodians of Akuapem Heritage
-                </Text>
-                <Text style={styles.bodyText}>
-                  The Akuapem Traditional Council serves as the custodian of our
-                  rich cultural heritage and the bridge between the government and
-                  our people.
-                </Text>
-                <Text style={[styles.bodyText, { marginBottom: 24 }]}>
-                  Under the leadership of {paramountKing.name}, the{" "}
-                  {paramountKing.title}, we continue to uphold the traditions of
-                  our ancestors while embracing progress for our communities.
-                </Text>
-                <Link href="/about" asChild>
-                  <Pressable
-                    style={({ hovered }: any) => [
-                      styles.textLink,
-                      hovered && styles.textLinkHover,
-                    ]}
-                  >
-                    <Text style={styles.textLinkText}>Meet the Council →</Text>
-                  </Pressable>
-                </Link>
-              </View>
+      {/* 01 — The Council: asymmetric split */}
+      <Section background="ink" number="01" label="The Council">
+        <View className={isMobile ? "flex-col gap-14" : "flex-row gap-20"}>
+          {/* Left: large intro copy */}
+          <View className={isMobile ? "w-full" : "flex-[55]"}>
+            <BodyLarge className="text-ivory/80 text-xl md:text-2xl leading-relaxed mb-8">
+              The Akuapem Traditional Council is the custodian of a living
+              heritage — the bridge between government and the people of the
+              ridge, from Akropong to the farthest of the seventeen towns.
+            </BodyLarge>
+            <BodyLarge className="text-ivory/60 mb-12">
+              Under the leadership of {paramountKing.name}, the{" "}
+              {paramountKing.title} and {paramountKing.lineage.toLowerCase()},
+              the Council upholds the traditions of the ancestors while
+              building a prosperous future for every community it serves.
+            </BodyLarge>
+            <View className="self-start">
+              <Button
+                title="Meet the Council"
+                variant="link-arrow"
+                onPress={() => router.push("/about")}
+              />
             </View>
           </View>
-        </AnimateOnScroll>
-      </View>
 
-      {/* Stats Section */}
+          {/* Right: offset portrait, breaking section rhythm on desktop */}
+          <View
+            className={isMobile ? "w-full" : "flex-[40]"}
+            style={!isMobile ? { marginTop: -96 } : undefined}
+          >
+            <AnimateOnScroll variant="fade-up" delay={150}>
+              <View
+                className="overflow-hidden"
+                style={
+                  isWeb
+                    ? ({
+                        filter: "grayscale(100%)",
+                        transition: "filter 0.8s ease",
+                      } as any)
+                    : undefined
+                }
+                // @ts-expect-error web-only hover handlers on View
+                onMouseEnter={
+                  isWeb
+                    ? (e: any) => {
+                        e.currentTarget.style.filter = "grayscale(0%)";
+                      }
+                    : undefined
+                }
+                onMouseLeave={
+                  isWeb
+                    ? (e: any) => {
+                        e.currentTarget.style.filter = "grayscale(100%)";
+                      }
+                    : undefined
+                }
+              >
+                <Image
+                  source={require("@/assets/images/about/okuapehene-portrait.jpg")}
+                  style={{ width: "100%", height: isMobile ? 420 : 560 }}
+                  resizeMode="cover"
+                  accessibilityLabel={`Portrait of ${paramountKing.name}, the ${paramountKing.title}`}
+                />
+              </View>
+              <Text className="font-body-medium text-label uppercase tracking-[3px] text-ivory/40 mt-4">
+                {paramountKing.name} — {paramountKing.title}
+              </Text>
+            </AnimateOnScroll>
+          </View>
+        </View>
+      </Section>
+
+      {/* Hairline-bounded stats row */}
       <StatsSection />
 
-      {/* Quick Links */}
-      <QuickLinks />
+      {/* 02 — Latest from the Council */}
+      <Section background="ink" number="02" label="Latest from the Council" animate={false}>
+        {isLoading ? (
+          <LoadingState message="Loading announcements..." />
+        ) : (
+          <>
+            {featured && (
+              <AnimateOnScroll>
+                <View className="mb-2">
+                  <AnnouncementCard announcement={featured} featured />
+                </View>
+              </AnimateOnScroll>
+            )}
 
-      {/* Latest Announcements */}
-      <View style={[styles.section, { paddingVertical: isMobile ? 60 : 100, backgroundColor: "#ffffff" }]}>
-        <View style={styles.sectionInner}>
-          <SectionHeading
-            label="LATEST NEWS"
-            title="Announcements"
-            subtitle="Stay informed with the latest news from the Council."
-          />
+            <View className="w-full border-t border-white/10">
+              {rest.map((announcement, index) => (
+                <AnimateOnScroll key={announcement.id} delay={index * 100}>
+                  <AnnouncementCard
+                    announcement={announcement}
+                    isLast={index === rest.length - 1}
+                  />
+                </AnimateOnScroll>
+              ))}
+            </View>
 
-          {isLoading ? (
-            <LoadingState message="Loading announcements..." />
-          ) : (
-            <>
-              <View style={[styles.announcementGrid, isMobile && styles.announcementGridMobile]}>
-                {(announcements ?? []).slice(0, 3).map((announcement, index) => (
-                  <AnimateOnScroll key={announcement.id} delay={index * 100}>
-                    <View style={isMobile ? styles.announcementCardMobile : styles.announcementCard}>
-                      <AnnouncementCard announcement={announcement} />
-                    </View>
-                  </AnimateOnScroll>
-                ))}
-              </View>
-              <View style={styles.viewAllContainer}>
-                <Link href="/community/announcements" asChild>
-                  <Pressable
-                    style={({ hovered }: any) => [
-                      styles.textLink,
-                      hovered && styles.textLinkHover,
-                    ]}
-                  >
-                    <Text style={styles.textLinkText}>View All Announcements →</Text>
-                  </Pressable>
-                </Link>
-              </View>
-            </>
-          )}
-        </View>
-      </View>
+            <View className="self-start mt-12">
+              <Button
+                title="All announcements"
+                variant="link-arrow"
+                onPress={() => router.push("/community/announcements")}
+              />
+            </View>
+          </>
+        )}
+      </Section>
 
-      {/* Subscribe CTA */}
+      {/* 03 — Explore */}
+      <Section background="ink" number="03" label="Explore">
+        <QuickLinks />
+      </Section>
+
+      {/* Ivory contrast band */}
       <SubscribeCTA />
     </PageLayout>
   );
 }
-
-const styles = StyleSheet.create({
-  section: {
-    paddingHorizontal: "8%",
-  },
-  sectionInner: {
-    maxWidth: 1200,
-    marginHorizontal: "auto",
-    width: "100%",
-  },
-  sectionLabel: {
-    fontSize: 13,
-    textTransform: "uppercase",
-    letterSpacing: 3,
-    color: "#d4a843",
-    fontWeight: "700",
-    fontFamily: "Inter_600SemiBold, sans-serif",
-    marginBottom: 12,
-  },
-  welcomeRow: {
-    flexDirection: "row",
-    gap: 48,
-    alignItems: "center",
-  },
-  welcomeRowMobile: {
-    flexDirection: "column",
-    gap: 32,
-  },
-  welcomeImage: {
-    flex: 55,
-    borderRadius: 12,
-    overflow: "hidden",
-  },
-  welcomeImageMobile: {
-    flex: 0,
-    width: "100%",
-  },
-  welcomeText: {
-    flex: 45,
-  },
-  welcomeTextMobile: {
-    flex: 0,
-    width: "100%",
-  },
-  welcomeTitle: {
-    fontFamily: "PlayfairDisplay_700Bold, serif",
-    fontWeight: "700",
-    color: "#2d2d2d",
-    marginBottom: 20,
-  },
-  bodyText: {
-    fontSize: 16,
-    color: "#6b6b6b",
-    fontFamily: "Inter_400Regular, sans-serif",
-    lineHeight: 26,
-    marginBottom: 12,
-  },
-  textLink: {
-    alignSelf: "flex-start",
-    ...(Platform.OS === "web"
-      ? { cursor: "pointer", transition: "opacity 0.2s ease" }
-      : {}),
-  } as any,
-  textLinkHover: {
-    opacity: 0.8,
-  },
-  textLinkText: {
-    color: "#d4a843",
-    fontSize: 16,
-    fontWeight: "600",
-    fontFamily: "Inter_600SemiBold, sans-serif",
-  },
-  announcementGrid: {
-    flexDirection: "row",
-    gap: 24,
-  },
-  announcementGridMobile: {
-    flexDirection: "column",
-  },
-  announcementCard: {
-    flex: 1,
-  },
-  announcementCardMobile: {
-    width: "100%",
-    marginBottom: 24,
-  },
-  viewAllContainer: {
-    alignItems: "center",
-    marginTop: 32,
-  },
-});

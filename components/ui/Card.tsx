@@ -5,6 +5,7 @@ interface CardProps {
   children: ReactNode;
   onPress?: () => void;
   className?: string;
+  goldBorder?: boolean;
   accessibilityLabel?: string;
   accessibilityHint?: string;
 }
@@ -24,9 +25,9 @@ const webHoverStyle = isWeb
     } as any)
   : undefined;
 
-export function Card({ children, onPress, className = "", accessibilityLabel, accessibilityHint }: CardProps) {
+export function Card({ children, onPress, className = "", goldBorder = false, accessibilityLabel, accessibilityHint }: CardProps) {
   const cardClasses = `
-    bg-white p-4 shadow-sm border border-gray-warm
+    bg-white p-4 shadow-sm border ${goldBorder ? "border-gold/20" : "border-gray-warm"}
     ${className}
   `;
 

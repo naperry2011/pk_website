@@ -1,11 +1,12 @@
-import { View, Text, Pressable, Linking, StyleSheet, Platform, ScrollView } from "react-native";
+import { View, Text, Pressable, Linking, Platform } from "react-native";
 import { Link } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
+import { tokens } from "@/constants/tokens";
 
 const quickLinks = [
-  { href: "/about", label: "About Us" },
-  { href: "/towns", label: "Our Towns" },
-  { href: "/community", label: "Community Updates" },
+  { href: "/about", label: "About" },
+  { href: "/towns", label: "Towns" },
+  { href: "/community", label: "Community" },
   { href: "/contact", label: "Contact" },
   { href: "/subscribe", label: "Subscribe" },
   { href: "/admin", label: "Admin Portal" },
@@ -16,247 +17,124 @@ const socialLinks = [
   { icon: "instagram", url: "https://instagram.com" },
 ];
 
-export function Footer() {
+const isWeb = Platform.OS === "web";
+const webCursor = isWeb
+  ? ({ cursor: "pointer", transition: "opacity 0.25s ease" } as any)
+  : undefined;
+
+export function Footer({ onBackToTop }: { onBackToTop?: () => void }) {
   const currentYear = new Date().getFullYear();
 
   const scrollToTop = () => {
-    if (Platform.OS === "web") {
+    if (onBackToTop) {
+      onBackToTop();
+    } else if (isWeb) {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   return (
-    <View style={styles.container} accessibilityRole={"contentinfo" as any} accessibilityLabel="Site footer">
-      <View style={styles.inner}>
-        {/* Top Section */}
-        <View style={styles.topRow}>
-          {/* Logo & About */}
-          <View style={styles.aboutColumn}>
-            <View style={styles.logoRow}>
-              <View style={styles.logoBadge}>
-                <Text style={styles.logoText}>AK</Text>
-              </View>
-              <Text style={styles.siteName}>Akuapem Traditional Council</Text>
-            </View>
-            <Text style={styles.aboutText}>
-              Serving the people of Akuapem since time immemorial. Bridging
-              tradition and progress for our communities.
-            </Text>
-          </View>
+    <View
+      className="bg-ink border-t border-white/10 pt-20 pb-8"
+      accessibilityRole={"contentinfo" as any}
+      accessibilityLabel="Site footer"
+    >
+      <View className="px-[6%] max-w-[1280px] mx-auto w-full">
+        {/* Oversized sign-off */}
+        <Text className="font-display text-4xl md:text-7xl text-ivory mb-3 tracking-tight">
+          The Kingdom of Akuapem
+        </Text>
+        <Text className="font-body-medium text-label uppercase tracking-[3px] text-champagne mb-16">
+          Seventeen towns, one heritage — since time immemorial
+        </Text>
 
-          {/* Quick Links */}
-          <View style={styles.linksColumn} accessibilityRole={"navigation" as any}>
-            <Text style={styles.columnTitle}>Quick Links</Text>
+        {/* Columns */}
+        <View className="flex-row flex-wrap gap-12 border-t border-white/10 pt-12 mb-16">
+          {/* Navigate */}
+          <View className="min-w-[150px]" accessibilityRole={"navigation" as any}>
+            <Text className="font-body-medium text-label uppercase tracking-[3px] text-ivory/40 mb-5">
+              Navigate
+            </Text>
             {quickLinks.map((link) => (
               <Link key={link.href} href={link.href as any} asChild>
-                <Pressable
-                  style={({ hovered }: any) => [
-                    styles.linkItem,
-                    hovered && styles.linkItemHover,
-                  ]}
-                  accessibilityRole="link"
-                >
-                  <Text style={styles.linkText}>{link.label}</Text>
+                <Pressable className="py-1.5" style={webCursor} accessibilityRole="link">
+                  {({ hovered }: any) => (
+                    <Text
+                      className={`font-body text-sm ${
+                        hovered ? "text-champagne" : "text-ivory/70"
+                      }`}
+                      style={
+                        isWeb
+                          ? ({ transition: "color 0.25s ease" } as any)
+                          : undefined
+                      }
+                    >
+                      {link.label}
+                    </Text>
+                  )}
                 </Pressable>
               </Link>
             ))}
           </View>
 
-          {/* Contact Info */}
-          <View style={styles.contactColumn}>
-            <Text style={styles.columnTitle}>Contact Us</Text>
-            <View style={styles.contactItem}>
-              <FontAwesome name="map-marker" size={16} color="#d4a843" />
-              <Text style={styles.contactText}>Akropong-Akuapem, Ghana</Text>
-            </View>
-            <View style={styles.contactItem}>
-              <FontAwesome name="phone" size={16} color="#d4a843" />
-              <Text style={styles.contactText}>+233 302 401 234</Text>
-            </View>
-            <View style={styles.contactItem}>
-              <FontAwesome name="envelope" size={16} color="#d4a843" />
-              <Text style={styles.contactText}>info@akuapemcouncil.org</Text>
+          {/* Visit */}
+          <View className="min-w-[200px]">
+            <Text className="font-body-medium text-label uppercase tracking-[3px] text-ivory/40 mb-5">
+              Visit
+            </Text>
+            <Text className="font-body text-sm text-ivory/70 leading-6">
+              Ahenfie (Palace){"\n"}Akropong-Akuapem{"\n"}Eastern Region, Ghana
+            </Text>
+          </View>
+
+          {/* Contact */}
+          <View className="min-w-[200px]">
+            <Text className="font-body-medium text-label uppercase tracking-[3px] text-ivory/40 mb-5">
+              Contact
+            </Text>
+            <Text className="font-body text-sm text-ivory/70 leading-6">
+              +233 302 401 234{"\n"}info@akuapemcouncil.org
+            </Text>
+            <View className="flex-row gap-3 mt-5">
+              {socialLinks.map((social) => (
+                <Pressable
+                  key={social.icon}
+                  onPress={() => Linking.openURL(social.url)}
+                  className="w-11 h-11 items-center justify-center border border-white/15 active:bg-white/10"
+                  style={webCursor}
+                  accessibilityRole="link"
+                  accessibilityLabel={`Visit our ${social.icon} page`}
+                >
+                  <FontAwesome
+                    name={social.icon as any}
+                    size={16}
+                    color={tokens.colors.champagne}
+                  />
+                </Pressable>
+              ))}
             </View>
           </View>
         </View>
 
-        {/* Social Links */}
-        <View style={styles.socialRow}>
-          {socialLinks.map((social) => (
-            <Pressable
-              key={social.icon}
-              onPress={() => Linking.openURL(social.url)}
-              style={({ hovered }: any) => [
-                styles.socialButton,
-                hovered && styles.socialButtonHover,
-              ]}
-              accessibilityRole="link"
-              accessibilityLabel={`Visit our ${social.icon} page`}
-            >
-              <FontAwesome name={social.icon as any} size={20} color="#d4a843" />
-            </Pressable>
-          ))}
-        </View>
-
-        {/* Back to Top */}
-        <Pressable
-          onPress={scrollToTop}
-          style={({ hovered }: any) => [
-            styles.backToTop,
-            hovered && styles.backToTopHover,
-          ]}
-        >
-          <FontAwesome name="chevron-up" size={12} color="#d4a843" />
-          <Text style={styles.backToTopText}>Back to Top</Text>
-        </Pressable>
-
-        {/* Bottom Bar */}
-        <View style={styles.bottomBar}>
-          <Text style={styles.copyright}>
+        {/* Bottom bar */}
+        <View className="border-t border-white/10 pt-5 flex-row flex-wrap items-center justify-between gap-4">
+          <Text className="font-body text-xs text-ivory/40">
             © {currentYear} Akuapem Traditional Council. All rights reserved.
           </Text>
+          <Pressable
+            onPress={scrollToTop}
+            className="flex-row items-center gap-2"
+            style={webCursor}
+            accessibilityRole="button"
+            accessibilityLabel="Back to top"
+          >
+            <Text className="font-body-medium text-label uppercase tracking-[3px] text-champagne">
+              Top
+            </Text>
+            <FontAwesome name="arrow-up" size={10} color={tokens.colors.champagne} />
+          </Pressable>
         </View>
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#1a5632",
-    paddingTop: 48,
-    paddingBottom: 24,
-  },
-  inner: {
-    paddingHorizontal: "8%",
-    maxWidth: 1200,
-    marginHorizontal: "auto",
-    width: "100%",
-  },
-  topRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 32,
-    marginBottom: 32,
-  },
-  aboutColumn: {
-    flex: 1,
-    minWidth: 250,
-  },
-  logoRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  logoBadge: {
-    width: 44,
-    height: 44,
-    backgroundColor: "#d4a843",
-    borderRadius: 22,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 12,
-  },
-  logoText: {
-    color: "#ffffff",
-    fontWeight: "700",
-    fontSize: 18,
-  },
-  siteName: {
-    color: "#ffffff",
-    fontFamily: "Cinzel_400Regular, serif",
-    fontSize: 16,
-  },
-  aboutText: {
-    color: "rgba(255, 255, 255, 0.75)",
-    fontFamily: "Inter_400Regular, sans-serif",
-    fontSize: 14,
-    lineHeight: 22,
-  },
-  linksColumn: {
-    minWidth: 150,
-  },
-  columnTitle: {
-    fontFamily: "PlayfairDisplay_700Bold, serif",
-    fontSize: 18,
-    color: "#d4a843",
-    marginBottom: 16,
-  },
-  linkItem: {
-    paddingVertical: 6,
-    ...(Platform.OS === "web"
-      ? { cursor: "pointer", transition: "opacity 0.2s ease" }
-      : {}),
-  } as any,
-  linkItemHover: {
-    opacity: 1,
-  },
-  linkText: {
-    fontFamily: "Inter_400Regular, sans-serif",
-    color: "rgba(255, 255, 255, 0.75)",
-    fontSize: 14,
-  },
-  contactColumn: {
-    minWidth: 200,
-  },
-  contactItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    marginBottom: 10,
-  },
-  contactText: {
-    fontFamily: "Inter_400Regular, sans-serif",
-    color: "rgba(255, 255, 255, 0.75)",
-    fontSize: 14,
-  },
-  socialRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 16,
-    marginBottom: 20,
-  },
-  socialButton: {
-    width: 44,
-    height: 44,
-    backgroundColor: "rgba(212, 168, 67, 0.15)",
-    borderRadius: 22,
-    alignItems: "center",
-    justifyContent: "center",
-    ...(Platform.OS === "web"
-      ? { cursor: "pointer", transition: "background-color 0.3s ease" }
-      : {}),
-  } as any,
-  socialButtonHover: {
-    backgroundColor: "rgba(212, 168, 67, 0.35)",
-  },
-  backToTop: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 6,
-    marginBottom: 20,
-    ...(Platform.OS === "web"
-      ? { cursor: "pointer", transition: "opacity 0.2s ease" }
-      : {}),
-  } as any,
-  backToTopHover: {
-    opacity: 0.8,
-  },
-  backToTopText: {
-    color: "#d4a843",
-    fontSize: 13,
-    fontFamily: "Inter_500Medium, sans-serif",
-  },
-  bottomBar: {
-    borderTopWidth: 1,
-    borderTopColor: "rgba(255, 255, 255, 0.15)",
-    paddingTop: 16,
-  },
-  copyright: {
-    fontFamily: "Inter_400Regular, sans-serif",
-    fontSize: 13,
-    color: "rgba(255, 255, 255, 0.5)",
-    textAlign: "center",
-  },
-});

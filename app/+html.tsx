@@ -61,7 +61,11 @@ html {
   scroll-behavior: smooth;
 }
 body {
-  background-color: #f5f2eb;
+  background-color: #0B0F0D;
+}
+::selection {
+  background-color: #C9A96A;
+  color: #0B0F0D;
 }
 /* Smooth transitions for interactive elements */
 a, button {

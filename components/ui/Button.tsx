@@ -1,6 +1,13 @@
-import { Pressable, Text, ActivityIndicator, Platform } from "react-native";
+import { Pressable, Text, View, ActivityIndicator, Platform } from "react-native";
+import { tokens } from "@/constants/tokens";
 
-type ButtonVariant = "primary" | "secondary" | "outline" | "danger";
+type ButtonVariant =
+  | "primary"
+  | "secondary"
+  | "outline"
+  | "ghost-light"
+  | "link-arrow"
+  | "danger";
 
 interface ButtonProps {
   title: string;
@@ -13,17 +20,21 @@ interface ButtonProps {
   accessibilityHint?: string;
 }
 
-const variantStyles = {
-  primary: "bg-gold active:bg-gold/80",
-  secondary: "bg-green-deep active:bg-green-deep/80",
-  outline: "bg-transparent border-2 border-gold active:bg-gold-light",
+const variantStyles: Record<ButtonVariant, string> = {
+  primary: "bg-champagne active:bg-champagne-dim",
+  secondary: "bg-transparent border border-white/30 active:bg-white/10",
+  outline: "bg-transparent border border-champagne active:bg-champagne/10",
+  "ghost-light": "bg-transparent border border-white/60 active:bg-white/10",
+  "link-arrow": "bg-transparent px-0",
   danger: "bg-red-kente active:bg-red-kente/80",
 };
 
-const textStyles = {
-  primary: "text-white",
-  secondary: "text-white",
-  outline: "text-gold",
+const textStyles: Record<ButtonVariant, string> = {
+  primary: "text-ink",
+  secondary: "text-ivory",
+  outline: "text-champagne",
+  "ghost-light": "text-white",
+  "link-arrow": "text-champagne",
   danger: "text-white",
 };
 
@@ -39,6 +50,8 @@ export function Button({
   accessibilityLabel,
   accessibilityHint,
 }: ButtonProps) {
+  const isLink = variant === "link-arrow";
+
   return (
     <Pressable
       onPress={onPress}
@@ -48,32 +61,58 @@ export function Button({
       accessibilityHint={accessibilityHint}
       accessibilityState={{ disabled: disabled || loading, busy: loading }}
       className={`
-        px-6 py-3 rounded-lg items-center justify-center min-h-[44px] min-w-[44px]
+        ${isLink ? "py-2" : "px-8 py-3.5"} items-center justify-center min-h-[44px]
+        ${isLink ? "" : "min-w-[44px] rounded-none"}
         ${variantStyles[variant]}
         ${fullWidth ? "w-full" : ""}
-        ${disabled ? "opacity-50" : ""}
+        ${disabled ? "opacity-40" : ""}
       `}
       style={
         isWeb
           ? ({
               cursor: disabled ? "not-allowed" : "pointer",
               transition:
-                "background-color 0.25s ease, opacity 0.25s ease, transform 0.15s ease",
+                "background-color 0.35s ease, opacity 0.35s ease, transform 0.2s ease",
             } as any)
           : undefined
       }
     >
-      {({ hovered }: { hovered?: boolean }) =>
+      {({ hovered }: any) =>
         loading ? (
           <ActivityIndicator
-            color={variant === "outline" ? "#d4a843" : "#FFFFFF"}
+            color={
+              variant === "primary" || variant === "danger"
+                ? tokens.colors.white
+                : tokens.colors.champagne
+            }
           />
+        ) : isLink ? (
+          <View className="flex-row items-center gap-2">
+            <Text
+              className={`font-body-medium text-label uppercase tracking-[3px] ${textStyles[variant]}`}
+            >
+              {title}
+            </Text>
+            <Text
+              className={`text-champagne text-base ${textStyles[variant]}`}
+              style={
+                isWeb
+                  ? ({
+                      transition: "transform 0.3s ease",
+                      transform: hovered ? "translateX(4px)" : "translateX(0)",
+                    } as any)
+                  : undefined
+              }
+            >
+              →
+            </Text>
+          </View>
         ) : (
           <Text
-            className={`font-body-semibold text-base ${textStyles[variant]}`}
+            className={`font-body-medium text-label uppercase tracking-[3px] ${textStyles[variant]}`}
             style={
               isWeb && hovered && !disabled
-                ? ({ opacity: 0.9 } as any)
+                ? ({ opacity: 0.85 } as any)
                 : undefined
             }
           >

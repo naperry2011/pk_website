@@ -1,49 +1,60 @@
 // Akuapem Paramount King Council - Color Palette
+// Derived from constants/tokens.ts (single source of truth).
+
+import { tokens } from "./tokens";
 
 export const Colors = {
-  // Primary Colors
+  // Canvas
+  ink: {
+    DEFAULT: tokens.colors.ink,
+    raised: tokens.colors.inkRaised,
+  },
+  ivory: tokens.colors.ivory,
+  champagne: {
+    DEFAULT: tokens.colors.champagne,
+    dim: tokens.colors.champagneDim,
+  },
+
+  // Legacy palette (admin/auth surfaces)
   gold: {
     DEFAULT: "#d4a843",
     light: "#f0e6c8",
+    muted: "#b8922e",
   },
   green: {
-    deep: "#1a5632",
+    deep: tokens.colors.greenDeep,
+    mid: tokens.colors.greenMid,
+    dark: tokens.colors.greenDark,
   },
   red: {
-    kente: "#8B0000",
+    kente: tokens.colors.redKente,
   },
 
-  // Secondary Colors
-  white: "#FFFFFF",
+  white: tokens.colors.white,
   gray: {
-    warm: "#f5f2eb",
-    charcoal: "#2d2d2d",
-    muted: "#6b6b6b",
+    warm: tokens.colors.grayWarm,
+    charcoal: tokens.colors.grayCharcoal,
+    muted: tokens.colors.grayMuted,
   },
-
-  // Accent Colors
   blue: {
-    heritage: "#1E4D8B",
-  },
-  brown: {
-    earth: "#8B4513",
+    heritage: tokens.colors.blueHeritage,
   },
 };
 
-// Tab navigation colors
+// Tab navigation colors — public tab bar (mobile) is ink with champagne tint
 export default {
   light: {
-    text: Colors.gray.charcoal,
-    background: Colors.white,
-    tint: Colors.gold.DEFAULT,
-    tabIconDefault: Colors.gray.charcoal,
-    tabIconSelected: Colors.gold.DEFAULT,
+    text: tokens.colors.ivory,
+    background: tokens.colors.ink,
+    tint: tokens.colors.champagne,
+    tabIconDefault: "rgba(244, 241, 234, 0.45)",
+    tabIconSelected: tokens.colors.champagne,
   },
   dark: {
-    text: Colors.white,
-    background: Colors.gray.charcoal,
-    tint: Colors.gold.DEFAULT,
-    tabIconDefault: Colors.gray.warm,
-    tabIconSelected: Colors.gold.DEFAULT,
+    text: tokens.colors.ivory,
+    background: tokens.colors.ink,
+    tint: tokens.colors.champagne,
+    tabIconDefault: "rgba(244, 241, 234, 0.45)",
+    tabIconSelected: tokens.colors.champagne,
   },
 };

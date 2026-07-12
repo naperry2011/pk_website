@@ -19,7 +19,12 @@ import {
   Inter_500Medium,
   Inter_600SemiBold,
 } from "@expo-google-fonts/inter";
-import { Cinzel_400Regular } from "@expo-google-fonts/cinzel";
+import {
+  Fraunces_400Regular,
+  Fraunces_400Regular_Italic,
+  Fraunces_600SemiBold,
+} from "@expo-google-fonts/fraunces";
+import { tokens } from "@/constants/tokens";
 
 export { ErrorBoundary } from "expo-router";
 import { AppErrorBoundary } from "@/components/ui/ErrorBoundary";
@@ -34,12 +39,12 @@ const AkuapemTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    primary: "#d4a843", // Royal Gold
-    background: "#FFFFFF",
-    card: "#FFFFFF",
-    text: "#2d2d2d", // Charcoal
-    border: "#8B4513", // Earth Brown
-    notification: "#8B0000", // Kente Red
+    primary: tokens.colors.champagne,
+    background: tokens.colors.ink,
+    card: tokens.colors.inkRaised,
+    text: tokens.colors.ivory,
+    border: "rgba(255, 255, 255, 0.1)",
+    notification: tokens.colors.redKente,
   },
 };
 
@@ -50,7 +55,9 @@ export default function RootLayout() {
     Inter_400Regular,
     Inter_500Medium,
     Inter_600SemiBold,
-    Cinzel_400Regular,
+    Fraunces_400Regular,
+    Fraunces_400Regular_Italic,
+    Fraunces_600SemiBold,
     ...FontAwesome.font,
   });
 
@@ -66,11 +73,11 @@ export default function RootLayout() {
 
   if (!loaded) {
     return (
-      <View className="flex-1 bg-green-deep items-center justify-center">
-        <View className="w-20 h-20 bg-gold rounded-full items-center justify-center mb-4">
-          <Text className="text-white font-bold text-2xl">AK</Text>
+      <View className="flex-1 bg-ink items-center justify-center">
+        <View className="w-20 h-20 border border-champagne rounded-full items-center justify-center mb-4">
+          <Text className="text-champagne font-bold text-2xl">AK</Text>
         </View>
-        <ActivityIndicator size="small" color="#d4a843" />
+        <ActivityIndicator size="small" color={tokens.colors.champagne} />
       </View>
     );
   }

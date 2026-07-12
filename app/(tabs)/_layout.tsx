@@ -23,11 +23,12 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors.light.tint,
+        tabBarInactiveTintColor: Colors.light.tabIconDefault,
         headerShown: false, // We use our custom header
         tabBarStyle: showTabBar
           ? {
-              backgroundColor: "#FFFFFF",
-              borderTopColor: "#8B4513",
+              backgroundColor: Colors.light.background,
+              borderTopColor: "rgba(255, 255, 255, 0.1)",
               borderTopWidth: 0.5,
               paddingBottom: 4,
               height: 60,
