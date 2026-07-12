@@ -4,11 +4,22 @@
 import { tokens } from "./tokens";
 
 export const Colors = {
-  // Primary Colors
+  // Canvas
+  ink: {
+    DEFAULT: tokens.colors.ink,
+    raised: tokens.colors.inkRaised,
+  },
+  ivory: tokens.colors.ivory,
+  champagne: {
+    DEFAULT: tokens.colors.champagne,
+    dim: tokens.colors.champagneDim,
+  },
+
+  // Legacy palette (admin/auth surfaces)
   gold: {
-    DEFAULT: tokens.colors.gold,
-    light: tokens.colors.goldLight,
-    muted: tokens.colors.goldMuted,
+    DEFAULT: "#d4a843",
+    light: "#f0e6c8",
+    muted: "#b8922e",
   },
   green: {
     deep: tokens.colors.greenDeep,
@@ -19,38 +30,31 @@ export const Colors = {
     kente: tokens.colors.redKente,
   },
 
-  // Secondary Colors
   white: tokens.colors.white,
-  cream: tokens.colors.cream,
   gray: {
     warm: tokens.colors.grayWarm,
     charcoal: tokens.colors.grayCharcoal,
     muted: tokens.colors.grayMuted,
   },
-
-  // Accent Colors
   blue: {
     heritage: tokens.colors.blueHeritage,
   },
-  brown: {
-    earth: tokens.colors.brownEarth,
-  },
 };
 
-// Tab navigation colors
+// Tab navigation colors — public tab bar (mobile) is ink with champagne tint
 export default {
   light: {
-    text: Colors.gray.charcoal,
-    background: Colors.white,
-    tint: Colors.gold.DEFAULT,
-    tabIconDefault: Colors.gray.charcoal,
-    tabIconSelected: Colors.gold.DEFAULT,
+    text: tokens.colors.ivory,
+    background: tokens.colors.ink,
+    tint: tokens.colors.champagne,
+    tabIconDefault: "rgba(244, 241, 234, 0.45)",
+    tabIconSelected: tokens.colors.champagne,
   },
   dark: {
-    text: Colors.white,
-    background: Colors.gray.charcoal,
-    tint: Colors.gold.DEFAULT,
-    tabIconDefault: Colors.gray.warm,
-    tabIconSelected: Colors.gold.DEFAULT,
+    text: tokens.colors.ivory,
+    background: tokens.colors.ink,
+    tint: tokens.colors.champagne,
+    tabIconDefault: "rgba(244, 241, 234, 0.45)",
+    tabIconSelected: tokens.colors.champagne,
   },
 };

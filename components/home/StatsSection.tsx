@@ -36,29 +36,32 @@ export function StatsSection() {
   const { isMobile } = useResponsive();
 
   return (
-    <View className="bg-green-deep border-t-2 border-b-2 border-gold/40 px-[8%] py-16 md:py-24">
+    <View className="bg-ink px-[6%]">
       <View
-        className={`max-w-7xl mx-auto w-full ${
-          isMobile ? "flex-col" : "flex-row justify-around items-stretch"
+        className={`max-w-[1280px] mx-auto w-full border-t border-b border-white/10 ${
+          isMobile ? "flex-col" : "flex-row items-stretch"
         }`}
       >
         {stats.map((stat, index) => (
-          <AnimateOnScroll key={stat.label} delay={index * 150}>
-            <View
-              className={`items-center py-6 ${
-                isMobile
-                  ? `w-full ${index < stats.length - 1 ? "border-b border-gold/30" : ""}`
-                  : `min-w-[180px] px-10 ${index > 0 ? "border-l border-gold/30" : ""}`
-              }`}
-            >
-              <Text className="font-accent text-gold text-5xl md:text-6xl mb-3">
-                <AnimatedNumber end={stat.value} suffix={stat.suffix} />
-              </Text>
-              <Text className="font-body-semibold uppercase tracking-[3px] text-white/70 text-sm text-center">
-                {stat.label}
-              </Text>
-            </View>
-          </AnimateOnScroll>
+          <View
+            key={stat.label}
+            className={
+              isMobile
+                ? `w-full ${index > 0 ? "border-t border-white/10" : ""}`
+                : `flex-1 ${index > 0 ? "border-l border-white/10" : ""}`
+            }
+          >
+            <AnimateOnScroll delay={index * 150}>
+              <View className="items-start px-8 md:px-14 py-12 md:py-16">
+                <Text className="font-display text-5xl md:text-7xl text-champagne mb-4">
+                  <AnimatedNumber end={stat.value} suffix={stat.suffix} />
+                </Text>
+                <Text className="font-body-medium text-label uppercase tracking-[3px] text-ivory/40">
+                  {stat.label}
+                </Text>
+              </View>
+            </AnimateOnScroll>
+          </View>
         ))}
       </View>
     </View>

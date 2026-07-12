@@ -1,13 +1,19 @@
-import { View, Text, Pressable, Image, Platform } from "react-native";
-import { Link, useRouter } from "expo-router";
+import { View, Text, Image, Platform } from "react-native";
+import { useRouter } from "expo-router";
 import Head from "expo-router/head";
 import { PageLayout, Section } from "@/components/layout";
-import { Hero, AnnouncementCard, QuickLinks, SubscribeCTA, StatsSection, ImageCarousel } from "@/components/home";
+import {
+  Hero,
+  Marquee,
+  AnnouncementCard,
+  QuickLinks,
+  SubscribeCTA,
+  StatsSection,
+} from "@/components/home";
 import { useAnnouncements } from "@/hooks/useAnnouncements";
 import { LoadingState } from "@/components/ui/LoadingState";
 import { AnimateOnScroll } from "@/components/ui/AnimateOnScroll";
-import { SectionHeading } from "@/components/ui/SectionHeading";
-import { Button, Eyebrow, H2, Body } from "@/components/ui";
+import { Button, BodyLarge } from "@/components/ui";
 import { useResponsive } from "@/hooks/useResponsive";
 import { paramountKing } from "@/constants/mockData";
 
@@ -18,10 +24,12 @@ export default function HomeScreen() {
   const { isMobile } = useResponsive();
   const router = useRouter();
 
-  const latest = (announcements ?? []).slice(0, 4);
+  const latest = announcements ?? [];
+  const featured = latest[0];
+  const rest = latest.slice(1, 4);
 
   return (
-    <PageLayout>
+    <PageLayout heroUnderHeader>
       <Head>
         <title>Akuapem Traditional Council - Official Website</title>
         <meta name="description" content="Official website of the Akuapem Traditional Council. Discover the heritage, leadership, and community of the Akuapem Traditional Area in Ghana's Eastern Region." />
@@ -30,112 +38,129 @@ export default function HomeScreen() {
         <meta property="og:type" content="website" />
       </Head>
 
-      {/* Hero Section */}
+      {/* Cinematic full-viewport hero */}
       <Hero />
 
-      {/* Image Carousel */}
-      <ImageCarousel />
+      {/* Marquee of the 17 principal towns */}
+      <Marquee />
 
-      {/* Welcome / Introduction Section */}
-      <Section background="white">
-        <View className={`items-center ${isMobile ? "flex-col gap-10" : "flex-row gap-16"}`}>
-          {/* Image column with offset gold frame */}
+      {/* 01 — The Council: asymmetric split */}
+      <Section background="ink" number="01" label="The Council">
+        <View className={isMobile ? "flex-col gap-14" : "flex-row gap-20"}>
+          {/* Left: large intro copy */}
           <View className={isMobile ? "w-full" : "flex-[55]"}>
-            <View className="relative" style={{ paddingBottom: 12, paddingRight: 12 }}>
-              {/* Offset gold frame behind the photo */}
-              <View
-                className="absolute border-2 border-gold rounded-xl"
-                style={{ top: 12, left: 12, right: 0, bottom: 0 }}
-              />
-              <View className="rounded-xl overflow-hidden">
-                <Image
-                  source={require("@/assets/images/hero/akuapem-heritage.jpg")}
-                  style={{ width: "100%", height: isMobile ? 300 : 450 }}
-                  resizeMode="cover"
-                  accessibilityLabel="Akuapem chiefs and community gathered together"
-                />
-              </View>
-            </View>
-          </View>
-
-          {/* Text column */}
-          <View className={isMobile ? "w-full" : "flex-[45]"}>
-            <Eyebrow className="mb-3">Welcome</Eyebrow>
-            <H2 className="mb-5">The Custodians of Akuapem Heritage</H2>
-            <Body className="text-gray-muted mb-4">
-              The Akuapem Traditional Council serves as the custodian of our
-              rich cultural heritage and the bridge between the government and
-              our people.
-            </Body>
-            <Body className="text-gray-muted mb-8">
+            <BodyLarge className="text-ivory/80 text-xl md:text-2xl leading-relaxed mb-8">
+              The Akuapem Traditional Council is the custodian of a living
+              heritage — the bridge between government and the people of the
+              ridge, from Akropong to the farthest of the seventeen towns.
+            </BodyLarge>
+            <BodyLarge className="text-ivory/60 mb-12">
               Under the leadership of {paramountKing.name}, the{" "}
-              {paramountKing.title}, we continue to uphold the traditions of
-              our ancestors while embracing progress for our communities.
-            </Body>
+              {paramountKing.title} and {paramountKing.lineage.toLowerCase()},
+              the Council upholds the traditions of the ancestors while
+              building a prosperous future for every community it serves.
+            </BodyLarge>
             <View className="self-start">
               <Button
                 title="Meet the Council"
-                variant="outline"
+                variant="link-arrow"
                 onPress={() => router.push("/about")}
               />
             </View>
           </View>
+
+          {/* Right: offset portrait, breaking section rhythm on desktop */}
+          <View
+            className={isMobile ? "w-full" : "flex-[40]"}
+            style={!isMobile ? { marginTop: -96 } : undefined}
+          >
+            <AnimateOnScroll variant="fade-up" delay={150}>
+              <View
+                className="overflow-hidden"
+                style={
+                  isWeb
+                    ? ({
+                        filter: "grayscale(100%)",
+                        transition: "filter 0.8s ease",
+                      } as any)
+                    : undefined
+                }
+                // @ts-expect-error web-only hover handlers on View
+                onMouseEnter={
+                  isWeb
+                    ? (e: any) => {
+                        e.currentTarget.style.filter = "grayscale(0%)";
+                      }
+                    : undefined
+                }
+                onMouseLeave={
+                  isWeb
+                    ? (e: any) => {
+                        e.currentTarget.style.filter = "grayscale(100%)";
+                      }
+                    : undefined
+                }
+              >
+                <Image
+                  source={require("@/assets/images/about/okuapehene-portrait.jpg")}
+                  style={{ width: "100%", height: isMobile ? 420 : 560 }}
+                  resizeMode="cover"
+                  accessibilityLabel={`Portrait of ${paramountKing.name}, the ${paramountKing.title}`}
+                />
+              </View>
+              <Text className="font-body-medium text-label uppercase tracking-[3px] text-ivory/40 mt-4">
+                {paramountKing.name} — {paramountKing.title}
+              </Text>
+            </AnimateOnScroll>
+          </View>
         </View>
       </Section>
 
-      {/* Stats Section */}
+      {/* Hairline-bounded stats row */}
       <StatsSection />
 
-      {/* Quick Links */}
-      <QuickLinks />
-
-      {/* Latest Announcements */}
-      <Section background="white" animate={false}>
-        <SectionHeading
-          label="LATEST NEWS"
-          title="Announcements"
-          subtitle="Stay informed with the latest news from the Council."
-        />
-
+      {/* 02 — Latest from the Council */}
+      <Section background="ink" number="02" label="Latest from the Council" animate={false}>
         {isLoading ? (
           <LoadingState message="Loading announcements..." />
         ) : (
           <>
-            {/* Newsroom-style list rows */}
-            <View className="w-full max-w-3xl mx-auto border-t border-gray-charcoal/10">
-              {latest.map((announcement, index) => (
+            {featured && (
+              <AnimateOnScroll>
+                <View className="mb-2">
+                  <AnnouncementCard announcement={featured} featured />
+                </View>
+              </AnimateOnScroll>
+            )}
+
+            <View className="w-full border-t border-white/10">
+              {rest.map((announcement, index) => (
                 <AnimateOnScroll key={announcement.id} delay={index * 100}>
                   <AnnouncementCard
                     announcement={announcement}
-                    isLast={index === latest.length - 1}
+                    isLast={index === rest.length - 1}
                   />
                 </AnimateOnScroll>
               ))}
             </View>
 
-            <View className="items-center mt-10">
-              <Link href="/community/announcements" asChild>
-                <Pressable
-                  className="self-center"
-                  style={({ hovered }: any) => [
-                    isWeb
-                      ? ({ cursor: "pointer", transition: "opacity 0.2s ease" } as any)
-                      : null,
-                    isWeb && hovered ? { opacity: 0.8 } : null,
-                  ]}
-                  accessibilityRole="link"
-                >
-                  <Text className="font-body-semibold text-base text-gold">
-                    View All Announcements →
-                  </Text>
-                </Pressable>
-              </Link>
+            <View className="self-start mt-12">
+              <Button
+                title="All announcements"
+                variant="link-arrow"
+                onPress={() => router.push("/community/announcements")}
+              />
             </View>
           </>
         )}
       </Section>
 
-      {/* Subscribe CTA */}
+      {/* 03 — Explore */}
+      <Section background="ink" number="03" label="Explore">
+        <QuickLinks />
+      </Section>
+
+      {/* Ivory contrast band */}
       <SubscribeCTA />
     </PageLayout>
   );

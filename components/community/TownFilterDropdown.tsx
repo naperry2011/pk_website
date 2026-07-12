@@ -1,7 +1,9 @@
-import { View, Pressable, ScrollView } from "react-native";
+import { View, Text, Pressable, ScrollView, Platform } from "react-native";
 import { useState } from "react";
-import { Body } from "@/components/ui/Typography";
 import { FontAwesome } from "@expo/vector-icons";
+import { tokens } from "@/constants/tokens";
+
+const isWeb = Platform.OS === "web";
 
 const ALL_TOWNS = [
   "Akropong", "Abiriw", "Amanokrom", "Awukugua", "Berekuso",
@@ -21,37 +23,45 @@ export function TownFilterDropdown({ selectedTown, onSelectTown }: TownFilterDro
   const displayLabel = selectedTown || "All Towns";
 
   return (
-    <View className="mb-4 z-10">
-      <Body className="font-body-medium text-gray-charcoal mb-2">Filter by Town</Body>
+    <View className="mb-10 z-10 max-w-xs">
+      <Text className="font-body-medium text-label uppercase tracking-[3px] text-ivory/40 mb-3">
+        Filter by Town
+      </Text>
       <Pressable
         onPress={() => setIsOpen(!isOpen)}
-        className="flex-row items-center justify-between px-4 py-3 bg-white border border-brown-earth/30 rounded-lg min-h-[44px]"
+        className="flex-row items-center justify-between py-3 border-b border-white/20 min-h-[44px]"
+        style={isWeb ? ({ cursor: "pointer" } as any) : undefined}
         accessibilityRole="button"
         accessibilityLabel={`Filter by town: ${displayLabel}`}
       >
-        <Body className="text-gray-charcoal">{displayLabel}</Body>
+        <Text className="font-body text-base text-ivory">{displayLabel}</Text>
         <FontAwesome
           name={isOpen ? "chevron-up" : "chevron-down"}
-          size={14}
-          color="#2C3E50"
+          size={12}
+          color={tokens.colors.champagne}
         />
       </Pressable>
 
       {isOpen && (
-        <View className="bg-white border border-brown-earth/20 rounded-lg mt-1 shadow-md max-h-[300px]">
+        <View className="bg-ink-raised border border-white/10 mt-2 max-h-[300px]">
           <ScrollView>
             <Pressable
               onPress={() => {
                 onSelectTown("");
                 setIsOpen(false);
               }}
-              className={`px-4 py-3 border-b border-brown-earth/10 min-h-[44px] justify-center ${
-                !selectedTown ? "bg-gold/10" : ""
-              }`}
+              className="px-4 py-3 border-b border-white/10 min-h-[44px] justify-center"
+              style={isWeb ? ({ cursor: "pointer" } as any) : undefined}
+              accessibilityRole="button"
+              accessibilityLabel="All Towns"
             >
-              <Body className={!selectedTown ? "text-gold font-body-semibold" : "text-gray-charcoal"}>
+              <Text
+                className={`font-body text-sm ${
+                  !selectedTown ? "text-champagne" : "text-ivory/70"
+                }`}
+              >
                 All Towns
-              </Body>
+              </Text>
             </Pressable>
             {ALL_TOWNS.map((town) => (
               <Pressable
@@ -60,13 +70,18 @@ export function TownFilterDropdown({ selectedTown, onSelectTown }: TownFilterDro
                   onSelectTown(town);
                   setIsOpen(false);
                 }}
-                className={`px-4 py-3 border-b border-brown-earth/10 min-h-[44px] justify-center ${
-                  selectedTown === town ? "bg-gold/10" : ""
-                }`}
+                className="px-4 py-3 border-b border-white/10 min-h-[44px] justify-center"
+                style={isWeb ? ({ cursor: "pointer" } as any) : undefined}
+                accessibilityRole="button"
+                accessibilityLabel={town}
               >
-                <Body className={selectedTown === town ? "text-gold font-body-semibold" : "text-gray-charcoal"}>
+                <Text
+                  className={`font-body text-sm ${
+                    selectedTown === town ? "text-champagne" : "text-ivory/70"
+                  }`}
+                >
                   {town}
-                </Body>
+                </Text>
               </Pressable>
             ))}
           </ScrollView>

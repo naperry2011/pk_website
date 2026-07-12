@@ -1,83 +1,62 @@
-import { View, Image } from "react-native";
+import { View, Text, Image, Platform } from "react-native";
 import Head from "expo-router/head";
+import { LinearGradient } from "expo-linear-gradient";
 import { PageLayout, Section } from "@/components/layout";
-import { FontAwesome } from "@expo/vector-icons";
 import { paramountKing, councilHistory } from "@/constants/mockData";
 import { AnimateOnScroll } from "@/components/ui/AnimateOnScroll";
-import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import {
   Display,
-  Eyebrow,
-  H2,
-  H3,
+  Title,
+  Label,
   Body,
-  BodyLarge,
   Accent,
 } from "@/components/ui/Typography";
-import { theme } from "@/constants/theme";
 import { tokens } from "@/constants/tokens";
 import { useResponsive } from "@/hooks/useResponsive";
 
-/** Photo with an offset gold hairline frame sitting behind it. */
-function FramedImage({
-  source,
-  placeholderLabel,
-  heightClass,
-}: {
-  source?: any;
-  placeholderLabel?: string;
-  heightClass: string;
-}) {
-  return (
-    <View className="relative mr-3 mb-3">
-      <View
-        className="absolute top-3 left-3 -right-3 -bottom-3 border-2 border-gold rounded-xl"
-        pointerEvents="none"
-      />
-      <View className="rounded-xl overflow-hidden">
-        {source ? (
-          <Image
-            source={source}
-            className={`w-full ${heightClass}`}
-            resizeMode="cover"
-          />
-        ) : (
-          <PlaceholderImage height={320} label={placeholderLabel} borderRadius={12} />
-        )}
-      </View>
-    </View>
-  );
-}
+const isWeb = Platform.OS === "web";
+
+const STRUCTURE = [
+  {
+    rank: "Omanhene",
+    title: "The Paramount Chief",
+    description:
+      "Occupant of the Ofori Kuma stool and president of the Traditional Council.",
+  },
+  {
+    rank: "Divisional Chiefs",
+    title: "Seventeen Divisions",
+    description:
+      "Custodians of the towns of Akuapem, each governing under the paramount stool.",
+  },
+  {
+    rank: "Queen Mothers",
+    title: "Mothers of the State",
+    description:
+      "Guardians of lineage and custom, with the authority to nominate heirs to the stool.",
+  },
+  {
+    rank: "Elders",
+    title: "Council of Elders",
+    description:
+      "Advisors on chieftaincy, land, development, and cultural affairs.",
+  },
+];
 
 export default function AboutScreen() {
   const { isMobile } = useResponsive();
 
   // Break history text into paragraphs
   const historyText = councilHistory.summary;
-  const midPoint = historyText.indexOf(". ", Math.floor(historyText.length / 2)) + 2;
+  const midPoint =
+    historyText.indexOf(". ", Math.floor(historyText.length / 2)) + 2;
   const historyParagraphs = [
     historyText.substring(0, midPoint),
     historyText.substring(midPoint),
   ];
 
-  const historyBlocks = [
-    {
-      eyebrow: "Our History",
-      title: "Centuries of Heritage",
-      body: historyParagraphs[0],
-      image: require("@/assets/images/about/historic-monument.jpg"),
-    },
-    {
-      eyebrow: "Continuity",
-      title: "Bridging Past and Future",
-      body: historyParagraphs[1],
-      image: null,
-      placeholderLabel: "Odwira Festival",
-    },
-  ];
-
   return (
-    <PageLayout>
+    <PageLayout heroUnderHeader>
       <Head>
         <title>About the Council - Akuapem Traditional Council</title>
         <meta name="description" content="Learn about the history, leadership, and structure of the Akuapem Traditional Council." />
@@ -85,253 +64,243 @@ export default function AboutScreen() {
         <meta property="og:description" content="Learn about the history, leadership, and structure of the Akuapem Traditional Council." />
       </Head>
 
-      {/* Editorial page header — image band with green-dark scrim */}
-      <View className="relative overflow-hidden">
+      {/* Cinematic sub-hero — full-bleed image, ink gradient, huge Fraunces */}
+      <View
+        className="relative overflow-hidden justify-end"
+        style={{ height: isWeb ? ("70vh" as any) : 520, minHeight: 480 }}
+      >
         <Image
           source={require("@/assets/images/about/historic-monument.jpg")}
           className="absolute inset-0 w-full h-full"
           resizeMode="cover"
           accessibilityIgnoresInvertColors
         />
-        <View className="absolute inset-0 bg-green-dark/80" />
-        <View className="py-20 md:py-32 px-[8%]">
-          <View className="max-w-7xl mx-auto w-full items-center">
-            <Eyebrow className="mb-4">About Us</Eyebrow>
-            <Display className="text-white text-center mb-4">
-              About the Council
-            </Display>
-            <BodyLarge className="text-white/85 text-center max-w-2xl">
-              Discover the rich history and leadership of the Akuapem
-              Traditional Council
-            </BodyLarge>
+        <LinearGradient
+          colors={["rgba(11,15,13,0.35)", "rgba(11,15,13,0.15)", tokens.colors.ink]}
+          locations={[0, 0.45, 1]}
+          style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
+        />
+        <View className="px-[6%] pb-16 md:pb-24 w-full">
+          <View className="max-w-[1280px] mx-auto w-full">
+            <AnimateOnScroll variant="fade">
+              <Label className="mb-6">The Council</Label>
+              <Display accessibilityLabel="About the Council">
+                About the{" "}
+                <Text className="font-display-italic text-champagne">
+                  Council
+                </Text>
+              </Display>
+            </AnimateOnScroll>
           </View>
         </View>
       </View>
 
-      {/* History — alternating editorial blocks */}
-      <Section background="white" animate={false}>
-        <View className="gap-16 md:gap-24">
-          {historyBlocks.map((block, i) => (
-            <AnimateOnScroll key={block.title}>
+      {/* 01 — History: asymmetric image / text splits */}
+      <Section background="ink" number="01" label="History" animate={false}>
+        <AnimateOnScroll>
+          <View
+            className={`gap-10 md:gap-20 ${isMobile ? "" : "flex-row items-center"}`}
+          >
+            <View className={isMobile ? "w-full" : "flex-[5]"}>
+              <View className="relative overflow-hidden">
+                <Image
+                  source={require("@/assets/images/about/historic-monument.jpg")}
+                  style={{ width: "100%", height: isMobile ? 320 : 520 }}
+                  resizeMode="cover"
+                  accessibilityLabel="Historic monument of the Akuapem Traditional Area"
+                />
+                <LinearGradient
+                  colors={["transparent", tokens.colors.ink]}
+                  start={{ x: 0.4, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    bottom: 0,
+                    right: 0,
+                    width: "45%",
+                    opacity: 0.9,
+                  }}
+                />
+              </View>
+            </View>
+            <View className={isMobile ? "w-full" : "flex-[6]"}>
+              <Title className="mb-8">Centuries of heritage</Title>
+              <Body className="text-ivory/80 text-lg leading-8 max-w-[560px]">
+                {historyParagraphs[0]}
+              </Body>
+            </View>
+          </View>
+        </AnimateOnScroll>
+
+        {/* Second block — reversed */}
+        <AnimateOnScroll>
+          <View
+            className={`mt-20 md:mt-32 gap-10 md:gap-20 ${
+              isMobile ? "" : "flex-row-reverse items-center"
+            }`}
+          >
+            <View className={isMobile ? "w-full" : "flex-[5]"}>
               <View
-                className={`items-center gap-10 md:gap-16 ${
-                  i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
-                }`}
+                className="bg-ink-raised items-center justify-center overflow-hidden"
+                style={{ height: isMobile ? 320 : 520 }}
               >
-                <View className="flex-1 w-full">
-                  <FramedImage
-                    source={block.image}
-                    placeholderLabel={block.placeholderLabel}
-                    heightClass={isMobile ? "h-[280px]" : "h-[400px]"}
-                  />
+                <Text
+                  className="font-display text-champagne/20"
+                  style={{ fontSize: isMobile ? 160 : 260, lineHeight: isMobile ? 180 : 280 }}
+                  accessibilityElementsHidden
+                  importantForAccessibility="no"
+                >
+                  O
+                </Text>
+                <Label className="text-ivory/40 absolute bottom-8">
+                  Odwira Festival
+                </Label>
+              </View>
+            </View>
+            <View className={isMobile ? "w-full" : "flex-[6]"}>
+              <Title className="mb-8">Bridging past and future</Title>
+              <Body className="text-ivory/80 text-lg leading-8 max-w-[560px] mb-12">
+                {historyParagraphs[1]}
+              </Body>
+
+              {/* Founded / headquarters — hairline facts */}
+              <View className="border-t border-white/10">
+                <View className="flex-row items-baseline justify-between py-5 border-b border-white/10">
+                  <Label className="text-ivory/40">Founded</Label>
+                  <Text className="font-display text-ivory text-xl">
+                    {councilHistory.founded}
+                  </Text>
                 </View>
-                <View className="flex-1 w-full">
-                  <Eyebrow className="mb-3">{block.eyebrow}</Eyebrow>
-                  <H2 className="mb-5">{block.title}</H2>
-                  <Body className="text-gray-muted">{block.body}</Body>
+                <View className="flex-row items-baseline justify-between py-5 border-b border-white/10">
+                  <Label className="text-ivory/40">Headquarters</Label>
+                  <Text className="font-display text-ivory text-xl">
+                    {councilHistory.headquarters}
+                  </Text>
                 </View>
               </View>
-            </AnimateOnScroll>
-          ))}
-        </View>
-
-        {/* Founded / headquarters — Cinzel accent facts */}
-        <AnimateOnScroll>
-          <View className="md:flex-row justify-center gap-8 md:gap-24 mt-16 md:mt-24 border-t border-gold/30 pt-10">
-            <View className="items-center">
-              <Eyebrow className="mb-2">Founded</Eyebrow>
-              <Accent className="text-gray-charcoal text-xl">
-                {councilHistory.founded}
-              </Accent>
-            </View>
-            <View className="items-center">
-              <Eyebrow className="mb-2">Headquarters</Eyebrow>
-              <Accent className="text-gray-charcoal text-xl">
-                {councilHistory.headquarters}
-              </Accent>
             </View>
           </View>
         </AnimateOnScroll>
       </Section>
 
-      {/* Our Structure */}
-      <Section background="warm">
-        <View className="items-center mb-10">
-          <Eyebrow className="mb-3">Governance</Eyebrow>
-          <H2 className="text-center mb-5">Our Structure</H2>
-          <Body className="text-gray-muted text-center max-w-xl">
-            The council is led by the Omanhene (Paramount Chief), supported by
-            17 divisional and sub-divisional chiefs, queen mothers, and elders.
+      {/* 02 — Governance: hairline structure list */}
+      <Section background="ink-raised" number="02" label="Governance" animate={false}>
+        <AnimateOnScroll>
+          <Title className="mb-4 max-w-[700px]">
+            One stool,{" "}
+            <Text className="font-display-italic text-champagne">
+              seventeen towns
+            </Text>
+          </Title>
+          <Body className="text-ivory/60 max-w-[560px] mb-16">
+            The council is led by the Omanhene, supported by divisional chiefs,
+            queen mothers, and elders in an unbroken order of custom.
           </Body>
-        </View>
+        </AnimateOnScroll>
 
-        {/* Visual Hierarchy */}
-        <View className="items-center">
-          <View className="bg-gold py-4 px-8 rounded-xl shadow-md">
-            <Body className="text-white font-body-semibold text-lg text-center">
-              Omanhene
-            </Body>
-            <Body className="text-white/85 text-sm text-center">
-              Paramount Chief
-            </Body>
-          </View>
-
-          <View className="w-0.5 h-8 bg-gold" />
-
-          <View className={`gap-4 ${isMobile ? "items-center" : "flex-row"}`}>
-            <View className="bg-green-deep py-3.5 px-6 rounded-xl shadow-sm">
-              <Body className="text-white font-body-semibold text-center">
-                Divisional Chiefs
-              </Body>
-            </View>
-            <View className="bg-green-deep py-3.5 px-6 rounded-xl shadow-sm">
-              <Body className="text-white font-body-semibold text-center">
-                Queen Mothers
-              </Body>
-            </View>
-          </View>
-
-          <View className="w-0.5 h-8 bg-gold" />
-
-          <View className="bg-blue-heritage py-3.5 px-6 rounded-xl shadow-sm">
-            <Body className="text-white font-body-semibold text-center">
-              Elders
-            </Body>
-          </View>
-
-          <View className="w-0.5 h-8 bg-gold" />
-
-          <View
-            className={`gap-3 justify-center ${
-              isMobile ? "items-center" : "flex-row flex-wrap"
-            }`}
-          >
-            {["Chieftaincy", "Land", "Development", "Cultural Affairs"].map(
-              (committee) => (
-                <View
-                  key={committee}
-                  className="bg-white border-2 border-gold py-3.5 px-5 rounded-xl"
-                >
-                  <Body className="text-gold font-body-semibold text-center">
-                    {committee}
-                  </Body>
+        <View className="border-t border-white/10">
+          {STRUCTURE.map((row, i) => (
+            <AnimateOnScroll key={row.rank} delay={i * 80}>
+              <View
+                className={`py-8 md:py-10 border-b border-white/10 gap-4 ${
+                  isMobile ? "" : "flex-row items-baseline"
+                }`}
+              >
+                <View className={isMobile ? "" : "w-[280px]"}>
+                  <Label>{row.rank}</Label>
                 </View>
-              )
-            )}
-          </View>
+                <View className="flex-1">
+                  <Text className="font-display text-ivory text-2xl md:text-3xl mb-2">
+                    {row.title}
+                  </Text>
+                  <Body className="text-ivory/60">{row.description}</Body>
+                </View>
+              </View>
+            </AnimateOnScroll>
+          ))}
         </View>
       </Section>
 
-      {/* Leadership — royal portrait */}
-      <Section background="cream">
-        <View className={`items-center gap-10 md:gap-16 ${isMobile ? "" : "flex-row"}`}>
-          {/* Portrait with gold hairline frame */}
-          <View className="flex-1 w-full">
-            <View className="border border-gold rounded-xl p-2 bg-white">
-              <View className="rounded-lg overflow-hidden">
-                <Image
-                  source={require("@/assets/images/about/okuapehene-portrait.jpg")}
-                  className={`w-full ${isMobile ? "h-[350px]" : "h-[480px]"}`}
-                  resizeMode="cover"
-                  accessibilityLabel={`Portrait of ${paramountKing.name}`}
-                />
-              </View>
-            </View>
+      {/* 03 — The Okuapehene: full-bleed portrait band */}
+      <View className="bg-ink px-[6%] pt-20 md:pt-32">
+        <View className="max-w-[1280px] mx-auto w-full flex-row items-baseline gap-4 border-t border-white/10 pt-4 pb-10 md:pb-16">
+          <Text className="font-display text-base text-champagne">03</Text>
+          <Text className="font-body-medium text-label uppercase tracking-[3px] text-ivory/50">
+            The Okuapehene
+          </Text>
+        </View>
+      </View>
+
+      <View className="relative bg-ink overflow-hidden">
+        {isMobile ? (
+          <View className="relative" style={{ height: 440 }}>
+            <Image
+              source={require("@/assets/images/about/okuapehene-portrait.jpg")}
+              className="absolute inset-0 w-full h-full"
+              resizeMode="cover"
+              accessibilityLabel={`Portrait of ${paramountKing.name}`}
+            />
+            <LinearGradient
+              colors={["transparent", tokens.colors.ink]}
+              locations={[0.45, 1]}
+              style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
+            />
           </View>
+        ) : (
+          <Image
+            source={require("@/assets/images/about/okuapehene-portrait.jpg")}
+            style={{
+              position: "absolute",
+              top: 0,
+              bottom: 0,
+              right: 0,
+              width: "58%",
+            }}
+            resizeMode="cover"
+            accessibilityLabel={`Portrait of ${paramountKing.name}`}
+          />
+        )}
+        {!isMobile && (
+          <LinearGradient
+            colors={[tokens.colors.ink, tokens.colors.ink, "rgba(11,15,13,0)"]}
+            locations={[0, 0.45, 0.8]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
+          />
+        )}
 
-          {/* Bio */}
-          <View className="flex-1 w-full">
-            <Eyebrow className="mb-3">Okuapehene</Eyebrow>
-            <Accent className="text-gray-charcoal text-2xl md:text-3xl mb-2">
-              {paramountKing.name}
-            </Accent>
-            <Accent className="text-gold-muted text-base mb-4">
-              President, Akuapem Traditional Council
-            </Accent>
-            <View className="w-16 h-0.5 bg-gold mb-5" />
-            <Body className="text-gray-muted mb-4">
-              {paramountKing.biography}
-            </Body>
-            <View className="bg-gray-warm py-3 px-5 rounded-lg self-start mt-2 border border-gold/20">
-              <Eyebrow className="text-xs mb-1">Enstooled</Eyebrow>
-              <Body className="font-body-semibold">
-                {new Date(paramountKing.enstoolmentDate).toLocaleDateString(
-                  "en-GB",
-                  { day: "numeric", month: "long", year: "numeric" }
-                )}
-              </Body>
-            </View>
+        <View
+          className="px-[6%] py-16 md:py-40"
+          style={!isMobile ? { minHeight: 680, justifyContent: "center" } : undefined}
+        >
+          <View className="max-w-[1280px] mx-auto w-full">
+            <AnimateOnScroll>
+              <View style={{ maxWidth: isMobile ? undefined : 520 }}>
+                <Title className="mb-3">{paramountKing.name}</Title>
+                <Accent className="text-xl mb-2">{paramountKing.title}</Accent>
+                <Body className="text-ivory/50 mb-10">
+                  {paramountKing.lineage} · President, Akuapem Traditional
+                  Council
+                </Body>
+                <Body className="text-ivory/70 leading-8 mb-12">
+                  {paramountKing.biography}
+                </Body>
+                <View className="flex-row items-baseline justify-between py-5 border-t border-b border-white/10">
+                  <Label className="text-ivory/40">Enstooled</Label>
+                  <Text className="font-display text-ivory text-xl">
+                    {new Date(paramountKing.enstoolmentDate).toLocaleDateString(
+                      "en-GB",
+                      { day: "numeric", month: "long", year: "numeric" }
+                    )}
+                  </Text>
+                </View>
+              </View>
+            </AnimateOnScroll>
           </View>
         </View>
-      </Section>
-
-      {/* Our Role, Vision & Mission */}
-      <Section background="warm">
-        <View className="items-center mb-10">
-          <Eyebrow className="mb-3">Our Purpose</Eyebrow>
-          <H2 className="text-center">Role, Vision & Mission</H2>
-        </View>
-
-        <View className={`gap-6 ${isMobile ? "" : "flex-row"}`}>
-          <AnimateOnScroll delay={0} style={{ flex: isMobile ? undefined : 1 }}>
-            <View className="flex-1 bg-white rounded-xl border border-gold/20 p-7 items-center">
-              <View className="w-14 h-14 rounded-full bg-green-deep/10 items-center justify-center mb-4">
-                <FontAwesome
-                  name="balance-scale"
-                  size={24}
-                  color={theme.colors.primaryGreen}
-                />
-              </View>
-              <H3 className="text-center mb-3">Our Role</H3>
-              <Body className="text-gray-muted text-center text-sm leading-6">
-                The governing traditional institution responsible for
-                installation of chiefs, dispute resolution, land
-                administration, and unifying all towns under its jurisdiction.
-              </Body>
-            </View>
-          </AnimateOnScroll>
-
-          <AnimateOnScroll delay={100} style={{ flex: isMobile ? undefined : 1 }}>
-            <View className="flex-1 bg-white rounded-xl border border-gold/20 p-7 items-center">
-              <View className="w-14 h-14 rounded-full bg-gold/10 items-center justify-center mb-4">
-                <FontAwesome name="eye" size={24} color={theme.colors.goldAccent} />
-              </View>
-              <H3 className="text-center mb-3">Our Vision</H3>
-              <Body className="text-gray-muted text-center text-sm leading-6">
-                To preserve and promote our cultural identity, peace, and unity
-                while fostering development and progress for future generations.
-              </Body>
-            </View>
-          </AnimateOnScroll>
-
-          <AnimateOnScroll delay={200} style={{ flex: isMobile ? undefined : 1 }}>
-            <View className="flex-1 bg-white rounded-xl border border-gold/20 p-7 items-center">
-              <View className="w-14 h-14 rounded-full bg-blue-heritage/10 items-center justify-center mb-4">
-                <FontAwesome
-                  name="flag"
-                  size={24}
-                  color={tokens.colors.blueHeritage}
-                />
-              </View>
-              <H3 className="text-center mb-3">Our Mission</H3>
-              <View className="gap-2">
-                {[
-                  "Uphold customs and traditions",
-                  "Promote peaceful coexistence and justice",
-                  "Collaborate with government and stakeholders for community development",
-                ].map((item) => (
-                  <View key={item} className="flex-row items-start gap-2">
-                    <View className="w-2 h-2 rounded-full bg-gold mt-1.5" />
-                    <Body className="flex-1 text-gray-muted text-sm leading-6">
-                      {item}
-                    </Body>
-                  </View>
-                ))}
-              </View>
-            </View>
-          </AnimateOnScroll>
-        </View>
-      </Section>
+      </View>
     </PageLayout>
   );
 }

@@ -1,13 +1,15 @@
-import { View, Text, Pressable, Switch } from "react-native";
+import { View, Text, Pressable, Switch, Platform } from "react-native";
 import { useState } from "react";
 import Head from "expo-router/head";
 import { PageLayout, Section } from "@/components/layout";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { FontAwesome } from "@expo/vector-icons";
-import { Body, BodyLarge, Card, Display, Eyebrow, H2 } from "@/components/ui";
+import { BodyLarge, Display, Label } from "@/components/ui";
 import { useResponsive } from "@/hooks/useResponsive";
-import { theme } from "@/constants/theme";
+import { tokens } from "@/constants/tokens";
+
+const isWeb = Platform.OS === "web";
 
 const ALL_TOWNS = [
   "Akropong", "Abiriw", "Amanokrom", "Awukugua", "Berekuso",
@@ -19,25 +21,21 @@ const ALL_TOWNS = [
 const subscriptionOptions = [
   {
     id: "obituaries",
-    icon: "heart" as const,
     title: "Obituaries",
     description: "Funeral announcements from all towns",
   },
   {
     id: "weddings",
-    icon: "bell" as const,
     title: "Weddings",
     description: "Wedding announcements and celebrations",
   },
   {
     id: "council",
-    icon: "gavel" as const,
     title: "Council Business",
     description: "Official announcements and resolutions",
   },
   {
     id: "events",
-    icon: "calendar" as const,
     title: "Events & Festivals",
     description: "Cultural events and festival dates",
   },
@@ -124,63 +122,48 @@ export default function SubscribeScreen() {
         <meta property="og:description" content="Subscribe to receive community updates from the Akuapem Traditional Area." />
       </Head>
 
-      {/* Page header band */}
-      <Section background="green-dark" className="py-20 md:py-28">
-        <View className="max-w-3xl mx-auto items-center">
-          <Eyebrow className="mb-4 text-center">Subscribe</Eyebrow>
-          <Display className="text-white text-center mb-5">
-            Stay Connected
-          </Display>
-          <View className="w-16 h-[2px] bg-gold mb-6" />
-          <BodyLarge className="text-white/80 text-center">
-            Subscribe to receive updates that matter to you from across the
-            Akuapem Traditional Area
-          </BodyLarge>
-        </View>
-      </Section>
-
-      {/* Two-column: benefits + form */}
-      <Section background="cream">
-        <View className={isMobile ? "gap-12" : "flex-row gap-16 items-start"}>
-          {/* Left: benefits */}
-          <View className={isMobile ? undefined : "flex-1 max-w-md"}>
-            <Eyebrow className="mb-3">Why Subscribe</Eyebrow>
-            <H2 className="mb-4">A direct line to the Traditional Area</H2>
-            <View className="w-16 h-[2px] bg-gold mb-8" />
-            <Body className="text-gray-muted mb-8">
+      {/* Split layout: pitch + form panel */}
+      <Section background="ink">
+        <View className={isMobile ? "gap-16" : "flex-row gap-16 items-start"}>
+          {/* Left: pitch + benefits */}
+          <View className={isMobile ? undefined : "w-[45%]"}>
+            <Label className="mb-6">Subscribe</Label>
+            <Display className="mb-8">Stay Connected</Display>
+            <BodyLarge className="text-ivory/60 mb-12 max-w-md">
               One subscription keeps you informed about life across all
               seventeen towns — from council resolutions to community
               celebrations and remembrances.
-            </Body>
+            </BodyLarge>
 
-            <View className="gap-6">
+            <View className="border-t border-white/10">
               {benefits.map((benefit) => (
-                <View key={benefit.title} className="flex-row items-start gap-4">
-                  <View className="w-6 h-6 rounded-full bg-gold/15 items-center justify-center mt-0.5">
-                    <FontAwesome name="check" size={11} color={theme.colors.goldAccent} />
-                  </View>
+                <View
+                  key={benefit.title}
+                  className="flex-row items-start gap-5 py-5 border-b border-white/10"
+                >
+                  <Text className="font-display text-base text-champagne mt-0.5">—</Text>
                   <View className="flex-1">
-                    <Text className="font-body-semibold text-base text-gray-charcoal mb-1">
+                    <Text className="font-body-medium text-base text-ivory/90 mb-1">
                       {benefit.title}
                     </Text>
-                    <Body className="text-gray-muted text-sm">{benefit.text}</Body>
+                    <Text className="font-body text-sm leading-relaxed text-ivory/50">
+                      {benefit.text}
+                    </Text>
                   </View>
                 </View>
               ))}
             </View>
           </View>
 
-          {/* Right: form card */}
+          {/* Right: form panel */}
           <View className={isMobile ? undefined : "flex-1"}>
-            <Card goldBorder className="p-8">
-              <Eyebrow className="mb-2">Your Details</Eyebrow>
-              <Text className="font-heading-bold text-h3 md:text-h3-desktop text-gray-charcoal mb-6">
-                Your Information
-              </Text>
+            <View className="bg-ink-raised p-8 md:p-12 border-t border-white/10">
+              <Label className="text-ivory/50 mb-8">Your Information</Label>
 
-              <View className={isMobile ? undefined : "flex-row gap-4"}>
+              <View className={isMobile ? undefined : "flex-row gap-8"}>
                 <View className={isMobile ? undefined : "flex-1"}>
                   <Input
+                    variant="underline"
                     label="First Name *"
                     placeholder="First name"
                     value={firstName}
@@ -193,6 +176,7 @@ export default function SubscribeScreen() {
                 </View>
                 <View className={isMobile ? undefined : "flex-1"}>
                   <Input
+                    variant="underline"
                     label="Last Name *"
                     placeholder="Last name"
                     value={lastName}
@@ -206,6 +190,7 @@ export default function SubscribeScreen() {
               </View>
 
               <Input
+                variant="underline"
                 label="Email Address *"
                 placeholder="your.email@example.com"
                 keyboardType="email-address"
@@ -219,6 +204,7 @@ export default function SubscribeScreen() {
               />
 
               <Input
+                variant="underline"
                 label="Phone Number"
                 placeholder="+233 XX XXX XXXX"
                 keyboardType="phone-pad"
@@ -227,6 +213,7 @@ export default function SubscribeScreen() {
               />
 
               <Input
+                variant="underline"
                 label="Current Location"
                 placeholder="City, Country"
                 value={currentLocation}
@@ -234,6 +221,7 @@ export default function SubscribeScreen() {
               />
 
               <Input
+                variant="underline"
                 label="Birthday (MM/DD)"
                 placeholder="MM/DD"
                 value={birthday}
@@ -245,91 +233,94 @@ export default function SubscribeScreen() {
                 accessibilityHint="Enter your birthday in MM/DD format, no year"
               />
 
-              {/* Preferences */}
-              <View className="border-t border-gray-charcoal/10 pt-6 mt-4 mb-2">
-                <Eyebrow className="mb-2">Preferences</Eyebrow>
-                <Text className="font-heading-bold text-h4 text-gray-charcoal mb-4">
-                  What would you like to receive?
-                </Text>
+              {/* Preferences — hairline toggle rows */}
+              <View className="pt-8 mt-4">
+                <Label className="text-ivory/50 mb-6">What would you like to receive?</Label>
               </View>
 
-              <View className="gap-3 mb-6">
+              <View className="border-t border-white/10 mb-8">
                 {subscriptionOptions.map((option) => (
                   <Pressable
                     key={option.id}
                     onPress={() => togglePreference(option.id)}
-                    className={`flex-row items-center p-4 min-h-[44px] rounded-xl border ${
-                      preferences[option.id]
-                        ? "border-gold bg-gold/5"
-                        : "border-gray-charcoal/15 bg-white"
-                    }`}
+                    className="flex-row items-center py-4 min-h-[44px] border-b border-white/10"
+                    style={isWeb ? ({ cursor: "pointer" } as any) : undefined}
                     accessibilityRole="switch"
                     accessibilityLabel={`${option.title}: ${option.description}`}
                     accessibilityState={{ checked: preferences[option.id] }}
                   >
-                    <View className={`${isMobile ? "w-9 h-9" : "w-11 h-11"} rounded-full bg-green-deep/10 items-center justify-center mr-3`}>
-                      <FontAwesome
-                        name={option.icon}
-                        size={isMobile ? 15 : 17}
-                        color={theme.colors.primaryGreen}
-                      />
-                    </View>
-                    <View className="flex-1">
-                      <Text className={`font-body-semibold ${isMobile ? "text-sm" : "text-[15px]"} text-gray-charcoal`}>
+                    <View className="flex-1 pr-4">
+                      <Text
+                        className={`font-body-medium text-base ${
+                          preferences[option.id] ? "text-ivory" : "text-ivory/60"
+                        }`}
+                      >
                         {option.title}
                       </Text>
-                      <Text className={`font-body ${isMobile ? "text-xs" : "text-[13px]"} text-gray-muted`}>
+                      <Text className="font-body text-xs text-ivory/40 mt-0.5">
                         {option.description}
                       </Text>
                     </View>
                     <Switch
                       value={preferences[option.id]}
                       onValueChange={() => togglePreference(option.id)}
-                      trackColor={{ false: "#E0E0E0", true: theme.colors.goldAccent + "80" }}
-                      thumbColor={preferences[option.id] ? theme.colors.goldAccent : "#f4f3f4"}
+                      trackColor={{
+                        false: "rgba(255,255,255,0.2)",
+                        true: tokens.colors.champagne,
+                      }}
+                      thumbColor={
+                        preferences[option.id] ? tokens.colors.ivory : "rgba(255,255,255,0.6)"
+                      }
                       accessibilityLabel={`Toggle ${option.title}`}
                     />
                   </Pressable>
                 ))}
               </View>
 
-              {/* Town-based Filtering */}
+              {/* Town-based Filtering — underline text toggles */}
               {hasAnyContentPref && (
-                <View className="mb-6">
-                  <Text className="font-body-semibold text-[15px] text-gray-charcoal mb-2">
-                    Filter updates by town (optional)
-                  </Text>
-                  <Body className="text-gray-muted text-sm mb-3">
+                <View className="mb-8">
+                  <Label className="text-ivory/50 mb-3">Filter updates by town</Label>
+                  <Text className="font-body text-sm text-ivory/40 mb-5">
                     Select specific towns to receive updates from, or leave empty
-                    for all towns
-                  </Body>
-                  <View className="flex-row flex-wrap gap-2">
-                    {ALL_TOWNS.map((town) => (
-                      <Pressable
-                        key={town}
-                        onPress={() => toggleTown(town)}
-                        className={`px-3 py-2 min-h-[36px] justify-center rounded-lg border ${
-                          selectedTowns.includes(town)
-                            ? "bg-green-deep border-green-deep"
-                            : "bg-white border-gray-charcoal/20"
-                        }`}
-                        accessibilityRole="checkbox"
-                        accessibilityLabel={town}
-                        accessibilityState={{ checked: selectedTowns.includes(town) }}
-                      >
-                        <Text
-                          className={`font-body text-sm ${
-                            selectedTowns.includes(town) ? "text-gold-light" : "text-gray-charcoal"
+                    for all towns.
+                  </Text>
+                  <View className="flex-row flex-wrap gap-x-6 gap-y-3">
+                    {ALL_TOWNS.map((town) => {
+                      const selected = selectedTowns.includes(town);
+                      return (
+                        <Pressable
+                          key={town}
+                          onPress={() => toggleTown(town)}
+                          className={`pb-1 min-h-[32px] justify-center border-b ${
+                            selected ? "border-champagne" : "border-transparent"
                           }`}
+                          style={isWeb ? ({ cursor: "pointer", transition: "border-color 0.2s ease" } as any) : undefined}
+                          accessibilityRole="checkbox"
+                          accessibilityLabel={town}
+                          accessibilityState={{ checked: selected }}
                         >
-                          {town}
-                        </Text>
-                      </Pressable>
-                    ))}
+                          <Text
+                            className={`font-body text-sm ${
+                              selected ? "text-champagne" : "text-ivory/60"
+                            }`}
+                            style={isWeb ? ({ transition: "color 0.2s ease" } as any) : undefined}
+                          >
+                            {town}
+                          </Text>
+                        </Pressable>
+                      );
+                    })}
                   </View>
                   {selectedTowns.length > 0 && (
-                    <Pressable onPress={() => setSelectedTowns([])} className="mt-2">
-                      <Text className="font-body text-sm text-gold">
+                    <Pressable
+                      onPress={() => setSelectedTowns([])}
+                      className="mt-4 min-h-[32px] justify-center"
+                      style={isWeb ? ({ cursor: "pointer" } as any) : undefined}
+                      accessibilityRole="button"
+                      accessibilityLabel="Clear town selection"
+                    >
+                      <Text className="font-body-medium text-label uppercase tracking-[3px] text-ivory/50">
                         Clear selection ({selectedTowns.length} selected)
                       </Text>
                     </Pressable>
@@ -338,15 +329,15 @@ export default function SubscribeScreen() {
               )}
 
               {subSuccess ? (
-                <View className="bg-green-deep/10 border border-green-deep/25 rounded-xl p-5 items-center">
-                  <FontAwesome name="check-circle" size={24} color={theme.colors.primaryGreen} />
-                  <Text className="font-body-semibold text-base text-green-deep mt-2">
+                <View className="border-t border-champagne/40 pt-8 mt-2">
+                  <FontAwesome name="check" size={20} color={tokens.colors.champagne} />
+                  <Text className="font-display text-xl text-ivory mt-4 mb-2">
                     You have been subscribed.
                   </Text>
-                  <Body className="text-green-deep/80 text-sm text-center mt-1">
+                  <Text className="font-body text-sm text-ivory/60 leading-relaxed">
                     Thank you for subscribing. You will receive updates based on
                     your selected preferences.
-                  </Body>
+                  </Text>
                 </View>
               ) : (
                 <Button
@@ -357,10 +348,10 @@ export default function SubscribeScreen() {
                 />
               )}
 
-              <Text className="font-body text-[13px] text-gray-muted text-center mt-4">
+              <Text className="font-body text-xs text-ivory/40 text-center mt-6">
                 You can update your preferences or unsubscribe at any time
               </Text>
-            </Card>
+            </View>
           </View>
         </View>
       </Section>

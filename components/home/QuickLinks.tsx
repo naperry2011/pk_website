@@ -1,103 +1,116 @@
-import { View, Text, Pressable, Platform } from "react-native";
+import { View, Text, Pressable, Image, Platform, ImageSourcePropType } from "react-native";
 import { Link } from "expo-router";
-import { FontAwesome } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import { useResponsive } from "@/hooks/useResponsive";
 import { AnimateOnScroll } from "@/components/ui/AnimateOnScroll";
-import { SectionHeading } from "@/components/ui/SectionHeading";
-import { theme } from "@/constants/theme";
-
-const links = [
-  {
-    href: "/community/obituaries",
-    icon: "heart",
-    title: "Obituaries",
-    description: "View and submit funeral announcements for the community.",
-  },
-  {
-    href: "/community/weddings",
-    icon: "bell",
-    title: "Weddings",
-    description: "Share and celebrate wedding announcements.",
-  },
-  {
-    href: "/towns",
-    icon: "map-marker",
-    title: "Our Towns",
-    description: "Explore the 17 principal towns of Akuapem.",
-  },
-  {
-    href: "/contact",
-    icon: "envelope",
-    title: "Contact Us",
-    description: "Reach out to the Traditional Council directly.",
-  },
-];
+import { tokens } from "@/constants/tokens";
 
 const isWeb = Platform.OS === "web";
 
+interface ExploreTile {
+  href: string;
+  label: string;
+  title: string;
+  image: ImageSourcePropType;
+  alt: string;
+}
+
+const tiles: ExploreTile[] = [
+  {
+    href: "/towns",
+    label: "17 Principal Towns",
+    title: "The Towns of Akuapem",
+    image: require("@/assets/images/hero/akuapem-heritage.jpg"),
+    alt: "Akuapem chiefs and community gathered together",
+  },
+  {
+    href: "/community",
+    label: "Life of the Kingdom",
+    title: "Community & Culture",
+    image: require("@/assets/images/community/traditional-dance.jpg"),
+    alt: "Traditional Akuapem dance performance",
+  },
+];
+
+function Tile({ tile, index }: { tile: ExploreTile; index: number }) {
+  const { isMobile } = useResponsive();
+  const height = isMobile ? 320 : 420;
+
+  return (
+    <AnimateOnScroll delay={index * 150} style={{ flex: isMobile ? undefined : 1 }}>
+      <Link href={tile.href as any} asChild>
+        <Pressable
+          className="relative overflow-hidden w-full"
+          style={
+            isWeb ? ({ cursor: "pointer" } as any) : undefined
+          }
+          accessibilityRole="link"
+          accessibilityLabel={tile.title}
+        >
+          {({ hovered }: any) => (
+            <View className="relative overflow-hidden" style={{ height }}>
+              <Image
+                source={tile.image}
+                resizeMode="cover"
+                accessibilityLabel={tile.alt}
+                style={[
+                  { width: "100%", height: "100%" },
+                  isWeb
+                    ? ({
+                        transition: "transform 1.2s cubic-bezier(0.22, 1, 0.36, 1)",
+                        transform: hovered ? "scale(1.03)" : "scale(1)",
+                      } as any)
+                    : null,
+                ]}
+              />
+              <LinearGradient
+                colors={["rgba(11, 15, 13, 0)", "rgba(11, 15, 13, 0.45)", tokens.colors.inkOverlayHeavy]}
+                locations={[0.35, 0.7, 1]}
+                style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
+              />
+              <View className="absolute bottom-0 left-0 right-0 p-8 md:p-10">
+                <Text className="font-body-medium text-label uppercase tracking-[3px] text-champagne mb-3">
+                  {tile.label}
+                </Text>
+                <View className="flex-row items-center justify-between gap-4">
+                  <Text
+                    accessibilityRole="header"
+                    className="font-display text-2xl md:text-3xl text-ivory flex-shrink"
+                  >
+                    {tile.title}
+                  </Text>
+                  <Text
+                    className="text-champagne text-xl"
+                    style={
+                      isWeb
+                        ? ({
+                            transition: "transform 0.3s ease",
+                            transform: hovered ? "translateX(6px)" : "translateX(0)",
+                          } as any)
+                        : undefined
+                    }
+                  >
+                    →
+                  </Text>
+                </View>
+              </View>
+            </View>
+          )}
+        </Pressable>
+      </Link>
+    </AnimateOnScroll>
+  );
+}
+
+/** Explore section body: two large full-bleed image tiles. */
 export function QuickLinks() {
   const { isMobile } = useResponsive();
 
   return (
-    <View className="bg-gray-warm px-[8%] py-16 md:py-24">
-      <View className="max-w-7xl mx-auto w-full">
-        <SectionHeading label="QUICK ACCESS" title="How Can We Help?" />
-
-        <View className={`gap-6 ${isMobile ? "flex-col" : "flex-row flex-wrap"}`}>
-          {links.map((link, index) => (
-            <AnimateOnScroll key={link.href} delay={index * 100}>
-              <Link href={link.href as any} asChild>
-                <Pressable
-                  className={`bg-green-dark rounded-xl overflow-hidden border border-gold/20 ${
-                    isMobile ? "w-full" : "flex-1 min-w-[220px] max-w-[282px]"
-                  }`}
-                  style={({ hovered }: any) => [
-                    isWeb
-                      ? ({
-                          transition: "all 0.3s ease",
-                          cursor: "pointer",
-                        } as any)
-                      : null,
-                    isWeb && hovered
-                      ? ({
-                          transform: [{ translateY: -6 }],
-                          boxShadow: "0px 12px 24px rgba(14, 51, 32, 0.35)",
-                          borderColor: "rgba(212, 168, 67, 0.5)",
-                        } as any)
-                      : null,
-                  ]}
-                  accessibilityRole="link"
-                  accessibilityLabel={link.title}
-                >
-                  {/* Card body */}
-                  <View className="p-8 pb-6 items-start">
-                    <View className="mb-5">
-                      <FontAwesome
-                        name={link.icon as any}
-                        size={28}
-                        color={theme.colors.goldAccent}
-                      />
-                    </View>
-                    <Text className="font-body text-sm text-white/70 leading-6">
-                      {link.description}
-                    </Text>
-                  </View>
-
-                  {/* Overlay-style footer label */}
-                  <View className="flex-row items-center justify-between px-8 py-4 bg-black/20 border-t border-gold/20">
-                    <Text className="font-heading-bold text-lg text-white">
-                      {link.title}
-                    </Text>
-                    <Text className="font-body-semibold text-lg text-gold">
-                      →
-                    </Text>
-                  </View>
-                </Pressable>
-              </Link>
-            </AnimateOnScroll>
-          ))}
-        </View>
-      </View>
+    <View className={`w-full ${isMobile ? "flex-col gap-6" : "flex-row gap-8"}`}>
+      {tiles.map((tile, index) => (
+        <Tile key={tile.href} tile={tile} index={index} />
+      ))}
     </View>
   );
 }

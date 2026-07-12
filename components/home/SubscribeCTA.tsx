@@ -1,39 +1,42 @@
 import { View, Text } from "react-native";
 import { useRouter } from "expo-router";
 import { useResponsive } from "@/hooks/useResponsive";
-import { AnimateOnScroll } from "@/components/ui/AnimateOnScroll";
-import { Button, Eyebrow } from "@/components/ui";
+import { Section } from "@/components/layout";
+import { Button } from "@/components/ui";
 
+/** Ivory contrast band — deliberate dark → light → dark rhythm. */
 export function SubscribeCTA() {
   const { isMobile } = useResponsive();
   const router = useRouter();
 
   return (
-    <View className="bg-green-deep border-t border-gold/40">
-      <AnimateOnScroll>
-        <View className="items-center px-[8%] py-16 md:py-24 max-w-3xl w-full mx-auto">
-          <Eyebrow className="mb-4 text-center">Stay Informed</Eyebrow>
-
+    <Section background="ivory">
+      <View className={isMobile ? "flex-col gap-10" : "flex-row items-end justify-between gap-16"}>
+        <View className="flex-1 max-w-[680px]">
+          <Text className="font-body-medium text-label uppercase tracking-[3px] text-ink/50 mb-6">
+            Stay Informed
+          </Text>
           <Text
             accessibilityRole="header"
-            className="font-heading-bold text-h2 md:text-h2-desktop text-white text-center mb-4"
+            className="font-display text-title md:text-title-desktop text-ink mb-6"
           >
-            Stay Connected with Your Community
+            Never miss a moment of the Kingdom
           </Text>
-
-          <Text className="font-body text-base text-white/85 text-center max-w-xl leading-6 mb-8">
-            Festival dates, council decisions, obituaries, wedding announcements
-            — delivered to your inbox.
+          <Text className="font-body text-body-lg text-ink/60 leading-relaxed">
+            Festival dates, council decisions, obituaries and wedding
+            announcements — delivered to your inbox.
           </Text>
+        </View>
 
+        <View className={isMobile ? "w-full" : "self-end"}>
           <Button
-            title="Subscribe Now"
+            title="Subscribe"
             variant="primary"
             fullWidth={isMobile}
             onPress={() => router.push("/subscribe")}
           />
         </View>
-      </AnimateOnScroll>
-    </View>
+      </View>
+    </Section>
   );
 }

@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, Platform } from "react-native";
 import { useState } from "react";
 import { PageLayout, Section } from "@/components/layout";
 import { Button } from "@/components/ui/Button";
@@ -9,9 +9,11 @@ import { useTowns } from "@/hooks/useTowns";
 import { LoadingState } from "@/components/ui/LoadingState";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { TownFilterDropdown, HelpfulResources } from "@/components/community";
-import { Body, BodyLarge, Card, Display, H3 } from "@/components/ui";
+import { BodyLarge, Display, Title } from "@/components/ui";
 import { useResponsive } from "@/hooks/useResponsive";
-import { theme } from "@/constants/theme";
+import { tokens } from "@/constants/tokens";
+
+const isWeb = Platform.OS === "web";
 
 export default function ObituariesScreen() {
   const { isMobile } = useResponsive();
@@ -105,40 +107,40 @@ export default function ObituariesScreen() {
 
   return (
     <PageLayout>
-      {/* Page header band — quiet, respectful */}
-      <Section background="green-dark" className="py-20 md:py-28">
-        <View className="max-w-3xl mx-auto items-center">
-          <Text className="font-accent text-eyebrow uppercase tracking-widest text-white/60 mb-4 text-center">
+      {/* Page title band — quiet, respectful, no accent color */}
+      <Section background="ink" className="pb-10 md:pb-16">
+        <View className="max-w-4xl">
+          <Text className="font-body-medium text-label uppercase tracking-[3px] text-ivory/40 mb-6">
             In Memoriam
           </Text>
-          <Display className="text-white text-center mb-5">Obituaries</Display>
-          <View className="w-16 h-[2px] bg-white/30 mb-6" />
-          <BodyLarge className="text-white/80 text-center">
-            Honoring the memory of our departed community members
+          <Display className="mb-8">Obituaries</Display>
+          <BodyLarge className="text-ivory/60 max-w-xl">
+            Honoring the memory of our departed community members.
           </BodyLarge>
         </View>
       </Section>
 
-      {/* Actions & Content */}
-      <Section background="white">
-        <View className="flex-row flex-wrap gap-4 justify-between items-center mb-10">
-          <Text className="font-heading-bold text-h2 md:text-h2-desktop text-gray-charcoal">
-            Recent Obituaries
-          </Text>
+      {/* Content */}
+      <Section background="ink">
+        <View className="flex-row flex-wrap gap-6 justify-between items-center mb-12 md:mb-16 border-t border-white/10 pt-10">
+          <Title>{showForm ? "Submit an Obituary" : "Recent Obituaries"}</Title>
           <Button
             title={showForm ? "View Listings" : "Submit Obituary"}
             onPress={() => setShowForm(!showForm)}
-            variant={showForm ? "outline" : "primary"}
+            variant="secondary"
           />
         </View>
 
         {showForm ? (
-          /* Submission Form */
-          <View className="max-w-2xl mx-auto w-full">
-            <Card className="p-8">
-              <H3 className="mb-6">Submit an Obituary</H3>
+          /* Submission Form — muted panel */
+          <View className="max-w-2xl w-full">
+            <View className="bg-ink-raised p-8 md:p-12 border-t border-white/10">
+              <Text className="font-body-medium text-label uppercase tracking-[3px] text-ivory/50 mb-8">
+                Submission Form
+              </Text>
 
               <Input
+                variant="underline"
                 label="Full Name of Deceased *"
                 placeholder="Enter full name"
                 value={obitForm.name}
@@ -149,9 +151,10 @@ export default function ObituariesScreen() {
                 error={obitErrors.name}
               />
 
-              <View className={isMobile ? undefined : "flex-row gap-4"}>
+              <View className={isMobile ? undefined : "flex-row gap-8"}>
                 <View className={isMobile ? undefined : "flex-1"}>
                   <Input
+                    variant="underline"
                     label="Date of Birth"
                     placeholder="YYYY-MM-DD"
                     value={obitForm.birthDate}
@@ -160,6 +163,7 @@ export default function ObituariesScreen() {
                 </View>
                 <View className={isMobile ? undefined : "flex-1"}>
                   <Input
+                    variant="underline"
                     label="Date of Passing *"
                     placeholder="YYYY-MM-DD"
                     value={obitForm.passedDate}
@@ -172,9 +176,10 @@ export default function ObituariesScreen() {
                 </View>
               </View>
 
-              <View className={isMobile ? undefined : "flex-row gap-4"}>
+              <View className={isMobile ? undefined : "flex-row gap-8"}>
                 <View className={isMobile ? undefined : "flex-1"}>
                   <Input
+                    variant="underline"
                     label="Funeral Start Date *"
                     placeholder="YYYY-MM-DD"
                     value={obitForm.funeralDate}
@@ -187,6 +192,7 @@ export default function ObituariesScreen() {
                 </View>
                 <View className={isMobile ? undefined : "flex-1"}>
                   <Input
+                    variant="underline"
                     label="Funeral End Date"
                     placeholder="YYYY-MM-DD"
                     value={obitForm.funeralEndDate}
@@ -195,56 +201,70 @@ export default function ObituariesScreen() {
                 </View>
               </View>
 
-              <View className="mb-4">
-                <Text className="font-body-semibold text-[15px] text-gray-charcoal mb-2">Town</Text>
-                <View className="flex-row flex-wrap gap-2">
-                  {(towns ?? []).map((town) => (
-                    <Pressable
-                      key={town.id}
-                      onPress={() => setSelectedTown(town.id)}
-                      className={`px-3 py-2 min-h-[44px] justify-center rounded-lg border ${
-                        selectedTown === town.id
-                          ? "bg-gray-charcoal border-gray-charcoal"
-                          : "bg-white border-gray-charcoal/20"
-                      }`}
-                      accessibilityRole="radio"
-                      accessibilityLabel={town.name}
-                      accessibilityState={{ selected: selectedTown === town.id }}
-                    >
-                      <Text
-                        className={`font-body text-sm ${
-                          selectedTown === town.id ? "text-white" : "text-gray-charcoal"
-                        }`}
+              {/* Town — hairline toggle rows, muted */}
+              <View className="mb-8 mt-4">
+                <Text className="font-body-medium text-label uppercase tracking-[3px] text-ivory/60 mb-4">
+                  Town
+                </Text>
+                <View className="border-t border-white/10">
+                  {(towns ?? []).map((town) => {
+                    const active = selectedTown === town.id;
+                    return (
+                      <Pressable
+                        key={town.id}
+                        onPress={() => setSelectedTown(town.id)}
+                        className="flex-row items-center justify-between py-3 border-b border-white/10 min-h-[44px]"
+                        style={isWeb ? ({ cursor: "pointer" } as any) : undefined}
+                        accessibilityRole="radio"
+                        accessibilityLabel={town.name}
+                        accessibilityState={{ selected: active }}
                       >
-                        {town.name}
-                      </Text>
-                    </Pressable>
-                  ))}
+                        <Text
+                          className={`font-body text-sm ${active ? "text-ivory" : "text-ivory/60"}`}
+                        >
+                          {town.name}
+                        </Text>
+                        <Text
+                          className={`font-body-medium text-label uppercase tracking-[3px] ${
+                            active ? "text-ivory" : "text-ivory/30"
+                          }`}
+                        >
+                          {active ? "Selected" : "Select"}
+                        </Text>
+                      </Pressable>
+                    );
+                  })}
                 </View>
               </View>
 
               <TextArea
+                variant="underline"
                 label="Brief Biography (Optional)"
                 placeholder="Share a few words about the deceased..."
                 value={obitForm.biography}
                 onChangeText={(text) => setObitForm({ ...obitForm, biography: text })}
               />
 
-              <View className="mb-6">
-                <Text className="font-body-semibold text-[15px] text-gray-charcoal mb-2">Photo</Text>
+              {/* Photo */}
+              <View className="mb-8">
+                <Text className="font-body-medium text-label uppercase tracking-[3px] text-ivory/60 mb-4">
+                  Photo
+                </Text>
                 <Pressable
-                  className="border-2 border-dashed border-gray-charcoal/20 rounded-xl p-8 items-center min-h-[44px]"
+                  className="border border-white/15 p-8 items-center min-h-[44px]"
+                  style={isWeb ? ({ cursor: "pointer" } as any) : undefined}
                   accessibilityRole="button"
                   accessibilityLabel="Upload photo"
                   accessibilityHint="Tap to upload a photo of the deceased"
                 >
-                  <FontAwesome name="camera" size={32} color="rgba(45, 45, 45, 0.25)" />
-                  <Body className="text-gray-muted mt-2">Tap to upload photo</Body>
-                  <Text className="font-body text-[13px] text-gray-muted/70">Max 5MB, JPG or PNG</Text>
+                  <FontAwesome name="camera" size={24} color={tokens.colors.ivory} style={{ opacity: 0.4 }} />
+                  <Text className="font-body text-sm text-ivory/60 mt-3">Tap to upload photo</Text>
+                  <Text className="font-body text-xs text-ivory/35 mt-1">Max 5MB, JPG or PNG</Text>
                 </Pressable>
               </View>
 
               <Input
+                variant="underline"
                 label="Family Contact Email"
                 placeholder="email@example.com"
                 keyboardType="email-address"
@@ -258,11 +278,12 @@ export default function ObituariesScreen() {
               />
 
               {/* Submitted By Section */}
-              <View className="border-t border-gray-charcoal/10 pt-5 mt-4">
-                <Text className="font-heading-bold text-base text-gray-charcoal mb-4">
-                  Your Information (Submitter)
+              <View className="border-t border-white/10 pt-8 mt-6">
+                <Text className="font-body-medium text-label uppercase tracking-[3px] text-ivory/50 mb-6">
+                  Your Information
                 </Text>
                 <Input
+                  variant="underline"
                   label="Your Name *"
                   placeholder="Full name"
                   value={obitForm.submittedByName}
@@ -273,6 +294,7 @@ export default function ObituariesScreen() {
                   error={obitErrors.submittedByName}
                 />
                 <Input
+                  variant="underline"
                   label="Your Email *"
                   placeholder="email@example.com"
                   keyboardType="email-address"
@@ -284,6 +306,7 @@ export default function ObituariesScreen() {
                   error={obitErrors.submittedByEmail}
                 />
                 <Input
+                  variant="underline"
                   label="Your Phone Number"
                   placeholder="+233 XX XXX XXXX"
                   keyboardType="phone-pad"
@@ -293,99 +316,110 @@ export default function ObituariesScreen() {
               </View>
 
               {submitError ? (
-                <View className="bg-red-kente/10 border border-red-kente/25 rounded-xl p-3 mb-4">
-                  <Text className="font-body text-sm text-red-kente text-center">{submitError}</Text>
+                <View className="border-l-2 border-red-kente pl-4 py-2 mb-6">
+                  <Text className="font-body text-sm text-red-kente">{submitError}</Text>
                 </View>
               ) : null}
 
               {formSubmitted ? (
-                <View className="bg-green-deep/10 border border-green-deep/25 rounded-xl p-5 items-center">
-                  <FontAwesome name="check-circle" size={24} color={theme.colors.primaryGreen} />
-                  <Text className="font-body-semibold text-base text-green-deep mt-2">
+                <View className="border-t border-white/25 pt-8 mt-2">
+                  <FontAwesome name="check" size={20} color={tokens.colors.ivory} />
+                  <Text className="font-display text-xl text-ivory mt-4 mb-2">
                     Thank you for your submission.
                   </Text>
-                  <Body className="text-green-deep/80 text-sm text-center mt-1">
+                  <Text className="font-body text-sm text-ivory/60 leading-relaxed">
                     Your obituary has been received. It will be reviewed and published with care and respect.
-                  </Body>
+                  </Text>
                 </View>
               ) : (
                 <Button
                   title="Submit for Review"
                   onPress={handleObitSubmit}
                   fullWidth
+                  variant="secondary"
                   loading={createObituary.isPending}
                   accessibilityHint="Submits the obituary for review"
                 />
               )}
 
-              <Text className="font-body text-[13px] text-gray-muted text-center mt-4">
+              <Text className="font-body text-xs text-ivory/40 text-center mt-6">
                 All submissions are reviewed before publishing
               </Text>
-            </Card>
+            </View>
           </View>
         ) : isLoading ? (
           <LoadingState message="Loading obituaries..." />
         ) : error ? (
           <ErrorState message="Failed to load obituaries." onRetry={refetch} />
         ) : (
-          <View className={isMobile ? undefined : "flex-row gap-12"}>
-            {/* Main list — quiet, muted rows */}
+          <View className={isMobile ? undefined : "flex-row gap-20"}>
+            {/* Main list — quiet editorial index, no accent color */}
             <View className={isMobile ? undefined : "flex-1"}>
               <TownFilterDropdown selectedTown={filterTown} onSelectTown={setFilterTown} />
 
               <View className="max-w-3xl">
                 {filteredObituaries.map((obituary) => (
-                  <View
+                  <Pressable
                     key={obituary.id}
-                    className="py-8 border-b border-gray-charcoal/10"
                     accessibilityLabel={`Obituary of ${obituary.name}`}
+                    className="py-10 border-b border-white/10"
+                    style={isWeb ? ({ cursor: "default" } as any) : undefined}
                   >
-                    <View className="flex-row flex-wrap items-center gap-3 mb-3">
-                      <Text className="font-body text-sm text-gray-muted">
-                        {obituary.birth_date ? new Date(obituary.birth_date).getFullYear() : "?"} –{" "}
-                        {new Date(obituary.passed_date).getFullYear()}
-                      </Text>
-                      <View className="w-1 h-1 rounded-full bg-gray-muted/50" />
-                      <Text className="font-accent text-xs uppercase tracking-widest text-gray-muted">
-                        {getTownName(obituary.town_id)}
-                      </Text>
-                    </View>
+                    {({ hovered }: any) => (
+                      <>
+                        <View className="flex-row flex-wrap items-baseline gap-x-5 gap-y-2 mb-4">
+                          <Text className="font-body-medium text-label uppercase tracking-[3px] text-ivory/40">
+                            {obituary.birth_date ? new Date(obituary.birth_date).getFullYear() : "?"} –{" "}
+                            {new Date(obituary.passed_date).getFullYear()}
+                          </Text>
+                          <Text className="font-body-medium text-label uppercase tracking-[3px] text-ivory/40">
+                            {getTownName(obituary.town_id)}
+                          </Text>
+                        </View>
 
-                    <Text className="font-heading text-xl md:text-2xl text-gray-charcoal mb-2">
-                      {obituary.name}
-                    </Text>
+                        <Text
+                          className={`font-display text-xl md:text-2xl mb-3 ${
+                            hovered && isWeb ? "text-white" : "text-ivory"
+                          }`}
+                          style={isWeb ? ({ transition: "color 0.25s ease" } as any) : undefined}
+                        >
+                          {obituary.name}
+                        </Text>
 
-                    <Body className="text-gray-muted text-sm">
-                      Funeral: {formatDateRange(obituary.funeral_date, obituary.funeral_end_date)}
-                    </Body>
+                        <Text className="font-body text-sm text-ivory/50">
+                          Funeral: {formatDateRange(obituary.funeral_date, obituary.funeral_end_date)}
+                        </Text>
 
-                    {obituary.biography ? (
-                      <Body className="text-gray-muted mt-2 max-w-2xl" numberOfLines={3}>
-                        {obituary.biography}
-                      </Body>
-                    ) : null}
+                        {obituary.biography ? (
+                          <Text className="font-body text-base leading-relaxed text-ivory/50 mt-3 max-w-2xl" numberOfLines={3}>
+                            {obituary.biography}
+                          </Text>
+                        ) : null}
 
-                    {obituary.submitted_by_name && (
-                      <Text className="font-body text-xs text-gray-muted mt-3">
-                        Submitted by: {obituary.submitted_by_name}
-                        {obituary.submitted_by_email ? ` · ${obituary.submitted_by_email}` : ""}
-                        {obituary.submitted_by_phone ? ` · ${obituary.submitted_by_phone}` : ""}
-                      </Text>
+                        {obituary.submitted_by_name && (
+                          <Text className="font-body text-xs text-ivory/35 mt-4">
+                            Submitted by: {obituary.submitted_by_name}
+                            {obituary.submitted_by_email ? ` · ${obituary.submitted_by_email}` : ""}
+                            {obituary.submitted_by_phone ? ` · ${obituary.submitted_by_phone}` : ""}
+                          </Text>
+                        )}
+                      </>
                     )}
-                  </View>
+                  </Pressable>
                 ))}
 
                 {filteredObituaries.length === 0 && (
-                  <View className="py-16 items-center">
-                    <FontAwesome name="inbox" size={40} color="rgba(45, 45, 45, 0.15)" />
-                    <Body className="text-gray-muted mt-4">No obituaries at this time</Body>
+                  <View className="py-20 border-b border-white/10">
+                    <Text className="font-display-italic text-lg text-ivory/40">
+                      No obituaries at this time.
+                    </Text>
                   </View>
                 )}
               </View>
             </View>
 
             {/* Sidebar */}
-            <View className={isMobile ? "mt-10" : "w-[300px]"}>
+            <View className={isMobile ? "mt-16" : "w-[300px]"}>
               <HelpfulResources />
             </View>
           </View>
